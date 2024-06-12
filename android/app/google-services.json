@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "221833913527",
+    "firebase_url": "https://trolydieuduong.firebaseio.com",
+    "project_id": "trolydieuduong",
+    "storage_bucket": "trolydieuduong.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221833913527:android:94657bd991a6e2bb8ed932",
+        "android_client_info": {
+          "package_name": "com.clinicmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221833913527-rb0c7bhe7sj5csohe8pu9tombm8sd5vu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZJP--kU5KsEtn-dE682JJgEXGE7mIGH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221833913527-rb0c7bhe7sj5csohe8pu9tombm8sd5vu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
