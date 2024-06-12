@@ -1662,16 +1662,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bsdaoquang/rncomponent@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "@bsdaoquang/rncomponent@npm:0.1.7"
+"@bsdaoquang/rncomponent@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "@bsdaoquang/rncomponent@npm:0.1.8"
   dependencies:
     "@react-native-community/checkbox": ^0.5.17
     react-native-vector-icons: ^10.1.0
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 8f822bb024421eed3e21dafea38d4c976713cc285469156f91353a2a92e6bd912c769a53a8fe3b0af67b387c68d0316fd0911d938188a6cbed0318cd4e6e6f18
+  checksum: 0c235bcd95f4c3375838c90af95a1d0560537047016d6fcfe312518504f098c6089052a9bcc8dda7bd54a3f60dea6be9ce2cf74f2be9dbc7b88ac96eed91a6ec
   languageName: node
   linkType: hard
 
@@ -3103,6 +3103,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-native-vector-icons@npm:^6.4.18":
+  version: 6.4.18
+  resolution: "@types/react-native-vector-icons@npm:6.4.18"
+  dependencies:
+    "@types/react": "*"
+    "@types/react-native": ^0.70
+  checksum: 1ef458cb5e7a37f41eb400e3153940b1b152e4df76a7c06c7a47c712dbfe46e14b9999f04dde1bd074f338f850e161c6c925174ddea33386b74f8112c940065b
+  languageName: node
+  linkType: hard
+
+"@types/react-native@npm:^0.70":
+  version: 0.70.19
+  resolution: "@types/react-native@npm:0.70.19"
+  dependencies:
+    "@types/react": "*"
+  checksum: 79b504fa56340631079e7c20ea0d9412ec14147b76d0ce189f4403936f529ef1e6fd031383afab117846c5ae039123bcf3afc948bae4432269c6780282726f71
+  languageName: node
+  linkType: hard
+
 "@types/react-test-renderer@npm:^18.0.0":
   version: 18.3.0
   resolution: "@types/react-test-renderer@npm:18.3.0"
@@ -4123,7 +4142,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@bsdaoquang/rncomponent": ^0.1.7
+    "@bsdaoquang/rncomponent": ^0.1.8
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-firebase/app": ^20.1.0
     "@react-native-firebase/auth": ^20.1.0
@@ -4139,6 +4158,7 @@ __metadata:
     "@react-navigation/native-stack": ^6.9.26
     "@reduxjs/toolkit": ^2.2.5
     "@types/react": ^18.2.6
+    "@types/react-native-vector-icons": ^6.4.18
     "@types/react-test-renderer": ^18.0.0
     babel-jest: ^29.6.3
     eslint: ^8.19.0

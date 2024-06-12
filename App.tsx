@@ -1,12 +1,25 @@
-import {View} from 'react-native';
 import React from 'react';
-import {Text} from '@bsdaoquang/rncomponent';
+import Router from './src/routers/Router';
+import {NavigationContainer} from '@react-navigation/native';
+import {StatusBar, View} from 'react-native';
 
 const App = () => {
   return (
-    <View>
-      <Text text="Hello" />
-    </View>
+    <NavigationContainer>
+      <StatusBar
+        translucent
+        backgroundColor={'transparent'}
+        barStyle={'dark-content'}
+      />
+      <View
+        style={{
+          paddingTop: StatusBar.currentHeight,
+          flex: 1,
+          backgroundColor: 'white',
+        }}>
+        <Router />
+      </View>
+    </NavigationContainer>
   );
 };
 
