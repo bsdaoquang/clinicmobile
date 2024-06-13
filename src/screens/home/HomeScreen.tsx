@@ -94,7 +94,7 @@ const HomeScreen = () => {
         },
       );
 
-      !val && GeoLocation.clearWatch(watch);
+      !val && watch && GeoLocation.clearWatch(watch);
       console.log(watch);
     } catch (error) {
       console.log(error);
