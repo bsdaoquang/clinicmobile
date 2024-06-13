@@ -13,7 +13,6 @@ const App = () => {
       />
       <View
         style={{
-          paddingTop: StatusBar.currentHeight,
           flex: 1,
           backgroundColor: 'white',
         }}>
