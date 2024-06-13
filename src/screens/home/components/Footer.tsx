@@ -1,12 +1,28 @@
-import {View, Text} from 'react-native';
-import React from 'react';
 import {Button, Card, Row} from '@bsdaoquang/rncomponent';
+import React, {useState} from 'react';
+import {View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import TextComponent from '../../../components/TextComponent';
+import auth from '@react-native-firebase/auth';
+import firestorage from '@react-native-firebase/firestore';
 
 type Props = {};
 
 const Footer = (props: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const user = auth().currentUser;
+
+  const handleOnline = async () => {
+    setIsLoading(true);
+    try {
+      await firestorage().collection('users').doc(user?.uid).update({
+        isOnline: true,
+      });
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
   return (
     <View
       style={{
@@ -20,13 +36,13 @@ const Footer = (props: Props) => {
           iconExtra
           icon={<AntDesign name="poweroff" size={18} color={'white'} />}
           title="Bật kết nối"
-          onPress={() => {}}
+          onPress={handleOnline}
           color="#219C90"
           styles={{paddingVertical: 8, width: '50%'}}
         />
       </Row>
       <Card>
-        <TextComponent text="Bạn đang ở chế độ nghỉ ngơi " />
+        <TextComponent text="Bạn đang ở chế độ nghỉ ngơi" />
       </Card>
     </View>
   );

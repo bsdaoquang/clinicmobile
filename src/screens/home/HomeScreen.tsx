@@ -1,18 +1,31 @@
-import {Button, Section, Space} from '@bsdaoquang/rncomponent';
+import {
+  Button,
+  Card,
+  Loading,
+  Row,
+  Section,
+  Space,
+} from '@bsdaoquang/rncomponent';
 import GeoLocation from '@react-native-community/geolocation';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Linking, PermissionsAndroid, View} from 'react-native';
 import MapView from 'react-native-maps';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Header from './components/Header';
 import TextComponent from '../../components/TextComponent';
-import Footer from './components/Footer';
+import Header from './components/Header';
 
 const HomeScreen = () => {
   const [currentLocation, setCurrentLocation] = useState<{
     lat: number;
     long: number;
   }>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
+
+  const user = auth().currentUser;
 
   useEffect(() => {
     PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION').then(
@@ -35,13 +48,64 @@ const HomeScreen = () => {
         }
       },
     );
+
+    firestore()
+      .collection('users')
+      .doc(user?.uid)
+      .onSnapshot(snap => {
+        if (snap.exists) {
+          const data: any = snap.data();
+          setIsOnline(data.isOnline);
+        }
+      });
   }, []);
+
+  const handleOnline = async (val: boolean) => {
+    setIsLoading(true);
+    try {
+      await firestore()
+        .collection('users')
+        .doc(user?.uid)
+        .update({
+          isOnline: val,
+          currentLocation: val ? currentLocation : '',
+        });
+
+      await handleListenLocation(val);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleListenLocation = async (val: boolean) => {
+    let watch;
+    try {
+      watch = GeoLocation.watchPosition(
+        position => {
+          console.log(position);
+        },
+        error => console.log(error),
+        {
+          timeout: 300,
+          interval: 15,
+        },
+      );
+
+      !val && GeoLocation.clearWatch(watch);
+      console.log(watch);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={{flex: 1}}>
       {currentLocation ? (
         <View style={{flex: 1}}>
-          <Header />
+          <Header isOnline={isOnline} onOffline={() => handleOnline(false)} />
           <MapView
             style={{
               flex: 1,
@@ -58,7 +122,36 @@ const HomeScreen = () => {
             followsUserLocation
             mapType="standard"
           />
-          <Footer />
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              left: 0,
+            }}>
+            {!isOnline && (
+              <Row>
+                <Button
+                  iconExtra
+                  icon={<AntDesign name="poweroff" size={18} color={'white'} />}
+                  title="Bật kết nối"
+                  onPress={() => handleOnline(true)}
+                  color="#219C90"
+                  styles={{paddingVertical: 8, width: '50%'}}
+                />
+              </Row>
+            )}
+
+            <Card>
+              <TextComponent
+                text={
+                  isOnline
+                    ? 'Bạn đang trong chế độ làm việc'
+                    : 'Bạn đang ở chế độ nghỉ ngơi'
+                }
+              />
+            </Card>
+          </View>
         </View>
       ) : (
         <Section styles={{flex: 1, paddingHorizontal: 20}}>
@@ -78,6 +171,10 @@ const HomeScreen = () => {
           />
         </Section>
       )}
+      <Loading
+        loading={isLoading}
+        mess={isOnline ? 'Đang ngắt kết nối' : 'Đang chuẩn bị làm việc...'}
+      />
     </View>
   );
 };

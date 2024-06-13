@@ -1,13 +1,16 @@
-import {View, Text, StatusBar, Image} from 'react-native';
+import {Badge, Button, Card, Row, Space} from '@bsdaoquang/rncomponent';
 import React from 'react';
-import {Badge, Card, Row} from '@bsdaoquang/rncomponent';
+import {Alert, Image, StatusBar, View} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../../components/TextComponent';
 import {fontFamilies} from '../../../constants/fontFamilies';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
-type Props = {};
+type Props = {isOnline?: boolean; onOffline: () => void};
 
 const Header = (props: Props) => {
+  const {isOnline, onOffline} = props;
+
   return (
     <View
       style={{
@@ -53,13 +56,45 @@ const Header = (props: Props) => {
             </Row>
           </Row>
         </Card>
-        <View>
+        <Row alignItems="center">
+          {isOnline && (
+            <Button
+              inline
+              type="link"
+              icon={
+                <MaterialIcons
+                  name="power-settings-new"
+                  size={28}
+                  color={'#EE4E4E'}
+                />
+              }
+              onPress={() =>
+                Alert.alert(
+                  'Xác nhận',
+                  'Bạn muốn ngưng chế độ làm việc, bạn sẽ không nhận được ca bệnh mới nữa?',
+                  [
+                    {
+                      text: 'Huỷ bỏ',
+                      style: 'default',
+                    },
+                    {
+                      text: 'Ngưng',
+                      style: 'destructive',
+                      onPress: () => onOffline(),
+                    },
+                  ],
+                )
+              }
+            />
+          )}
+
+          <Space width={8} />
           <Badge
             dotStylesProps={{
               top: 0,
               right: 0,
             }}
-            dotColor="#e0e0e0">
+            dotColor={isOnline ? '#40A578' : '#e0e0e0'}>
             <Image
               source={{
                 uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDCKK0X8qO8cLiVCeGQxMbgJmRayqriLiyTny0cXpUczhSl2WCpTwqjF2kvkxrrB2l8NY&usqp=CAU',
@@ -73,7 +108,7 @@ const Header = (props: Props) => {
               }}
             />
           </Badge>
-        </View>
+        </Row>
       </Row>
     </View>
   );
