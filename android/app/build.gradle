@@ -16,9 +16,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.clinicmobile"
+    namespace "com.bsdaoquang.clinicscheduler"
     defaultConfig {
-        applicationId "com.clinicmobile"
+        applicationId "com.bsdaoquang.clinicscheduler"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

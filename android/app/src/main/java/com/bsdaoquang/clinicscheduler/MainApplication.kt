@@ -1,4 +1,4 @@
-package com.clinicmobile
+package com.bsdaoquang.clinicscheduler
 
 import android.app.Application
 import com.facebook.react.PackageList
