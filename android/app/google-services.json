@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "221833913527",
-    "firebase_url": "https://trolydieuduong.firebaseio.com",
-    "project_id": "trolydieuduong",
-    "storage_bucket": "trolydieuduong.appspot.com"
+    "project_number": "1081533478969",
+    "project_id": "clinic-scheduler-e62c2",
+    "storage_bucket": "clinic-scheduler-e62c2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221833913527:android:94657bd991a6e2bb8ed932",
+        "mobilesdk_app_id": "1:1081533478969:android:9c07d8e2c6e924a01b75e8",
         "android_client_info": {
-          "package_name": "com.clinicmobile"
+          "package_name": "com.bsdaoquang.clinicscheduler"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "221833913527-rb0c7bhe7sj5csohe8pu9tombm8sd5vu.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDZJP--kU5KsEtn-dE682JJgEXGE7mIGH0"
+          "current_key": "AIzaSyBpCYKMlmbfuVgwWV9Y1Ps-iyEHwmLeotg"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "221833913527-rb0c7bhe7sj5csohe8pu9tombm8sd5vu.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -1,11 +1,15 @@
-import {View, Text} from 'react-native';
+import {View, Text, ActivityIndicator} from 'react-native';
 import React from 'react';
+import {Container} from '../components';
+import {Section} from '@bsdaoquang/rncomponent';
 
 const Splash = () => {
   return (
-    <View>
-      <Text>Splase</Text>
-    </View>
+    <Container isScroll={false}>
+      <Section>
+        <ActivityIndicator size={22} />
+      </Section>
+    </Container>
   );
 };
 

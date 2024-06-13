@@ -6,23 +6,23 @@ import {fontFamilies} from '../../constants/fontFamilies';
 import auth from '@react-native-firebase/auth';
 import {HandleAuthen} from '../../utils/handleAuthentication';
 
-const Login = ({navigation}: any) => {
+const Register = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (email && password) {
       setIsLoading(true);
       try {
-        const userCredential = await auth().signInWithEmailAndPassword(
+        const userCredential = await auth().createUserWithEmailAndPassword(
           email,
           password,
         );
 
         const user = userCredential.user;
         if (user) {
-          await HandleAuthen.Update(user);
+          await HandleAuthen.Create(user);
         }
 
         setIsLoading(false);
@@ -37,7 +37,7 @@ const Login = ({navigation}: any) => {
   return (
     <Container>
       <Section>
-        <Text text="Login" size={28} font={fontFamilies.RobotoBold} />
+        <Text text="Register" size={28} font={fontFamilies.RobotoBold} />
       </Section>
       <Section>
         <Input
@@ -58,19 +58,12 @@ const Login = ({navigation}: any) => {
           required
           helpText="Nhập mật khẩu"
         />
-
-        <Button
-          title="Register"
-          type="link"
-          onPress={() => navigation.navigate('Register')}
-        />
       </Section>
-
       <Section>
         <Button
           type="primary"
-          onPress={handleLogin}
-          title="Đăng nhập"
+          onPress={handleRegister}
+          title="Đăng ký"
           textStyleProps={{fontSize: 16}}
           styles={{paddingVertical: 8}}
         />
@@ -80,4 +73,4 @@ const Login = ({navigation}: any) => {
   );
 };
 
-export default Login;
+export default Register;

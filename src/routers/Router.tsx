@@ -15,7 +15,6 @@ const Router = () => {
       } else {
         setIsLogin(false);
       }
-
       setIsWelcome(false);
     });
   }, []);
