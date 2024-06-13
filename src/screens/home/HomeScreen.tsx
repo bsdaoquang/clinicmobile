@@ -1,10 +1,11 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
+import TextComponent from '../../components/TextComponent';
 
 const HomeScreen = () => {
   return (
-    <View>
-      <Text>HomeScreen</Text>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <TextComponent text="Map view" />
     </View>
   );
 };
