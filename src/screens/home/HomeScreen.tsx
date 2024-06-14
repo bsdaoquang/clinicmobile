@@ -10,7 +10,7 @@ import GeoLocation from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
-import {Linking, PermissionsAndroid, View} from 'react-native';
+import {Linking, PermissionsAndroid, Platform, View} from 'react-native';
 import MapView from 'react-native-maps';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -28,8 +28,10 @@ const HomeScreen = () => {
   const user = auth().currentUser;
 
   useEffect(() => {
-    PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION').then(
-      result => {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        'android.permission.ACCESS_FINE_LOCATION',
+      ).then(result => {
         if (result === 'granted') {
           GeoLocation.getCurrentPosition(
             position => {
@@ -46,8 +48,8 @@ const HomeScreen = () => {
             {},
           );
         }
-      },
-    );
+      });
+    }
 
     firestore()
       .collection('users')
