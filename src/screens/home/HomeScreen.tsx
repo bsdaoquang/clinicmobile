@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Col,
   Loading,
   Row,
   Section,
@@ -10,12 +11,13 @@ import GeoLocation from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
-import {Linking, PermissionsAndroid, Platform, View} from 'react-native';
+import {Alert, Linking, PermissionsAndroid, Platform, View} from 'react-native';
 import MapView from 'react-native-maps';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../components/TextComponent';
 import Header from './components/Header';
+import {colors} from '../../constants/colors';
 
 const HomeScreen = () => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -29,28 +31,24 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      PermissionsAndroid.request(
-        'android.permission.ACCESS_FINE_LOCATION',
-      ).then(result => {
-        if (result === 'granted') {
-          GeoLocation.getCurrentPosition(
-            position => {
-              if (position.coords) {
-                setCurrentLocation({
-                  lat: position.coords.latitude,
-                  long: position.coords.longitude,
-                });
-              }
-            },
-            error => {
-              console.log(error);
-            },
-            {},
-          );
-        }
-      });
+      PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION');
+    } else {
+      GeoLocation.requestAuthorization();
     }
-
+    GeoLocation.getCurrentPosition(
+      position => {
+        if (position.coords) {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+        }
+      },
+      error => {
+        console.log(error);
+      },
+      {},
+    );
     firestore()
       .collection('users')
       .doc(user?.uid)
@@ -107,7 +105,7 @@ const HomeScreen = () => {
     <View style={{flex: 1}}>
       {currentLocation ? (
         <View style={{flex: 1}}>
-          <Header isOnline={isOnline} onOffline={() => handleOnline(false)} />
+          <Header isOnline={isOnline} />
           <MapView
             style={{
               flex: 1,
@@ -131,7 +129,7 @@ const HomeScreen = () => {
               right: 0,
               left: 0,
             }}>
-            {!isOnline && (
+            {!isOnline ? (
               <Row>
                 <Button
                   iconExtra
@@ -142,16 +140,60 @@ const HomeScreen = () => {
                   styles={{paddingVertical: 8, width: '50%'}}
                 />
               </Row>
+            ) : (
+              <Row justifyContent="flex-start" styles={{paddingHorizontal: 16}}>
+                <Button
+                  styles={{width: 48, height: 48, paddingHorizontal: 0}}
+                  color={colors.primary}
+                  icon={
+                    <MaterialIcons
+                      name="power-settings-new"
+                      size={28}
+                      color={colors.white}
+                    />
+                  }
+                  onPress={() =>
+                    Alert.alert(
+                      'Xác nhận',
+                      'Bạn muốn ngưng chế độ làm việc, bạn sẽ không nhận được ca bệnh mới nữa?',
+                      [
+                        {
+                          text: 'Huỷ bỏ',
+                          style: 'default',
+                        },
+                        {
+                          text: 'Ngưng',
+                          style: 'destructive',
+                          onPress: () => handleOnline(false),
+                        },
+                      ],
+                    )
+                  }
+                />
+              </Row>
             )}
 
             <Card>
-              <TextComponent
-                text={
-                  isOnline
-                    ? 'Bạn đang trong chế độ làm việc'
-                    : 'Bạn đang ở chế độ nghỉ ngơi'
-                }
-              />
+              <Row>
+                <View
+                  style={{
+                    width: 12,
+                    height: 12,
+                    backgroundColor: isOnline ? '#40A578' : '#e0e0e0',
+                    borderRadius: 100,
+                  }}
+                />
+                <Space width={8} />
+                <Col>
+                  <TextComponent
+                    text={
+                      isOnline
+                        ? 'Bạn đang trong chế độ làm việc'
+                        : 'Bạn đang ở chế độ nghỉ ngơi'
+                    }
+                  />
+                </Col>
+              </Row>
             </Card>
           </View>
         </View>
@@ -173,10 +215,7 @@ const HomeScreen = () => {
           />
         </Section>
       )}
-      <Loading
-        loading={isLoading}
-        mess={isOnline ? 'Đang ngắt kết nối' : 'Đang chuẩn bị làm việc...'}
-      />
+      <Loading loading={isLoading} />
     </View>
   );
 };

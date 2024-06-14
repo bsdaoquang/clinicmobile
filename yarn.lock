@@ -1662,16 +1662,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bsdaoquang/rncomponent@npm:^0.1.8":
-  version: 0.1.8
-  resolution: "@bsdaoquang/rncomponent@npm:0.1.8"
+"@bsdaoquang/rncomponent@npm:^0.1.9":
+  version: 0.1.9
+  resolution: "@bsdaoquang/rncomponent@npm:0.1.9"
   dependencies:
     "@react-native-community/checkbox": ^0.5.17
     react-native-vector-icons: ^10.1.0
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 0c235bcd95f4c3375838c90af95a1d0560537047016d6fcfe312518504f098c6089052a9bcc8dda7bd54a3f60dea6be9ce2cf74f2be9dbc7b88ac96eed91a6ec
+  checksum: 99e0813b0dde9c53fadda74325b097447ccde63bb2cf6639f2f02e841c7059703d1649fe4b17e003697f545a46461010e8969cd367347549e28d0287dfa33907
   languageName: node
   linkType: hard
 
@@ -4159,7 +4159,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@bsdaoquang/rncomponent": ^0.1.8
+    "@bsdaoquang/rncomponent": ^0.1.9
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-community/geolocation": ^3.2.1
     "@react-native-firebase/app": ^20.1.0

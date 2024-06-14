@@ -7,13 +7,9 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
-
-# React Native Maps dependencies
-
-# rn_maps_path = '../node_modules/react-native-maps'
-# pod 'react-native-google-maps', :path => rn_maps_path
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -29,6 +25,9 @@ target 'ClinicScheduler' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
 
   target 'ClinicSchedulerTests' do
     inherit! :complete

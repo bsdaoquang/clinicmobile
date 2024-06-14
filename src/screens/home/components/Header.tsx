@@ -6,10 +6,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../../components/TextComponent';
 import {fontFamilies} from '../../../constants/fontFamilies';
 
-type Props = {isOnline?: boolean; onOffline: () => void};
+type Props = {isOnline?: boolean};
 
 const Header = (props: Props) => {
-  const {isOnline, onOffline} = props;
+  const {isOnline} = props;
 
   return (
     <View
@@ -57,38 +57,6 @@ const Header = (props: Props) => {
           </Row>
         </Card>
         <Row alignItems="center">
-          {isOnline && (
-            <Button
-              inline
-              type="link"
-              icon={
-                <MaterialIcons
-                  name="power-settings-new"
-                  size={28}
-                  color={'#EE4E4E'}
-                />
-              }
-              onPress={() =>
-                Alert.alert(
-                  'Xác nhận',
-                  'Bạn muốn ngưng chế độ làm việc, bạn sẽ không nhận được ca bệnh mới nữa?',
-                  [
-                    {
-                      text: 'Huỷ bỏ',
-                      style: 'default',
-                    },
-                    {
-                      text: 'Ngưng',
-                      style: 'destructive',
-                      onPress: () => onOffline(),
-                    },
-                  ],
-                )
-              }
-            />
-          )}
-
-          <Space width={8} />
           <Badge
             dotStylesProps={{
               top: 0,
