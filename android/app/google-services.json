@@ -7,12 +7,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1081533478969:android:9c07d8e2c6e924a01b75e8",
+        "mobilesdk_app_id": "1:1081533478969:android:024c406d97ccefee1b75e8",
         "android_client_info": {
-          "package_name": "com.bsdaoquang.clinicscheduler"
+          "package_name": "com.bsdaoquang.clinicclient"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1081533478969-esv3u60v01080f4db430ulrogd58tlpr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bsdaoquang.clinicclient",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBpCYKMlmbfuVgwWV9Y1Ps-iyEHwmLeotg"
@@ -20,7 +33,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1081533478969-bc7nagnoejhngoslqqaigh3k8e8cdd9h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bsdaoquang.clinicmobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081533478969:android:9c07d8e2c6e924a01b75e8",
+        "android_client_info": {
+          "package_name": "com.bsdaoquang.clinicscheduler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081533478969-439juqnkfqq8kvil1si2446qdcrf94uf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bsdaoquang.clinicscheduler",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpCYKMlmbfuVgwWV9Y1Ps-iyEHwmLeotg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1081533478969-bc7nagnoejhngoslqqaigh3k8e8cdd9h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bsdaoquang.clinicmobile"
+              }
+            }
+          ]
         }
       }
     }
