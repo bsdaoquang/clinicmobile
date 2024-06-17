@@ -18,6 +18,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../components/TextComponent';
 import Header from './components/Header';
 import {colors} from '../../constants/colors';
+import {userRef} from '../../firebase/firebaseConfig';
+import {useStatusBar} from '../../hooks/useStatusBar';
 
 const HomeScreen = () => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -29,7 +31,16 @@ const HomeScreen = () => {
 
   const user = auth().currentUser;
 
+  useStatusBar({
+    style: 'dark-content',
+    color: 'transparent',
+  });
+
   useEffect(() => {
+    getPosition();
+  }, []);
+
+  const getPosition = async () => {
     if (Platform.OS === 'android') {
       PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION');
     } else {
@@ -49,16 +60,13 @@ const HomeScreen = () => {
       },
       {},
     );
-    firestore()
-      .collection('users')
-      .doc(user?.uid)
-      .onSnapshot(snap => {
-        if (snap.exists) {
-          const data: any = snap.data();
-          setIsOnline(data.isOnline);
-        }
-      });
-  }, []);
+    userRef.doc(user?.uid).onSnapshot(snap => {
+      if (snap.exists) {
+        const data: any = snap.data();
+        setIsOnline(data.isOnline);
+      }
+    });
+  };
 
   const handleOnline = async (val: boolean) => {
     setIsLoading(true);
@@ -103,7 +111,7 @@ const HomeScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {currentLocation ? (
+      {currentLocation && (
         <View style={{flex: 1}}>
           <Header isOnline={isOnline} />
           <MapView
@@ -197,23 +205,6 @@ const HomeScreen = () => {
             </Card>
           </View>
         </View>
-      ) : (
-        <Section styles={{flex: 1, paddingHorizontal: 20}}>
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <MaterialIcons name="share-location" color={'#1abc9c'} size={80} />
-            <Space height={20} />
-            <TextComponent
-              textAlign="center"
-              text="Để ứng dụng có thể hoạt động được chính xác, bạn cần cấp quyền truy cập thông tin vị trí"
-            />
-          </View>
-          <Button
-            title="Mở quyền truy cập vị trí"
-            onPress={() => Linking.openSettings()}
-            type="link"
-          />
-        </Section>
       )}
       <Loading loading={isLoading} />
     </View>

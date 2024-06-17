@@ -3,26 +3,81 @@ import React, {useEffect, useState} from 'react';
 import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
+import {profileRef, servicesRef} from '../firebase/firebaseConfig';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {HomeProfile, UploadCurriculumVitae} from '../screens';
 
 const Router = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isWelcome, setIsWelcome] = useState(true);
+  const [doctorProfile, setDoctorProfile] = useState<any>();
+  const [services, setServices] = useState<number>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const Stack = createNativeStackNavigator();
 
   useEffect(() => {
-    auth().onAuthStateChanged(user => {
-      if (user) {
-        setIsLogin(true);
-      } else {
-        setIsLogin(false);
-      }
-      setIsWelcome(false);
-    });
+    getData();
   }, []);
+
+  const getData = async () => {
+    try {
+      auth().onAuthStateChanged(async user => {
+        if (user) {
+          setIsLogin(true);
+
+          await getProfile(user.uid);
+          await getServices(user.uid);
+
+          setIsWelcome(false);
+        } else {
+          setIsLogin(false);
+          setIsWelcome(false);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      setIsWelcome(false);
+    }
+  };
+
+  const getProfile = async (id: string) => {
+    profileRef.doc(id).onSnapshot(snap => {
+      if (snap.exists) {
+        const data = snap.data();
+        setDoctorProfile(data);
+      } else {
+        setDoctorProfile(undefined);
+      }
+    });
+  };
+
+  const getServices = async (id: string) => {
+    const snap = await servicesRef.where('uid', '==', id).get();
+    if (snap.empty) {
+      setServices(undefined);
+    } else {
+      setServices(snap.size);
+    }
+  };
 
   return isWelcome ? (
     <Splash />
   ) : isLogin ? (
-    <MainNavigator />
+    !doctorProfile ? (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen name="updateProfile" component={HomeProfile} />
+        <Stack.Screen
+          name="UploadCurriculumVitae"
+          component={UploadCurriculumVitae}
+        />
+      </Stack.Navigator>
+    ) : (
+      <MainNavigator />
+    )
   ) : (
     <AuthNavigator />
   );

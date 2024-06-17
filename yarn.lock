@@ -1662,16 +1662,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bsdaoquang/rncomponent@npm:^0.1.9":
-  version: 0.1.9
-  resolution: "@bsdaoquang/rncomponent@npm:0.1.9"
+"@bsdaoquang/rncomponent@npm:^0.1.13":
+  version: 0.1.13
+  resolution: "@bsdaoquang/rncomponent@npm:0.1.13"
   dependencies:
     "@react-native-community/checkbox": ^0.5.17
     react-native-vector-icons: ^10.1.0
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 99e0813b0dde9c53fadda74325b097447ccde63bb2cf6639f2f02e841c7059703d1649fe4b17e003697f545a46461010e8969cd367347549e28d0287dfa33907
+  checksum: 3a277d0fd8fae0831318da7b048924a7cf7d191ee44291cda0ca8f9ebd977be30c6dc52ae0e82ef007e82ed2ce1c7abb7e37d95d0e59c3c2eab50eb504f7664a
   languageName: node
   linkType: hard
 
@@ -2444,6 +2444,23 @@ __metadata:
   peerDependencies:
     "@react-native-firebase/app": 20.1.0
   checksum: 67c91a60b404767d1d5b76e6456397cc88dadafe8ddbb41206d259a3d9df01c27667b2863b7c3528e726317d4a8e83ccce9e0ea4d1da324a5a47f81e324c0a0d
+  languageName: node
+  linkType: hard
+
+"@react-native-google-signin/google-signin@npm:^12.2.1":
+  version: 12.2.1
+  resolution: "@react-native-google-signin/google-signin@npm:12.2.1"
+  peerDependencies:
+    expo: ">=50.0.0"
+    react: "*"
+    react-dom: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 214a51d4b98a74b3f8f26aaf2882d95d37592aebfc59f2c65619234f64aa545a72a7ba3b2cb19eebf02312758ec0f6c12c5fe801bb3da613bf79d9914f247dac
   languageName: node
   linkType: hard
 
@@ -4159,7 +4176,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@bsdaoquang/rncomponent": ^0.1.9
+    "@bsdaoquang/rncomponent": ^0.1.13
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-community/geolocation": ^3.2.1
     "@react-native-firebase/app": ^20.1.0
@@ -4167,6 +4184,7 @@ __metadata:
     "@react-native-firebase/firestore": ^20.1.0
     "@react-native-firebase/messaging": ^20.1.0
     "@react-native-firebase/storage": ^20.1.0
+    "@react-native-google-signin/google-signin": ^12.2.1
     "@react-native/babel-preset": 0.74.84
     "@react-native/eslint-config": 0.74.84
     "@react-native/metro-config": 0.74.84

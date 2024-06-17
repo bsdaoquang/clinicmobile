@@ -10,8 +10,14 @@ import {colors} from './src/constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {fontFamilies} from './src/constants/fontFamilies';
 import TextComponent from './src/components/TextComponent';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const deviceType = DeviceInfo.getDeviceType();
+GoogleSignin.configure({
+  webClientId:
+    '1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com',
+  iosClientId: '',
+});
 
 const App = () => {
   useEffect(() => {
@@ -69,11 +75,6 @@ const App = () => {
   };
   return (
     <NavigationContainer>
-      <StatusBar
-        translucent
-        backgroundColor={'transparent'}
-        barStyle={'dark-content'}
-      />
       <View
         style={{
           flex: 1,
