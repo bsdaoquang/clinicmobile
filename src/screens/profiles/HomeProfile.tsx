@@ -1,63 +1,127 @@
-import {View, Text} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {profileRef} from '../../firebase/firebaseConfig';
-import auth from '@react-native-firebase/auth';
-import {Container} from '../../components';
 import {
   Button,
-  Row,
+  Input,
+  Loading,
   Section,
-  Space,
-  colors,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
+import auth from '@react-native-firebase/auth';
+import React, {useEffect, useState} from 'react';
+import {Text} from 'react-native';
+import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
-import {useStatusBar} from '../../hooks/useStatusBar';
+import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 
+const initstate = {
+  phoneNumber: '',
+  displayName: '',
+  address: '',
+  referentCode: '',
+};
+
 const HomeProfile = ({navigation}: any) => {
-  const [profile, setProfile] = useState<any>();
+  const [formData, setFormData] = useState(initstate);
+  const [isLoading, setIsLoading] = useState(false);
+
   const user = auth().currentUser;
 
+  const handleUpdateProfile = async () => {
+    console.log(formData);
+
+    navigation.navigate('Verification');
+  };
+
   useEffect(() => {
-    profileRef.doc(user?.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        setProfile(snap.data());
-      } else {
-        setProfile(undefined);
-      }
-    });
-  }, []);
+    if (user) {
+      user.displayName &&
+        setFormData({
+          ...formData,
+          displayName: user.displayName,
+        });
+    }
+  }, [user]);
 
-  useStatusBar({
-    style: 'dark-content',
-  });
+  const handleChangeData = (val: string, key: string) => {
+    const items: any = {...formData};
+    items[`${key}`] = val;
+    setFormData(items);
+  };
+  console.log(formData);
 
-  return profile ? (
-    <></>
-  ) : (
-    <Container isScroll={false}>
-      <Section styles={[{flex: 1, justifyContent: 'center'}]}>
+  return (
+    <Container>
+      <Section>
+        <TextComponent text="Đăng ký" size={28} weight={'bold'} />
         <TextComponent
-          text="Không tìm thấy hồ sơ"
-          font={fontFamilies.RobotoBold}
-          size={22}
-        />
-
-        <TextComponent
-          text="Bạn cần tải lên và xác minh hồ sơ trước khi có thể hoạt động"
           size={18}
-          color={colors.gray700}
-        />
-
-        <Space height={20} />
-        <Button
-          type="link"
-          isShadow={false}
-          title="Cập nhật hồ sơ"
-          onPress={() => navigation.navigate('UploadCurriculumVitae')}
+          color={colors.gray}
+          text="Cho chúng tôi biết thêm thông tin về bạn"
         />
       </Section>
+      <Section>
+        <Input
+          value={formData.displayName}
+          onChange={val => handleChangeData('displayName', val)}
+          placeholder="Tên của bạn"
+          label="Họ và Tên"
+          required
+          helpText="Họ tên của bạn theo CCCD"
+          autoCapitalize="sentences"
+          autoComplete="name"
+          clear
+        />
+        <Input
+          value={formData.phoneNumber}
+          onChange={val => handleChangeData('phoneNumber', val)}
+          placeholder="090"
+          keyboardType="phone-pad"
+          label="Số điện thoại"
+          required
+          helpText="Nhập số điện thoại của bạn"
+        />
+        <Input
+          value={formData.phoneNumber}
+          onChange={val => handleChangeData('address', val)}
+          placeholder="Địa chỉ của bạn"
+          label="Địa chỉ"
+        />
+        <Input
+          value={formData.referentCode}
+          onChange={val => handleChangeData('referentCode', val)}
+          placeholder="1234"
+          label="Mã giới thiệu"
+        />
+      </Section>
+      <Section>
+        <Button
+          disable={!formData.displayName && !formData.phoneNumber}
+          title="Tiếp tục"
+          onPress={handleUpdateProfile}
+          color={colors.primary}
+        />
+      </Section>
+      <Section>
+        <Text
+          style={[
+            globalStyles.text,
+            {
+              fontSize: 14,
+              color: '#676767',
+              fontWeight: '300',
+              fontFamily: fontFamilies.RobotoRegular,
+              lineHeight: 19,
+            },
+          ]}>
+          Bằng việc tiếp tục, tôi đồng ý rằng DoctorBee được quyền thu thập chia
+          sẻ dữ liệu của tôi theo{' '}
+          <Text style={{color: colors.primary}}>Điều khoản dịch vụ</Text> và{' '}
+          <Text style={{color: colors.primary}}>Chính sách bảo mật</Text> của
+          chúng tôi.
+        </Text>
+      </Section>
+
+      <Loading loading={isLoading} />
     </Container>
   );
 };

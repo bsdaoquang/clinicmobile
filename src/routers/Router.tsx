@@ -1,18 +1,18 @@
 import auth from '@react-native-firebase/auth';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
+import {profileRef, servicesRef} from '../firebase/firebaseConfig';
+import {HomeProfile, UploadCurriculumVitae} from '../screens';
 import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
-import {profileRef, servicesRef} from '../firebase/firebaseConfig';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {HomeProfile, UploadCurriculumVitae} from '../screens';
+import Verification from '../screens/auth/Verification';
 
 const Router = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isWelcome, setIsWelcome] = useState(true);
   const [doctorProfile, setDoctorProfile] = useState<any>();
   const [services, setServices] = useState<number>();
-  const [isLoading, setIsLoading] = useState(false);
 
   const Stack = createNativeStackNavigator();
 
@@ -25,10 +25,8 @@ const Router = () => {
       auth().onAuthStateChanged(async user => {
         if (user) {
           setIsLogin(true);
-
           await getProfile(user.uid);
           await getServices(user.uid);
-
           setIsWelcome(false);
         } else {
           setIsLogin(false);
@@ -70,6 +68,7 @@ const Router = () => {
           headerShown: false,
         }}>
         <Stack.Screen name="updateProfile" component={HomeProfile} />
+        <Stack.Screen name="Verification" component={Verification} />
         <Stack.Screen
           name="UploadCurriculumVitae"
           component={UploadCurriculumVitae}

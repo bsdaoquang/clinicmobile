@@ -1,16 +1,16 @@
-import React, {useEffect} from 'react';
-import Router from './src/routers/Router';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
-import {StatusBar, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {View} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
-import {HandleNotification} from './src/utils/handleNotification';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
-import {colors} from './src/constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {fontFamilies} from './src/constants/fontFamilies';
 import TextComponent from './src/components/TextComponent';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {colors} from './src/constants/colors';
+import {fontFamilies} from './src/constants/fontFamilies';
+import {HandleNotification} from './src/utils/handleNotification';
+import Router from './src/routers/Router';
 
 const deviceType = DeviceInfo.getDeviceType();
 GoogleSignin.configure({

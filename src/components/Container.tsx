@@ -1,7 +1,13 @@
 import {Loading, Row} from '@bsdaoquang/rncomponent';
 import {useNavigation} from '@react-navigation/native';
 import React, {ReactNode} from 'react';
-import {SafeAreaView, ScrollView, TouchableOpacity, View} from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Text} from '.';
 import {fontFamilies} from '../constants/fontFamilies';
@@ -64,6 +70,7 @@ const Container = (props: Props) => {
       style={{
         flex: 1,
         backgroundColor: color ?? 'white',
+        paddingTop: Platform.OS === 'android' ? 20 : 0,
       }}>
       <View style={[{flex: 1, backgroundColor: 'white'}]}>
         {(title || back || left || right) && (
