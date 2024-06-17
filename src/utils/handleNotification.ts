@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
-import { Platform } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import firestore, { arrayRemove, arrayUnion } from '@react-native-firebase/firestore';
+import { arrayRemove, arrayUnion } from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 import { userRef } from '../firebase/firebaseConfig';
+
+const account = require('../../service-account.json');
 
 export class HandleNotification {
   static checkNotificationPersion = async () => {
@@ -13,15 +14,7 @@ export class HandleNotification {
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL
     ) {
-      if (Platform.OS === 'ios') {
-        try {
-          // await messaging().registerDeviceForRemoteMessages();
-        } catch (error) {
-          console.log(error);
-        }
-      } else {
-        this.getFcmToken();
-      }
+      this.getFcmToken();
     }
   };
 
@@ -59,4 +52,5 @@ export class HandleNotification {
     }
 
   };
+
 }

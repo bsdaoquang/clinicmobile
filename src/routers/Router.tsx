@@ -2,7 +2,7 @@ import auth from '@react-native-firebase/auth';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {profileRef, servicesRef} from '../firebase/firebaseConfig';
-import {HomeProfile, UploadCurriculumVitae} from '../screens';
+import {Avatar, HomeProfile, UploadCurriculumVitae} from '../screens';
 import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
@@ -26,7 +26,6 @@ const Router = () => {
         if (user) {
           setIsLogin(true);
           await getProfile(user.uid);
-          await getServices(user.uid);
           setIsWelcome(false);
         } else {
           setIsLogin(false);
@@ -50,15 +49,6 @@ const Router = () => {
     });
   };
 
-  const getServices = async (id: string) => {
-    const snap = await servicesRef.where('uid', '==', id).get();
-    if (snap.empty) {
-      setServices(undefined);
-    } else {
-      setServices(snap.size);
-    }
-  };
-
   return isWelcome ? (
     <Splash />
   ) : isLogin ? (
@@ -69,6 +59,7 @@ const Router = () => {
         }}>
         <Stack.Screen name="updateProfile" component={HomeProfile} />
         <Stack.Screen name="Verification" component={Verification} />
+        <Stack.Screen name="Avatar" component={Avatar} />
         <Stack.Screen
           name="UploadCurriculumVitae"
           component={UploadCurriculumVitae}

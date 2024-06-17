@@ -14,6 +14,7 @@ import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import {userRef} from '../../firebase/firebaseConfig';
 
 const user = auth().currentUser;
 
@@ -35,6 +36,12 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
+    if (user && (user.phoneNumber || user?.email || user?.emailVerified)) {
+      navigation.navigate('UploadCurriculumVitae');
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (!formData.phoneNumber) {
       setErrorText('');
     }
@@ -53,11 +60,19 @@ const HomeProfile = ({navigation}: any) => {
           true,
         );
 
-        confirm &&
+        if (confirm) {
+          await user?.updateProfile({
+            displayName: formData.displayName,
+          });
+
+          await userRef.doc(user?.uid).update(formData);
+
           navigation.navigate('Verification', {
             confirm,
             phoneNumber: formData.phoneNumber,
           });
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -153,7 +168,6 @@ const HomeProfile = ({navigation}: any) => {
           chúng tôi.
         </Text>
       </Section>
-
       <Loading loading={isLoading} />
     </Container>
   );
