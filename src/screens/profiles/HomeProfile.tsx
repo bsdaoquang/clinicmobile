@@ -3,6 +3,7 @@ import {
   Input,
   Loading,
   Section,
+  Validator,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
 import auth from '@react-native-firebase/auth';
@@ -12,10 +13,13 @@ import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
+import {useStatusBar} from '../../hooks/useStatusBar';
+
+const user = auth().currentUser;
 
 const initstate = {
   phoneNumber: '',
-  displayName: '',
+  displayName: user ? (user.displayName ? user.displayName : '') : '',
   address: '',
   referentCode: '',
 };
@@ -23,31 +27,55 @@ const initstate = {
 const HomeProfile = ({navigation}: any) => {
   const [formData, setFormData] = useState(initstate);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
-  const user = auth().currentUser;
-
-  const handleUpdateProfile = async () => {
-    console.log(formData);
-
-    navigation.navigate('Verification');
-  };
+  useStatusBar({
+    style: 'dark-content',
+    color: 'transparent',
+  });
 
   useEffect(() => {
-    if (user) {
-      user.displayName &&
-        setFormData({
-          ...formData,
-          displayName: user.displayName,
-        });
+    if (!formData.phoneNumber) {
+      setErrorText('');
     }
-  }, [user]);
+  }, [formData]);
 
-  const handleChangeData = (val: string, key: string) => {
+  const handleUpdateProfile = async () => {
+    // check phone number
+    setIsLoading(true);
+    const isValidPhone = Validator.PhoneNumber(formData.phoneNumber);
+    if (isValidPhone) {
+      setErrorText('');
+
+      try {
+        const confirm = await auth().signInWithPhoneNumber(
+          `+84${formData.phoneNumber.substring(1)}`,
+          true,
+        );
+
+        confirm &&
+          navigation.navigate('Verification', {
+            confirm,
+            phoneNumber: formData.phoneNumber,
+          });
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
+
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      setErrorText('Số điện thoại không đúng định dạng');
+    }
+  };
+
+  const handleChangeData = (key: string, val: string) => {
     const items: any = {...formData};
     items[`${key}`] = val;
     setFormData(items);
   };
-  console.log(formData);
 
   return (
     <Container>
@@ -93,9 +121,14 @@ const HomeProfile = ({navigation}: any) => {
           label="Mã giới thiệu"
         />
       </Section>
+      {errorText && (
+        <Section>
+          <TextComponent text={errorText} color={colors.danger} />
+        </Section>
+      )}
       <Section>
         <Button
-          disable={!formData.displayName && !formData.phoneNumber}
+          disable={!formData.displayName || !formData.phoneNumber}
           title="Tiếp tục"
           onPress={handleUpdateProfile}
           color={colors.primary}

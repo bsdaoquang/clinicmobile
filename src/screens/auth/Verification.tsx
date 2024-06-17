@@ -23,15 +23,25 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const WIDTH = (Dimensions.get('window').width - 82) / 6;
 
-const Verification = () => {
-  const [phonenumber, setPhonenumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorText, setErrorText] = useState('');
-  const [confirm, setConfirm] =
-    useState<FirebaseAuthTypes.ConfirmationResult>();
+const Verification = ({navigation, route}: any) => {
+  const {
+    confirm,
+    phoneNumber,
+  }: {confirm: FirebaseAuthTypes.ConfirmationResult; phoneNumber: string} =
+    route.params;
+
   const [numcodes, setNumcodes] = useState<string[]>([]);
   const [existimes, setExistimes] = useState(60);
   const [isVerifing, setIsVerifing] = useState(false);
+  const [errorText, setErrorText] = useState('');
+  const [confirmValue, setConfirmValue] = useState(confirm);
+
+  const inp1 = useRef<TextInput>(null);
+  const inp2 = useRef<TextInput>(null);
+  const inp3 = useRef<TextInput>(null);
+  const inp4 = useRef<TextInput>(null);
+  const inp5 = useRef<TextInput>(null);
+  const inp6 = useRef<TextInput>(null);
 
   useEffect(() => {
     if (confirm && existimes > 0) {
@@ -43,36 +53,6 @@ const Verification = () => {
     }
   }, [confirm, existimes]);
 
-  const inp1 = useRef<TextInput>(null);
-  const inp2 = useRef<TextInput>(null);
-  const inp3 = useRef<TextInput>(null);
-  const inp4 = useRef<TextInput>(null);
-  const inp5 = useRef<TextInput>(null);
-  const inp6 = useRef<TextInput>(null);
-
-  const handleLoginWithPhone = async () => {
-    const validator = Validator.PhoneNumber(phonenumber);
-
-    if (validator) {
-      setErrorText('');
-      setIsLoading(true);
-      try {
-        const confirm = await auth().signInWithPhoneNumber(
-          `+84${phonenumber.substring(1)}`,
-          true,
-        );
-
-        setConfirm(confirm);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-    } else {
-      setErrorText('Số điện thoại không đúng định dạng');
-    }
-  };
-
   const handleComfirmCode = async () => {
     if (numcodes.length === 6) {
       let code = ``;
@@ -82,6 +62,7 @@ const Verification = () => {
         setErrorText('');
         const userCreadential = await confirm?.confirm(code);
 
+        navigation.navigate('UploadCurriculumVitae');
         if (userCreadential) {
           HandleAuthen.Update(userCreadential.user);
         }
@@ -103,19 +84,13 @@ const Verification = () => {
     setNumcodes(items);
   };
 
-  const handleLoginWithGoogle = async () => {
+  const resendVerifyCode = async () => {
     setIsVerifing(true);
     try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      const {idToken} = await GoogleSignin.signIn();
+      const data = await auth().signInWithPhoneNumber(phoneNumber, true);
 
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      const userCreadential = await auth().signInWithCredential(
-        googleCredential,
-      );
-
-      await HandleAuthen.Update(userCreadential.user);
+      data && setConfirmValue(confirm);
+      setExistimes(60);
       setIsVerifing(false);
     } catch (error) {
       console.log(error);
@@ -226,10 +201,9 @@ const Verification = () => {
           </Row>
         ) : (
           <Row
-            onPress={() => {
+            onPress={async () => {
               setNumcodes([]);
-              setConfirm(undefined);
-              handleLoginWithPhone();
+              await resendVerifyCode();
             }}>
             <Text text="Gửi lại mã xác minh" color={colors.primary} />
           </Row>
@@ -237,10 +211,9 @@ const Verification = () => {
       </Section>
       <Section>
         <Button
-          loading={isLoading}
-          disable={phonenumber.length === 0}
+          disable={numcodes.length < 6}
+          loading={isVerifing}
           title="Xác minh"
-          // type="primary"
           color={colors.primary}
           onPress={handleComfirmCode}
         />
@@ -248,56 +221,7 @@ const Verification = () => {
       <Loading loading={isVerifing} />
     </Container>
   ) : (
-    <Container isFlex>
-      <Section>
-        <TextComponent
-          size={28}
-          font={fontFamilies.RobotoBold}
-          text={'Rhino'}
-        />
-        <Text text="Tìm kiếm dịch vụ y tế uy tín chất lượng ngay gần bạn" />
-      </Section>
-      <Section styles={{flex: 1, justifyContent: 'center'}}>
-        <Input
-          placeholder="Số điện thoại"
-          clear
-          disable={isLoading}
-          prefix={<FontAwesome name="phone" size={22} color={colors.gray} />}
-          value={phonenumber}
-          onChange={val => setPhonenumber(val)}
-          inputStyles={{
-            fontFamily: fontFamilies.RobotoBold,
-            color: colors.text,
-            fontSize: 16,
-          }}
-          required
-          keyboardType="phone-pad"
-        />
-        {errorText && <Text text={errorText} color={colors.danger} />}
-      </Section>
-      <Section>
-        <Row>
-          <Button
-            disable={isLoading}
-            // title="Google"
-            color={colors.danger}
-            icon={<AntDesign name="google" color={colors.white} size={22} />}
-            onPress={handleLoginWithGoogle}
-          />
-          <Space width={12} />
-          <Col>
-            <Button
-              loading={isLoading}
-              disable={phonenumber.length === 0}
-              title="Đăng nhập"
-              // type="primary"
-              color={colors.primary}
-              onPress={handleLoginWithPhone}
-            />
-          </Col>
-        </Row>
-      </Section>
-    </Container>
+    <></>
   );
 };
 
