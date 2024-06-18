@@ -1,14 +1,14 @@
 import {Button, Loading, Row, Section, colors} from '@bsdaoquang/rncomponent';
+import auth from '@react-native-firebase/auth';
 import React, {useState} from 'react';
+import {Image} from 'react-native';
+import {ImageOrVideo} from 'react-native-image-crop-picker';
 import {Container, UploadButton} from '../../../components';
 import TextComponent from '../../../components/TextComponent';
-import {ImageOrVideo} from 'react-native-image-crop-picker';
-import {Image} from 'react-native';
 import {sizes} from '../../../constants/sizes';
+import {profileRef} from '../../../firebase/firebaseConfig';
 import {HandleFile} from '../../../utils/handleFile';
 import {showToast} from '../../../utils/showToast';
-import auth from '@react-native-firebase/auth';
-import {profileRef, userRef} from '../../../firebase/firebaseConfig';
 
 const Avatar = ({navigation}: any) => {
   const [file, setfile] = useState<ImageOrVideo>();
@@ -30,6 +30,8 @@ const Avatar = ({navigation}: any) => {
           });
         }
         setIsUploading(false);
+        navigation.goBack();
+        showToast('Đã tải lên hình đại diện');
       } catch (error: any) {
         console.log(error);
         showToast(error.message);
@@ -70,14 +72,7 @@ const Avatar = ({navigation}: any) => {
           </>
         )}
       </Section>
-      <UploadButton
-        imageSize={{
-          width: 512,
-          height: 512,
-        }}
-        onSelectedFile={file => setfile(file)}
-        multible
-      />
+      <UploadButton useFrontCamera onSelectedFile={file => setfile(file)} />
       <Loading loading={isUploading} mess="Đang upload hình ảnh..." />
     </Container>
   );

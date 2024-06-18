@@ -1,6 +1,3 @@
-import {View, Text, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Container} from '../../components';
 import {
   Button,
   Col,
@@ -9,16 +6,45 @@ import {
   Space,
   colors,
 } from '@bsdaoquang/rncomponent';
+import auth from '@react-native-firebase/auth';
+import React, {memo, useEffect, useState} from 'react';
+import {FlatList} from 'react-native';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {fontFamilies} from '../../constants/fontFamilies';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {profileRef} from '../../firebase/firebaseConfig';
-import auth from '@react-native-firebase/auth';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
   const [profileData, setProfileData] = useState<any>();
 
   const user = auth().currentUser;
+
+  useEffect(() => {
+    profileRef.doc(user?.uid).onSnapshot(snap => {
+      if (snap.exists) {
+        setProfileData(snap.data());
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const values: string[] = [];
+    if (profileData) {
+      profiles.forEach(item => {
+        const val = profileData[`${item.key.toLocaleLowerCase()}`];
+        if (!val) {
+          values.push(item.key);
+        }
+      });
+      if (values.length === 0) {
+        profileRef.doc(user?.uid).update({
+          status: 'pending',
+        });
+      }
+    }
+  }, [profileData]);
+
   const profiles = [
     {
       key: 'Avatar',
@@ -26,17 +52,17 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       compulsory: true,
     },
     {
-      key: 'ID',
+      key: 'CCCD',
       title: 'CMND / Thẻ căn cước / Hộ chiếu',
       compulsory: true,
     },
     {
-      key: 'Certificate',
+      key: 'BangTotNghiep',
       title: 'Bằng tốt nghiệp cao nhất thuộc chuyên ngành liên quan',
       compulsory: true,
     },
     {
-      key: 'Practicing certificate',
+      key: 'PracticingCertificate',
       title: 'Chứng chỉ hành nghề',
       compulsory: true,
     },
@@ -56,33 +82,10 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       compulsory: true,
       title: 'Thông tin liên hệ khẩn cấp và địa chỉ tạm trú',
     },
-    {
-      key: 'CollectiveCommitment',
-      title: 'Cam kết',
-    },
-    {
-      key: 'Terms',
-      title: 'Điều khoản dịch vụ',
-    },
   ];
 
-  useEffect(() => {
-    profileRef.doc(user?.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        setProfileData(snap.data());
-      } else {
-        profileRef.doc(user?.uid).set({
-          isVerified: false,
-        });
-      }
-    });
-  }, []);
-
-  const renderButtonText = (item: any) => {
-    const val = profileData
-      ? profileData[`${item.key.toLowerCase()}`]
-      : undefined;
-
+  const RenderButtonText = memo(({item}: {item: any}) => {
+    const val = profileData ? profileData[`${item.key}`] : undefined;
     return (
       <>
         {item.compulsory ? (
@@ -107,7 +110,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         ) : null}
       </>
     );
-  };
+  });
 
   return (
     <Container
@@ -122,15 +125,16 @@ const UploadCurriculumVitae = ({navigation}: any) => {
           size={16}
         />
       </Section>
+
       <FlatList
         data={profiles}
         renderItem={({item}) => (
           <Row
             onPress={
-              profileData && profileData.avatar
+              profileData && profileData[`${item.key.toLowerCase()}`]
                 ? undefined
                 : () => {
-                    navigation.navigate(item.key);
+                    navigation.navigate(item.key, {title: item.title});
                   }
             }
             styles={{
@@ -143,7 +147,12 @@ const UploadCurriculumVitae = ({navigation}: any) => {
               <TextComponent text={item.title} />
             </Col>
             <Space width={16} />
-            {renderButtonText(item)}
+            <RenderButtonText
+              item={{
+                ...item,
+                key: `${item.key.toLowerCase()}`,
+              }}
+            />
           </Row>
         )}
         keyExtractor={item => item.key}

@@ -7,25 +7,27 @@ import {
   globalStyles,
 } from '@bsdaoquang/rncomponent';
 import auth from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
+import {profileRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
-import {userRef} from '../../firebase/firebaseConfig';
 
 const user = auth().currentUser;
 
-const initstate = {
-  phoneNumber: '',
-  displayName: user ? (user.displayName ? user.displayName : '') : '',
-  address: '',
-  referentCode: '',
-};
-
 const HomeProfile = ({navigation}: any) => {
+  const initstate = {
+    phoneNumber: user ? (user.phoneNumber ? user.phoneNumber : '') : '',
+    displayName: user ? (user.displayName ? user.displayName : '') : '',
+    address: '',
+    referentCode: '',
+  };
+
   const [formData, setFormData] = useState(initstate);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -36,22 +38,45 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
-    auth().onAuthStateChanged(currentUser => {
-      if (
-        currentUser &&
-        (currentUser.phoneNumber ||
-          (currentUser?.email && currentUser?.emailVerified))
-      ) {
-        navigation.navigate('UploadCurriculumVitae');
+    if (user) {
+      setIsLoading(true);
+      if (user.email && user.phoneNumber && user.emailVerified) {
+        checkValues();
+      } else {
+        setIsLoading(false);
       }
-    });
-  }, []);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!formData.phoneNumber) {
       setErrorText('');
     }
   }, [formData]);
+
+  const checkValues = async () => {
+    setIsLoading(true);
+
+    try {
+      profileRef
+        .doc(user?.uid)
+        .get()
+        .then(snap => {
+          if (snap.exists) {
+            const data: any = snap.data();
+            if (!data.isVerifing) {
+              navigation.navigate(
+                !data.status ? 'UploadCurriculumVitae' : 'VerifyStatus',
+              );
+            }
+          }
+        });
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   const handleUpdateProfile = async () => {
     // check phone number
@@ -61,21 +86,20 @@ const HomeProfile = ({navigation}: any) => {
       setErrorText('');
 
       try {
-        const confirm = await auth().signInWithPhoneNumber(
-          `+84${formData.phoneNumber.substring(1)}`,
-          true,
-        );
+        const phoneNumber = `+84${formData.phoneNumber.substring(1)}`;
+        const confirm = await auth().verifyPhoneNumber(phoneNumber, true);
 
         if (confirm) {
+          const user = auth().currentUser;
+
           await user?.updateProfile({
             displayName: formData.displayName,
           });
 
-          await userRef.doc(user?.uid).update(formData);
+          await profileRef.doc(user?.uid).set(formData);
 
           navigation.navigate('Verification', {
             confirm,
-            phoneNumber: formData.phoneNumber,
           });
         }
 
@@ -130,7 +154,7 @@ const HomeProfile = ({navigation}: any) => {
           helpText="Nhập số điện thoại của bạn"
         />
         <Input
-          value={formData.phoneNumber}
+          value={formData.address}
           onChange={val => handleChangeData('address', val)}
           placeholder="Địa chỉ của bạn"
           label="Địa chỉ"
@@ -173,6 +197,25 @@ const HomeProfile = ({navigation}: any) => {
           <Text style={{color: colors.primary}}>Chính sách bảo mật</Text> của
           chúng tôi.
         </Text>
+      </Section>
+      <Section>
+        <Button
+          textStyleProps={{color: colors.danger}}
+          isShadow={false}
+          icon={
+            <MaterialCommunityIcons
+              name="account-switch-outline"
+              size={20}
+              color={colors.danger}
+            />
+          }
+          title="Đổi tài khoản"
+          type="link"
+          onPress={async () => {
+            await GoogleSignin.signOut();
+            await auth().signOut();
+          }}
+        />
       </Section>
       <Loading loading={isLoading} />
     </Container>

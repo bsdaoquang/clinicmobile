@@ -1,40 +1,32 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Container} from '../../components';
 import {
   Button,
-  Col,
-  Input,
   Loading,
   Row,
   Section,
   Space,
   Text,
-  Validator,
 } from '@bsdaoquang/rncomponent';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../constants/colors';
-import TextComponent from '../../components/TextComponent';
-import {fontFamilies} from '../../constants/fontFamilies';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, StyleSheet, TextInput} from 'react-native';
+import {Container} from '../../components';
+import TextComponent from '../../components/TextComponent';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
+import {profileRef} from '../../firebase/firebaseConfig';
 import {HandleAuthen} from '../../utils/handleAuthentication';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 const WIDTH = (Dimensions.get('window').width - 82) / 6;
 
 const Verification = ({navigation, route}: any) => {
-  const {
-    confirm,
-    phoneNumber,
-  }: {confirm: FirebaseAuthTypes.ConfirmationResult; phoneNumber: string} =
+  const {confirm}: {confirm: FirebaseAuthTypes.ConfirmationResult} =
     route.params;
 
   const [numcodes, setNumcodes] = useState<string[]>([]);
-  const [existimes, setExistimes] = useState(60);
+  const [existimes, setExistimes] = useState(120);
   const [isVerifing, setIsVerifing] = useState(false);
   const [errorText, setErrorText] = useState('');
-  const [confirmValue, setConfirmValue] = useState(confirm);
 
   const inp1 = useRef<TextInput>(null);
   const inp2 = useRef<TextInput>(null);
@@ -60,11 +52,24 @@ const Verification = ({navigation, route}: any) => {
       setIsVerifing(true);
       try {
         setErrorText('');
-        const userCreadential = await confirm?.confirm(code);
 
-        navigation.navigate('UploadCurriculumVitae');
+        const credential = auth.PhoneAuthProvider.credential(
+          confirm.verificationId,
+          code,
+        );
+
+        const userCreadential = await auth().currentUser?.linkWithCredential(
+          credential,
+        );
+
         if (userCreadential) {
-          HandleAuthen.Update(userCreadential.user);
+          await HandleAuthen.Update(userCreadential.user);
+
+          await profileRef.doc(userCreadential.user.uid).update({
+            isVerifing: false,
+          });
+
+          navigation.navigate('UploadCurriculumVitae');
         }
 
         setIsVerifing(false);
@@ -82,20 +87,6 @@ const Verification = ({navigation, route}: any) => {
     const items = [...numcodes];
     items[index] = val;
     setNumcodes(items);
-  };
-
-  const resendVerifyCode = async () => {
-    setIsVerifing(true);
-    try {
-      const data = await auth().signInWithPhoneNumber(phoneNumber, true);
-
-      data && setConfirmValue(confirm);
-      setExistimes(60);
-      setIsVerifing(false);
-    } catch (error) {
-      console.log(error);
-      setIsVerifing(false);
-    }
   };
 
   return confirm ? (
@@ -203,7 +194,7 @@ const Verification = ({navigation, route}: any) => {
           <Row
             onPress={async () => {
               setNumcodes([]);
-              await resendVerifyCode();
+              navigation.goBack();
             }}>
             <Text text="Gửi lại mã xác minh" color={colors.primary} />
           </Row>

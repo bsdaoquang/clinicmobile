@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
-import { arrayRemove, arrayUnion } from '@react-native-firebase/firestore';
+import { arrayUnion } from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import { userRef } from '../firebase/firebaseConfig';
 
@@ -41,10 +41,12 @@ export class HandleNotification {
 
         if (snap.exists) {
           const data: any = snap.data();
+          if (data.tokens && !data.tokens.includes(token)) {
 
-          await userRef.doc(user.uid).update({
-            tokens: data.tokens && data.tokens.includes(token) ? arrayRemove(token) : arrayUnion(token)
-          });
+            await userRef.doc(user.uid).update({
+              tokens: arrayUnion(token)
+            });
+          }
         }
       }
     } catch (error) {
