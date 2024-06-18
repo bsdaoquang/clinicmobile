@@ -1,5 +1,5 @@
 import {View, Text, FlatList} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Container} from '../../components';
 import {
   Button,
@@ -12,8 +12,13 @@ import {
 import TextComponent from '../../components/TextComponent';
 import {fontFamilies} from '../../constants/fontFamilies';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {profileRef} from '../../firebase/firebaseConfig';
+import auth from '@react-native-firebase/auth';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
+  const [profileData, setProfileData] = useState<any>();
+
+  const user = auth().currentUser;
   const profiles = [
     {
       key: 'Avatar',
@@ -61,6 +66,49 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     },
   ];
 
+  useEffect(() => {
+    profileRef.doc(user?.uid).onSnapshot(snap => {
+      if (snap.exists) {
+        setProfileData(snap.data());
+      } else {
+        profileRef.doc(user?.uid).set({
+          isVerified: false,
+        });
+      }
+    });
+  }, []);
+
+  const renderButtonText = (item: any) => {
+    const val = profileData
+      ? profileData[`${item.key.toLowerCase()}`]
+      : undefined;
+
+    return (
+      <>
+        {item.compulsory ? (
+          val ? (
+            <>
+              <TextComponent
+                text={!val.verify ? 'Chờ duyệt' : 'Đã duyệt'}
+                color={!val.verify ? colors.gray500 : colors.success}
+              />
+            </>
+          ) : (
+            <Row>
+              <TextComponent text="Bắt buộc" color={'coral'} />
+              <Space width={8} />
+              <SimpleLineIcons
+                name="arrow-right"
+                color={colors.gray700}
+                size={16}
+              />
+            </Row>
+          )
+        ) : null}
+      </>
+    );
+  };
+
   return (
     <Container
       isScroll={false}
@@ -78,9 +126,13 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         data={profiles}
         renderItem={({item}) => (
           <Row
-            onPress={() => {
-              navigation.navigate(item.key);
-            }}
+            onPress={
+              profileData && profileData.avatar
+                ? undefined
+                : () => {
+                    navigation.navigate(item.key);
+                  }
+            }
             styles={{
               marginHorizontal: 16,
               borderBottomColor: '#e0e0e0',
@@ -91,15 +143,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
               <TextComponent text={item.title} />
             </Col>
             <Space width={16} />
-            {item.compulsory && (
-              <TextComponent text="Bắt buộc" color={'coral'} />
-            )}
-            <Space width={8} />
-            <SimpleLineIcons
-              name="arrow-right"
-              color={colors.gray700}
-              size={16}
-            />
+            {renderButtonText(item)}
           </Row>
         )}
         keyExtractor={item => item.key}

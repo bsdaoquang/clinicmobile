@@ -36,10 +36,16 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
-    if (user && (user.phoneNumber || user?.email || user?.emailVerified)) {
-      navigation.navigate('UploadCurriculumVitae');
-    }
-  }, [user]);
+    auth().onAuthStateChanged(currentUser => {
+      if (
+        currentUser &&
+        (currentUser.phoneNumber ||
+          (currentUser?.email && currentUser?.emailVerified))
+      ) {
+        navigation.navigate('UploadCurriculumVitae');
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!formData.phoneNumber) {

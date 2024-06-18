@@ -1,5 +1,5 @@
 import Container from './Container';
 import Text from './TextComponent';
-import UploadImage from './UploadImage';
+import UploadButton from './UploadButton';
 
-export { Text, Container, UploadImage };
+export { Text, Container, UploadButton };

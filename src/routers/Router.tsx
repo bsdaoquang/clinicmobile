@@ -52,7 +52,7 @@ const Router = () => {
   return isWelcome ? (
     <Splash />
   ) : isLogin ? (
-    !doctorProfile ? (
+    !doctorProfile || !doctorProfile.isVerified ? (
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
