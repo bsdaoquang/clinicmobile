@@ -1,3 +1,4 @@
+import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
@@ -6,16 +7,18 @@ import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Provider} from 'react-redux';
 import TextComponent from './src/components/TextComponent';
 import {colors} from './src/constants/colors';
 import {fontFamilies} from './src/constants/fontFamilies';
-import {HandleNotification} from './src/utils/handleNotification';
-import Router from './src/routers/Router';
-import auth from '@react-native-firebase/auth';
-import Splash from './src/screens/Splash';
 import AuthNavigator from './src/routers/AuthNavigator';
+import Router from './src/routers/Router';
+import Splash from './src/screens/Splash';
+import store from './src/redux/store';
+import firestore from '@react-native-firebase/firestore';
 
 const deviceType = DeviceInfo.getDeviceType();
+
 GoogleSignin.configure({
   webClientId:
     '1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com',
@@ -34,8 +37,6 @@ const App = () => {
         setIsLogin(false);
       }
     });
-    HandleNotification.checkNotificationPersion();
-
     setIsWelcome(false);
   }, []);
 
@@ -88,21 +89,24 @@ const App = () => {
       </View>
     ),
   };
+
   return (
     <NavigationContainer>
-      {isWelcome ? (
-        <Splash />
-      ) : isLogin ? (
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'white',
-          }}>
-          <Router />
-        </View>
-      ) : (
-        <AuthNavigator />
-      )}
+      <Provider store={store}>
+        {isWelcome ? (
+          <Splash />
+        ) : isLogin ? (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'white',
+            }}>
+            <Router />
+          </View>
+        ) : (
+          <AuthNavigator />
+        )}
+      </Provider>
 
       <Toast config={toastConfig} />
     </NavigationContainer>

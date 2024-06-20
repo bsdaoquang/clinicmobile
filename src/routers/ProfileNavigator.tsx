@@ -45,7 +45,11 @@ const ProfileNavigator = () => {
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="VerifyStatus" component={VerifyStatus} />
+        <Stack.Screen
+          name="VerifyStatus"
+          component={VerifyStatus}
+          initialParams={{doctorProfile}}
+        />
       </Stack.Navigator>
     ) : (
       <Stack.Navigator

@@ -14,6 +14,7 @@ import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {profileRef} from '../../firebase/firebaseConfig';
+import {HandleNotification} from '../../utils/handleNotification';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
   const [profileData, setProfileData] = useState<any>();
@@ -41,6 +42,16 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         profileRef.doc(user?.uid).update({
           status: 'pending',
         });
+
+        // send notification to admin
+        HandleNotification.pushNotification(
+          '9QCbsLHRR5ZNihzyrExOWedAvJk2',
+          {
+            title: 'Đăng ký mới',
+            body: 'Có người mới đăng ký cần xét duyệt',
+          },
+          {id: ''},
+        );
       }
     }
   }, [profileData]);
