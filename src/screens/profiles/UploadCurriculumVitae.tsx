@@ -15,6 +15,7 @@ import TextComponent from '../../components/TextComponent';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {profileRef} from '../../firebase/firebaseConfig';
 import {HandleNotification} from '../../utils/handleNotification';
+import {Timestamp} from '@react-native-firebase/firestore';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
   const [profileData, setProfileData] = useState<any>();
@@ -41,6 +42,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       if (values.length === 0) {
         profileRef.doc(user?.uid).update({
           status: 'pending',
+          createdAt: Date.now(),
         });
 
         // send notification to admin
