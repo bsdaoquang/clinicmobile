@@ -5,6 +5,7 @@ import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import auth from '@react-native-firebase/auth';
 
 const VerifyStatus = ({navigation, route}: any) => {
   const {doctorProfile} = route.params;
@@ -33,6 +34,14 @@ const VerifyStatus = ({navigation, route}: any) => {
           onPress={handleActiveAccount}
           disable={!doctorProfile.isVerifing}
           color={colors.primary}
+        />
+
+        <Button
+          type="text"
+          isShadow={false}
+          textStyleProps={{color: colors.danger}}
+          title="Đăng xuất"
+          onPress={() => auth().signOut()}
         />
       </Section>
     </Container>

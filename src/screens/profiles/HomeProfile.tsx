@@ -96,7 +96,13 @@ const HomeProfile = ({navigation}: any) => {
             displayName: formData.displayName,
           });
 
-          await profileRef.doc(user?.uid).set(formData);
+          await profileRef
+            .doc(user?.uid)
+            .set({
+              ...formData,
+              createdAt: Date.now(),
+              email: user?.email ?? '',
+            });
 
           navigation.navigate('Verification', {
             confirm,

@@ -112,7 +112,7 @@ export class HandleNotification {
             };
 
             const res = await fetch(
-              'https://fcm.googleapis.com/v1/projects/shopping-app-demo-1/messages:send',
+              'https://fcm.googleapis.com/v1/projects/clinic-scheduler-e62c2/messages:send',
               requestOptions,
             );
 

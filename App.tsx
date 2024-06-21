@@ -11,11 +11,10 @@ import {Provider} from 'react-redux';
 import TextComponent from './src/components/TextComponent';
 import {colors} from './src/constants/colors';
 import {fontFamilies} from './src/constants/fontFamilies';
+import store from './src/redux/store';
 import AuthNavigator from './src/routers/AuthNavigator';
 import Router from './src/routers/Router';
 import Splash from './src/screens/Splash';
-import store from './src/redux/store';
-import firestore from '@react-native-firebase/firestore';
 
 const deviceType = DeviceInfo.getDeviceType();
 
