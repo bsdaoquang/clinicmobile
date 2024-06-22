@@ -6,15 +6,22 @@ import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const VerifyStatus = ({navigation, route}: any) => {
   const {doctorProfile} = route.params;
+  const user = auth().currentUser;
 
   useStatusBar({
     style: 'dark-content',
   });
 
-  const handleActiveAccount = async () => {};
+  const handleActiveAccount = async () => {
+    await firestore().collection('profiles').doc(user?.uid).update({
+      isVerifing: true,
+      status: 'active',
+    });
+  };
 
   return (
     <Container isFlex>
@@ -32,7 +39,7 @@ const VerifyStatus = ({navigation, route}: any) => {
         <Button
           title="Kích hoạt tài khoản"
           onPress={handleActiveAccount}
-          disable={!doctorProfile.isVerifing}
+          disable={!doctorProfile.verify}
           color={colors.primary}
         />
 

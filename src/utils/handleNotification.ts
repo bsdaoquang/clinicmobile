@@ -9,7 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 const profileRef = firestore().collection('profiles');
 const user = auth().currentUser;
 
-const seviceaccout = require('../../serviceaccount.json');
+const seviceaccout = require('../../service-account.json');
 
 export class HandleNotification {
   static CheckNotificationPerson = async () => {

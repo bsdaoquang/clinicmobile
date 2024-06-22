@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React from 'react';
+import {AddService, ProfileScreen, ServicesScreen} from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 
 const MainNavigator = () => {
@@ -10,6 +11,9 @@ const MainNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Main" component={HomeScreen} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
+      <Stack.Screen name="AddService" component={AddService} />
     </Stack.Navigator>
   );
 };

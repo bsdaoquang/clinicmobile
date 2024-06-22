@@ -92,7 +92,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     },
     {
       key: 'EmergenciyContact',
-      compulsory: true,
+      compulsory: false,
       title: 'Thông tin liên hệ khẩn cấp và địa chỉ tạm trú',
     },
   ];
@@ -160,12 +160,20 @@ const UploadCurriculumVitae = ({navigation}: any) => {
               <TextComponent text={item.title} />
             </Col>
             <Space width={16} />
-            <RenderButtonText
-              item={{
-                ...item,
-                key: `${item.key.toLowerCase()}`,
-              }}
-            />
+            {item.compulsory ? (
+              <RenderButtonText
+                item={{
+                  ...item,
+                  key: `${item.key.toLowerCase()}`,
+                }}
+              />
+            ) : (
+              <SimpleLineIcons
+                name="arrow-right"
+                color={colors.gray700}
+                size={16}
+              />
+            )}
           </Row>
         )}
         keyExtractor={item => item.key}

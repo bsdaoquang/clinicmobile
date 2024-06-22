@@ -8,6 +8,9 @@ import Driver from "./profiles/uploads/Driver";
 import EmergenciyContact from "./profiles/uploads/EmergenciyContact";
 import PracticingCertificate from "./profiles/uploads/PracticingCertificate";
 import BangTotNghiep from "./profiles/uploads/BangTotNghiep";
+import ProfileScreen from "./profiles/ProfileScreen";
+import ServicesScreen from "./services/ServicesScreen";
+import AddService from "./services/AddService";
 
 export {
   HomeProfile,
@@ -19,5 +22,8 @@ export {
   Driver,
   CV,
   EmergenciyContact,
-  VerifyStatus
+  VerifyStatus,
+  ProfileScreen,
+  ServicesScreen,
+  AddService
 };

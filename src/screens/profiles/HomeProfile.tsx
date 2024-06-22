@@ -66,7 +66,9 @@ const HomeProfile = ({navigation}: any) => {
             const data: any = snap.data();
             if (!data.isVerifing) {
               navigation.navigate(
-                !data.status ? 'UploadCurriculumVitae' : 'VerifyStatus',
+                !data.status || data.status !== 'pending'
+                  ? 'UploadCurriculumVitae'
+                  : 'VerifyStatus',
               );
             }
           }
@@ -96,13 +98,11 @@ const HomeProfile = ({navigation}: any) => {
             displayName: formData.displayName,
           });
 
-          await profileRef
-            .doc(user?.uid)
-            .set({
-              ...formData,
-              createdAt: Date.now(),
-              email: user?.email ?? '',
-            });
+          await profileRef.doc(user?.uid).set({
+            ...formData,
+            createdAt: Date.now(),
+            email: user?.email ?? '',
+          });
 
           navigation.navigate('Verification', {
             confirm,
