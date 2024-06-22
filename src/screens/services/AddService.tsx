@@ -15,11 +15,13 @@ import fs from '@react-native-firebase/firestore';
 import {showToast} from '../../utils/showToast';
 
 const AddService = ({navigation, route}: any) => {
+  const service = route.params ? route.params.item : undefined;
+
   const user = auth().currentUser;
   const initState = {
-    title: '',
-    description: '',
-    price: '',
+    title: service.title ?? '',
+    description: service.description ?? '',
+    price: service.price ?? '',
   };
   const [formData, setFormData] = useState(initState);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,18 +37,31 @@ const AddService = ({navigation, route}: any) => {
     setIsLoading(true);
     try {
       setErrorText('');
-      await fs()
-        .collection('services')
-        .add({
-          ...formData,
-          uid: user?.uid,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          searchIndex: replaceName(formData.title).split('-'),
-        });
+      if (service) {
+        await fs()
+          .collection('services')
+          .doc(service.id)
+          .update({
+            ...formData,
+            updatedAt: Date.now(),
+            searchIndex: replaceName(formData.title).split('-'),
+          });
+      } else {
+        await fs()
+          .collection('services')
+          .add({
+            ...formData,
+            uid: user?.uid,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            searchIndex: replaceName(formData.title).split('-'),
+          });
+      }
 
       setIsLoading(false);
-      showToast('Tạo dịch vụ thành công!!');
+      showToast(
+        service ? 'Đã cập nhật dịch vụ của bạn' : 'Tạo dịch vụ thành công!!',
+      );
       navigation.goBack();
     } catch (error: any) {
       setIsLoading(false);
