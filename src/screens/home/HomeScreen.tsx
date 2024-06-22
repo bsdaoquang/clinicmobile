@@ -6,6 +6,7 @@ import {
   Loading,
   Row,
   Space,
+  globalStyles,
 } from '@bsdaoquang/rncomponent';
 import GeoLocation from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
@@ -13,10 +14,12 @@ import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
+  FlatList,
   Image,
   PermissionsAndroid,
   Platform,
   StatusBar,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import MapView from 'react-native-maps';
@@ -27,6 +30,8 @@ import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {userRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import {MoneyRecive} from 'iconsax-react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -39,6 +44,43 @@ const HomeScreen = ({navigation}: any) => {
   const [services, setservices] = useState<number>(0);
 
   const user = auth().currentUser;
+  const menus = [
+    {
+      key: 'RechargeScreen',
+      label: 'Nạp tiền',
+      icon: <MoneyRecive size={24} color={colors.white} />,
+    },
+    {
+      key: 'ServicesScreen',
+      label: 'Dịch vụ',
+      icon: (
+        <MaterialIcons name="medical-services" size={24} color={colors.white} />
+      ),
+    },
+    {
+      key: 'Auto',
+      onPress: () => {},
+      label: 'Tự động nhận bệnh',
+      icon: (
+        <MaterialCommunityIcons
+          name="lightning-bolt"
+          size={24}
+          color={colors.white}
+        />
+      ),
+    },
+    {
+      key: 'SupportScreen',
+      label: 'Hỗ trợ',
+      icon: (
+        <MaterialCommunityIcons
+          name="message-processing"
+          size={24}
+          color={colors.white}
+        />
+      ),
+    },
+  ];
 
   useStatusBar({
     style: 'dark-content',
@@ -231,9 +273,7 @@ const HomeScreen = ({navigation}: any) => {
                   </Row>
                 </Row>
               </Card>
-              <Row
-                alignItems="center"
-                onPress={() => navigation.navigate('ProfileScreen')}>
+              <Row alignItems="center" onPress={() => navigation.openDrawer()}>
                 {profile && profile.avatar && profile.avatar.downloadUrl && (
                   <Badge
                     dotStylesProps={{
@@ -325,7 +365,7 @@ const HomeScreen = ({navigation}: any) => {
               </Row>
             )}
 
-            <Card>
+            <Card styles={{marginBottom: 12}}>
               <Row>
                 <View
                   style={{
@@ -346,6 +386,57 @@ const HomeScreen = ({navigation}: any) => {
                   />
                 </Col>
               </Row>
+            </Card>
+            <Card>
+              <TextComponent
+                text="Truy cập nhanh"
+                font={fontFamilies.RobotoMedium}
+              />
+              <Space height={12} />
+              <FlatList
+                horizontal
+                contentContainerStyle={{
+                  alignItems: 'flex-start',
+                }}
+                showsHorizontalScrollIndicator={false}
+                data={menus}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={[
+                      globalStyles.center,
+                      {
+                        marginRight: 20,
+                        maxWidth: 80,
+                      },
+                    ]}
+                    key={item.key}
+                    onPress={
+                      item.onPress
+                        ? item.onPress
+                        : () => navigation.navigate(item.key)
+                    }>
+                    <View
+                      style={[
+                        globalStyles.center,
+                        {
+                          width: 45,
+                          height: 45,
+                          backgroundColor: colors.gray2,
+                          borderRadius: 100,
+                        },
+                      ]}>
+                      {item.icon}
+                    </View>
+                    <TextComponent
+                      numberOfLine={2}
+                      textAlign="center"
+                      size={14}
+                      color={colors.gray}
+                      text={item.label}
+                    />
+                  </TouchableOpacity>
+                )}
+              />
             </Card>
           </View>
         </View>
