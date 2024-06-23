@@ -103,6 +103,7 @@ const HomeProfile = ({navigation}: any) => {
             ...formData,
             createdAt: Date.now(),
             email: user?.email ?? '',
+            amount: 0,
           });
 
           navigation.navigate('Verification', {

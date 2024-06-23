@@ -1,16 +1,20 @@
 import {Button, Section, Space, globalStyles} from '@bsdaoquang/rncomponent';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import {addAuth, authSelector} from '../../redux/reducers/authReducer';
 
 const VerifyStatus = ({navigation, route}: any) => {
   const {doctorProfile} = route.params;
   const user = auth().currentUser;
+  const profile = useSelector(authSelector);
+  const dispatch = useDispatch();
 
   useStatusBar({
     style: 'dark-content',
@@ -21,6 +25,8 @@ const VerifyStatus = ({navigation, route}: any) => {
       isVerifing: true,
       status: 'active',
     });
+
+    dispatch(addAuth({...profile, isVerifing: true, status: 'active'}));
   };
 
   return (

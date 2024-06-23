@@ -4,9 +4,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {profileRef} from '../firebase/firebaseConfig';
 import {addAuth, authSelector} from '../redux/reducers/authReducer';
 import {HandleNotification} from '../utils/handleNotification';
-import MainNavigator from './MainNavigator';
-import ProfileNavigator from './ProfileNavigator';
 import DrawerNavigator from './DrawerNavigator';
+import ProfileNavigator from './ProfileNavigator';
 
 const Router = () => {
   const user = auth().currentUser;
