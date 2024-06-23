@@ -17,6 +17,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import {HandleAuthen} from '../../utils/handleAuthentication';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import TextComponent from '../../components/TextComponent';
+import {ArrowRight} from 'iconsax-react-native';
 
 const HomeAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +66,7 @@ const HomeAuth = () => {
         </Section>
         <Section styles={{flex: 1, justifyContent: 'center'}}>
           <Text
-            text="Dortor Bee"
+            text="Doctor Bee"
             size={42}
             color={colors.white}
             font={fontFamilies.RobotoBold}
@@ -75,7 +77,7 @@ const HomeAuth = () => {
             size={18}
             text="Mạng lưới chăm sóc sức khoẻ tại nhà"
           />
-          <Space height={16} />
+
           <Text
             color={colors.white}
             size={16}
@@ -101,8 +103,20 @@ const HomeAuth = () => {
         <Section>
           <Row>
             <Col>
-              <Text text="Bạn muốn đặt lịch khám bệnh?" />
-              <Text text="Tải ứng dụng khách" />
+              <TextComponent
+                size={13}
+                text="Bạn là nhân viên phòng khám?"
+                color={`#e0e0e0`}
+              />
+              <Row>
+                <TextComponent
+                  font={fontFamilies.RobotoMedium}
+                  text="Đăng nhập phòng khám"
+                  color={colors.white}
+                />
+                <Space width={8} />
+                <ArrowRight size={20} color={colors.white} />
+              </Row>
             </Col>
           </Row>
         </Section>

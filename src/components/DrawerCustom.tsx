@@ -16,6 +16,8 @@ import TextComponent from './TextComponent';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 const DrawerCustom = ({navigation}: any) => {
   const user = useSelector(authSelector);
@@ -144,6 +146,23 @@ const DrawerCustom = ({navigation}: any) => {
             </Col>
           </Row>
         ))}
+        <Space height={20} />
+        <Row
+          styles={{marginVertical: 10}}
+          onPress={async () => {
+            await GoogleSignin.signOut();
+            await auth().signOut();
+          }}>
+          <FontAwesome6
+            name="power-off"
+            size={size - 2}
+            color={colors.danger}
+          />
+          <Space width={18} />
+          <Col>
+            <TextComponent text={`Đăng xuất`} color={colors.danger} />
+          </Col>
+        </Row>
       </Section>
     </ScrollView>
   );

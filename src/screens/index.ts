@@ -25,5 +25,5 @@ export {
   VerifyStatus,
   ProfileScreen,
   ServicesScreen,
-  AddService
+  AddService,
 };

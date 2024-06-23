@@ -18,11 +18,17 @@ const AddService = ({navigation, route}: any) => {
   const service = route.params ? route.params.item : undefined;
 
   const user = auth().currentUser;
-  const initState = {
-    title: service.title ?? '',
-    description: service.description ?? '',
-    price: service.price ?? '',
-  };
+  const initState = service
+    ? {
+        title: service.title ?? '',
+        description: service.description ?? '',
+        price: service.price ?? '',
+      }
+    : {
+        title: '',
+        description: '',
+        price: '',
+      };
   const [formData, setFormData] = useState(initState);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
