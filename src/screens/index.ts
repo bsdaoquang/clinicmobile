@@ -11,6 +11,7 @@ import BangTotNghiep from "./profiles/uploads/BangTotNghiep";
 import ProfileScreen from "./profiles/ProfileScreen";
 import ServicesScreen from "./services/ServicesScreen";
 import AddService from "./services/AddService";
+import SupportForm from "./SupportForm";
 
 export {
   HomeProfile,
@@ -26,4 +27,5 @@ export {
   ProfileScreen,
   ServicesScreen,
   AddService,
+  SupportForm
 };

@@ -18,6 +18,8 @@ import Verification from '../screens/auth/Verification';
 import {ActivityIndicator} from 'react-native';
 import {Button, Section, Space, colors} from '@bsdaoquang/rncomponent';
 import TextComponent from '../components/TextComponent';
+import Terms from '../screens/Terms';
+import Policy from '../screens/Policy';
 
 const ProfileNavigator = () => {
   const [doctorProfile, setDoctorProfile] = useState<any>();
@@ -57,6 +59,8 @@ const ProfileNavigator = () => {
           headerShown: false,
         }}>
         <Stack.Screen name="updateProfile" component={HomeProfile} />
+        <Stack.Screen name="Terms" component={Terms} />
+        <Stack.Screen name="Policy" component={Policy} />
         <Stack.Screen name="Verification" component={Verification} />
         <Stack.Screen name="Avatar" component={Avatar} />
         <Stack.Screen name="CCCD" component={CCCD} />

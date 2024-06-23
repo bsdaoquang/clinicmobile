@@ -74,8 +74,9 @@ const Verification = ({navigation, route}: any) => {
 
         setIsVerifing(false);
       } catch (error: any) {
-        console.log(error);
-        setErrorText(error.message);
+        setErrorText(
+          `Số điện thoại đã được sử dụng ở một tài khoản khác, hãy thử lại với số điện thoại khác hoặc đăng nhập với tài khoản của bạn`,
+        );
         setIsVerifing(false);
       }
     } else {
@@ -100,7 +101,7 @@ const Verification = ({navigation, route}: any) => {
         <Text text="Nhập vào 6 số bảo mật được gửi đến số điện thoại của bạn" />
       </Section>
       <Section styles={{flex: 1, justifyContent: 'center'}}>
-        <Row>
+        <Row styles={{marginBottom: 16}}>
           <TextInput
             keyboardType="number-pad"
             style={[localStyles.input, localStyles.shadow]}
@@ -183,7 +184,12 @@ const Verification = ({navigation, route}: any) => {
             onSubmitEditing={handleComfirmCode}
           />
         </Row>
-        {errorText && <Text text={errorText} color={colors.danger} />}
+
+        {errorText && (
+          <>
+            <Text text={errorText} color={colors.danger} />
+          </>
+        )}
 
         <Space height={20} />
         {existimes > 0 ? (
@@ -208,7 +214,14 @@ const Verification = ({navigation, route}: any) => {
           color={colors.primary}
           onPress={handleComfirmCode}
         />
+
+        <Button
+          title="Quay lại"
+          onPress={() => navigation.goBack()}
+          type="link"
+        />
       </Section>
+
       <Loading loading={isVerifing} />
     </Container>
   ) : (

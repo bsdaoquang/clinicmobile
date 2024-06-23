@@ -54,7 +54,7 @@ const SupportScreen = ({navigation}: any) => {
             textStyleProps={{color: colors.primary, fontSize: 16}}
             isShadow={false}
             icon={<Message2 size={22} color={colors.primary} />}
-            onPress={() => navigation.navigate('SupportMessage')}
+            onPress={() => navigation.navigate('SupportForm')}
           />
           <Button
             color={colors.primary}

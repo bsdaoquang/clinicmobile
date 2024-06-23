@@ -30,6 +30,8 @@ export class HandleAuthen {
         .set({
           lastloginat: user.metadata.lastSignInTime,
           emailVerified: user.emailVerified,
+          email: user.email ?? '',
+          amount: 0,
           displayName: user.displayName
             ? user.displayName
             : user.email?.split('@')[0],

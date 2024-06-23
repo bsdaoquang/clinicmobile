@@ -17,6 +17,7 @@ import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {profileRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import {showToast} from '../../utils/showToast';
 
 const user = auth().currentUser;
 
@@ -107,6 +108,9 @@ const HomeProfile = ({navigation}: any) => {
           navigation.navigate('Verification', {
             confirm,
           });
+        } else {
+          showToast(`Không thể xác minh số điện thoại`);
+          setIsLoading(false);
         }
 
         setIsLoading(false);
@@ -199,9 +203,18 @@ const HomeProfile = ({navigation}: any) => {
           ]}>
           Bằng việc tiếp tục, tôi đồng ý rằng DoctorBee được quyền thu thập chia
           sẻ dữ liệu của tôi theo{' '}
-          <Text style={{color: colors.primary}}>Điều khoản dịch vụ</Text> và{' '}
-          <Text style={{color: colors.primary}}>Chính sách bảo mật</Text> của
-          chúng tôi.
+          <Text
+            onPress={() => navigation.navigate('Terms')}
+            style={{color: colors.primary}}>
+            Điều khoản dịch vụ
+          </Text>{' '}
+          và{' '}
+          <Text
+            onPress={() => navigation.navigate('Policy')}
+            style={{color: colors.primary}}>
+            Chính sách bảo mật
+          </Text>{' '}
+          của chúng tôi.
         </Text>
       </Section>
       <Section>
