@@ -12,6 +12,8 @@ import ProfileScreen from "./profiles/ProfileScreen";
 import ServicesScreen from "./services/ServicesScreen";
 import AddService from "./services/AddService";
 import SupportForm from "./SupportForm";
+import RechargeScreen from "./RechargeScreen";
+import Payment from "./Payment";
 
 export {
   HomeProfile,
@@ -27,5 +29,7 @@ export {
   ProfileScreen,
   ServicesScreen,
   AddService,
-  SupportForm
+  SupportForm,
+  RechargeScreen,
+  Payment
 };

@@ -4240,6 +4240,7 @@ __metadata:
     react: 18.2.0
     react-image-file-resizer: ^0.4.8
     react-native: 0.74.2
+    react-native-currency-input: ^1.1.1
     react-native-device-info: ^11.1.0
     react-native-document-picker: ^9.3.0
     react-native-gesture-handler: ^2.17.1
@@ -8846,6 +8847,16 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-native-currency-input@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "react-native-currency-input@npm:1.1.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: b49f3d273249124b120a0566b73e643a9d9e99e4100d2adf2ffdf1fa2aac742ceaa536d9866a8893af069841fe93ae3cd99659c4da8b2b677bf4b4b4ed1d99ad
   languageName: node
   linkType: hard
 

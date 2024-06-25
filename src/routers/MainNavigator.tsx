@@ -2,7 +2,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   AddService,
+  Payment,
   ProfileScreen,
+  RechargeScreen,
   ServicesScreen,
   SupportForm,
 } from '../screens';
@@ -22,6 +24,8 @@ const MainNavigator = () => {
       <Stack.Screen name="AddService" component={AddService} />
       <Stack.Screen name="SupportScreen" component={SupportScreen} />
       <Stack.Screen name="SupportForm" component={SupportForm} />
+      <Stack.Screen name="RechargeScreen" component={RechargeScreen} />
+      <Stack.Screen name="Payment" component={Payment} />
     </Stack.Navigator>
   );
 };
