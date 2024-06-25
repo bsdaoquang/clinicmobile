@@ -84,7 +84,7 @@ const RechargeScreen = ({navigation}: any) => {
 
         <TextInput
           keyboardType="numeric"
-          value={parseInt(amount).toLocaleString()}
+          value={amount ? parseInt(amount).toLocaleString() : ''}
           placeholder="0"
           onChangeText={val => handleCurrency(val)}
           style={{

@@ -3,19 +3,24 @@ import {
   Card,
   Col,
   DateTime,
+  Divider,
+  Loading,
   Row,
   Section,
   Space,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
-import React from 'react';
-import {Image, Text, TouchableOpacity} from 'react-native';
-import {Container, TextComponent} from '../components';
-import {fontFamilies} from '../constants/fontFamilies';
-import {colors} from '../constants/colors';
-import {Copy} from 'iconsax-react-native';
+import React, {useState} from 'react';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import {VND} from '../utils/handleCurrency';
+import {Container, TextComponent} from '../components';
+import {colors} from '../constants/colors';
+import {fontFamilies} from '../constants/fontFamilies';
+import {VND, handleCopyToClipboard} from '../utils/handleCurrency';
+import {showToast} from '../utils/showToast';
+import {HandleNotification} from '../utils/handleNotification';
+import firestore from '@react-native-firebase/firestore';
+import {sendMail} from '../utils/sendMail';
 
 const Payment = ({navigation, route}: any) => {
   const data: {
@@ -29,6 +34,42 @@ const Payment = ({navigation, route}: any) => {
     uid: string;
     phoneNumber: string;
   } = route.params;
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRechanrge = async () => {
+    setIsLoading(true);
+
+    try {
+      // send notification
+      await HandleNotification.pushNotification(
+        data.uid,
+        {
+          title: 'Thông báo',
+          body: 'Yêu cầu nạp tiền của bạn đã được gửi đi!',
+        },
+        {
+          id: data.paymentId,
+          module: 'Payment',
+        },
+      );
+      // send email to admin
+      await sendMail('bsdaoquang@gmail.com', {
+        html: '',
+        subject: 'Yêu cầu nạp tiền',
+      });
+      // update payment
+      await firestore().collection('bills').doc(data.paymentId).update({
+        status: 1,
+      });
+      setIsLoading(false);
+      // go to home
+      navigation.navigate('Main');
+    } catch (error: any) {
+      setIsLoading(false);
+      showToast(error.message);
+    }
+  };
 
   return (
     <Container back title="Thông tin thanh toán">
@@ -81,7 +122,8 @@ const Payment = ({navigation, route}: any) => {
             <TextComponent text="Số điện thoại: " />
             <TextComponent font={fontFamilies.RobotoMedium} text="0328323686" />
             <Space width={12} />
-            <TouchableOpacity onPress={() => console.log(``)}>
+            <TouchableOpacity
+              onPress={() => handleCopyToClipboard(`0328323686`)}>
               <Feather size={18} name="copy" color={colors.primary} />
             </TouchableOpacity>
           </Row>
@@ -99,7 +141,8 @@ const Payment = ({navigation, route}: any) => {
               text={VND.format(parseInt(data.amount))}
             />
             <Space width={12} />
-            <TouchableOpacity onPress={() => console.log(``)}>
+            <TouchableOpacity
+              onPress={() => handleCopyToClipboard(data.amount)}>
               <Feather size={18} name="copy" color={colors.primary} />
             </TouchableOpacity>
           </Row>
@@ -113,13 +156,161 @@ const Payment = ({navigation, route}: any) => {
               text={`Nạp ví DoctorBee #${data.phoneNumber}`}
             />
             <Space width={12} />
-            <TouchableOpacity onPress={() => console.log(``)}>
+            <TouchableOpacity
+              onPress={() =>
+                handleCopyToClipboard(`Nạp ví DoctorBee #${data.phoneNumber}`)
+              }>
               <Feather size={18} name="copy" color={colors.primary} />
             </TouchableOpacity>
           </Row>
         </Card>
       ) : (
-        <Card></Card>
+        <Card>
+          <View style={{marginBottom: 16}}>
+            <Row>
+              <Image
+                source={{
+                  uri: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQTGdr2mHwiGohpfNp9v-0aXu2T1oBR4drXg&s`,
+                }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Space width={12} />
+              <Col>
+                <TextComponent text="BIDV" font={fontFamilies.RobotoBold} />
+                <TextComponent text="Ngân hàng đầu tư và phát triển Việt Nam" />
+              </Col>
+            </Row>
+            <Row
+              styles={{marginBottom: 12, marginTop: 16}}
+              justifyContent="flex-start">
+              <TextComponent text="Số tài khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text="6504867278"
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() => handleCopyToClipboard(`6504867278`)}>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+            <Row styles={{marginBottom: 12}} justifyContent="flex-start">
+              <TextComponent text="Tên tài khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text="Đào Văn Quang"
+              />
+            </Row>
+            <Row styles={{marginBottom: 12}} justifyContent="flex-start">
+              <TextComponent text="Số tiền: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text={VND.format(parseInt(data.amount))}
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() => handleCopyToClipboard(data.amount)}>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+            <Row
+              styles={{marginBottom: 12}}
+              wrap="wrap"
+              justifyContent="flex-start">
+              <TextComponent text="Nội dung chuyển khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text={`Nạp ví DoctorBee #${data.phoneNumber}`}
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() =>
+                  handleCopyToClipboard(`Nạp ví DoctorBee #${data.phoneNumber}`)
+                }>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+          </View>
+          <Divider />
+          <View style={{marginBottom: 16}}>
+            <Row>
+              <Image
+                source={{
+                  uri: `https://play-lh.googleusercontent.com/0DIgmMfEvk48LV-OOJc7QRAzjGHjIlhfxHiKERYjXOHN3IuioPuAM0PRFdNeqgIOMy0`,
+                }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Space width={12} />
+              <Col>
+                <TextComponent
+                  text="Sacombank"
+                  font={fontFamilies.RobotoBold}
+                />
+                <TextComponent text="Ngân hàng hàng sài gòn thương tín" />
+              </Col>
+            </Row>
+            <Row
+              styles={{marginBottom: 12, marginTop: 16}}
+              justifyContent="flex-start">
+              <TextComponent text="Số tài khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text="050089283911"
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() => handleCopyToClipboard(`050089283911`)}>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+            <Row styles={{marginBottom: 12}} justifyContent="flex-start">
+              <TextComponent text="Tên tài khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text="Đào Văn Quang"
+              />
+            </Row>
+            <Row styles={{marginBottom: 12}} justifyContent="flex-start">
+              <TextComponent text="Số tiền: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text={VND.format(parseInt(data.amount))}
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() => handleCopyToClipboard(data.amount)}>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+            <Row
+              styles={{marginBottom: 12}}
+              wrap="wrap"
+              justifyContent="flex-start">
+              <TextComponent text="Nội dung chuyển khoản: " />
+              <TextComponent
+                font={fontFamilies.RobotoMedium}
+                text={`Nạp ví DoctorBee #${data.phoneNumber}`}
+              />
+              <Space width={12} />
+              <TouchableOpacity
+                onPress={() =>
+                  handleCopyToClipboard(`Nạp ví DoctorBee #${data.phoneNumber}`)
+                }>
+                <Feather size={18} name="copy" color={colors.primary} />
+              </TouchableOpacity>
+            </Row>
+          </View>
+        </Card>
       )}
       <Section>
         <TextComponent text='Sau khi chuyển tiền thành công, quý khách hãy bấm vào nút "Đã chuyển tiền" ở bên dưới để thông báo cho chúng tôi' />
@@ -127,11 +318,13 @@ const Payment = ({navigation, route}: any) => {
       <Section>
         <Button
           title="Đã chuyển tiền"
-          onPress={() => {}}
+          onPress={handleRechanrge}
           color={colors.primary}
           radius={12}
         />
       </Section>
+
+      <Loading loading={isLoading} />
     </Container>
   );
 };

@@ -32,6 +32,8 @@ import {userRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {MoneyRecive} from 'iconsax-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import messaging from '@react-native-firebase/messaging';
+import Toast from 'react-native-toast-message';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -109,6 +111,10 @@ const HomeScreen = ({navigation}: any) => {
           setProfile(snap.data());
         }
       });
+
+    messaging().onMessage(mess => {
+      console.log(mess);
+    });
   }, []);
 
   useEffect(() => {
