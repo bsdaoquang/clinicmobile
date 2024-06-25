@@ -123,13 +123,14 @@ const DrawerCustom = ({navigation}: any) => {
           />
         </Col>
         <Row>
-          <TextComponent size={12} color={colors.gray200} text={`4.5`} />
+          <TextComponent size={12} color={colors.gray200} text={`4.5 `} />
+
           <AntDesign name="star" color={colors.warning} size={16} />
           <Space width={12} />
           <TextComponent
             size={12}
             color={colors.gray200}
-            text={`(1size đánh giá)`}
+            text={`(1 đánh giá)`}
           />
         </Row>
       </Section>

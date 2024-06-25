@@ -113,7 +113,11 @@ const HomeScreen = ({navigation}: any) => {
       });
 
     messaging().onMessage(mess => {
-      console.log(mess);
+      const notification = mess.notification;
+      Toast.show({
+        text2: notification?.body,
+        type: 'success',
+      });
     });
   }, []);
 

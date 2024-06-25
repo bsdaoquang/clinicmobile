@@ -56,9 +56,12 @@ const App = () => {
         )}
         contentContainerStyle={{paddingHorizontal: 15}}
         text2Style={{
-          fontSize: 15,
-          fontFamily: fontFamilies.RobotoMedium,
+          fontSize: 12,
+          fontFamily: fontFamilies.RobotoRegular,
           color: 'white',
+        }}
+        text2Props={{
+          numberOfLines: 2,
         }}
       />
     ),
@@ -75,8 +78,11 @@ const App = () => {
           fontSize: 17,
         }}
         text2Style={{
-          fontSize: 15,
+          fontSize: 12,
           color: 'white',
+        }}
+        text2Props={{
+          numberOfLines: 2,
         }}
       />
     ),
