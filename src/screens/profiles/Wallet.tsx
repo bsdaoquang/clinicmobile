@@ -230,7 +230,7 @@ const Wallet = ({navigation}: any) => {
   ) : (
     <Container>
       <Section>
-        <TextComponent text="Không tìm thấy dữ liệu hồ sơ" />
+        <TextComponent text="" />
       </Section>
     </Container>
   );
