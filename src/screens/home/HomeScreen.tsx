@@ -251,7 +251,7 @@ const HomeScreen = ({navigation}: any) => {
             }}>
             <Row justifyContent="space-between">
               <Card styles={{paddingVertical: 4, marginBottom: 0}}>
-                <Row>
+                <Row onPress={() => navigation.navigate('Wallet')}>
                   <View>
                     <TextComponent
                       text="VND"

@@ -13,14 +13,14 @@ import {
 import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import {Container, TextComponent} from '../components';
-import {colors} from '../constants/colors';
-import {fontFamilies} from '../constants/fontFamilies';
-import {VND, handleCopyToClipboard} from '../utils/handleCurrency';
-import {showToast} from '../utils/showToast';
-import {HandleNotification} from '../utils/handleNotification';
+import {Container, TextComponent} from '../../components';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
+import {VND, handleCopyToClipboard} from '../../utils/handleCurrency';
+import {showToast} from '../../utils/showToast';
+import {HandleNotification} from '../../utils/handleNotification';
 import firestore from '@react-native-firebase/firestore';
-import {sendMail} from '../utils/sendMail';
+import {sendMail} from '../../utils/sendMail';
 
 const Payment = ({navigation, route}: any) => {
   const data: {
@@ -61,6 +61,8 @@ const Payment = ({navigation, route}: any) => {
       // update payment
       await firestore().collection('bills').doc(data.paymentId).update({
         status: 1,
+        content: 'Nạp tiền vào tài khoản',
+        type: 'deposit',
       });
       setIsLoading(false);
       // go to home
@@ -105,7 +107,7 @@ const Payment = ({navigation, route}: any) => {
         <Card>
           <Row>
             <Image
-              source={require('../assets/images/momo-logo.png')}
+              source={require('../../assets/images/momo-logo.png')}
               style={{width: 32, height: 32, resizeMode: 'contain'}}
             />
             <Space width={12} />

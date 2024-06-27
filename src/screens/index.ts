@@ -12,8 +12,11 @@ import ProfileScreen from "./profiles/ProfileScreen";
 import ServicesScreen from "./services/ServicesScreen";
 import AddService from "./services/AddService";
 import SupportForm from "./SupportForm";
-import RechargeScreen from "./RechargeScreen";
-import Payment from "./Payment";
+import RechargeScreen from "./profiles/RechargeScreen";
+import Payment from "./profiles/Payment";
+import Wallet from "./profiles/Wallet";
+import TransferScreen from "./profiles/TransferScreen";
+import WithdrawScreen from "./profiles/WithdrawScreen";
 
 export {
   HomeProfile,
@@ -31,5 +34,8 @@ export {
   AddService,
   SupportForm,
   RechargeScreen,
-  Payment
+  Payment,
+  Wallet,
+  TransferScreen,
+  WithdrawScreen
 };

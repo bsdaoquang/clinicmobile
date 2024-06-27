@@ -8,12 +8,12 @@ import {
 } from '@bsdaoquang/rncomponent';
 import React, {useState} from 'react';
 import {Alert, Image, TextInput, TouchableOpacity, View} from 'react-native';
-import {Container, TextComponent} from '../components';
-import {fontFamilies} from '../constants/fontFamilies';
-import * as appColors from '../constants/colors';
+import {Container, TextComponent} from '../../components';
+import {fontFamilies} from '../../constants/fontFamilies';
+import * as appColors from '../../constants/colors';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {VND} from '../utils/handleCurrency';
+import {VND} from '../../utils/handleCurrency';
 
 const RechargeScreen = ({navigation}: any) => {
   const [amount, setAmount] = useState('');
@@ -35,12 +35,12 @@ const RechargeScreen = ({navigation}: any) => {
   const paymentMethod = [
     {
       key: 'momo',
-      icon: require('../assets/images/momo-logo.png'),
+      icon: require('../../assets/images/momo-logo.png'),
       title: 'Ví điện tử Momo',
     },
     {
       key: 'bank',
-      icon: require('../assets/images/bank-icon.png'),
+      icon: require('../../assets/images/bank-icon.png'),
       title: 'Chuyển khoản ngân hàng',
     },
   ];

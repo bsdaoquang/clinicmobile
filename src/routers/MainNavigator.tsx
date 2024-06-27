@@ -7,6 +7,9 @@ import {
   RechargeScreen,
   ServicesScreen,
   SupportForm,
+  TransferScreen,
+  Wallet,
+  WithdrawScreen,
 } from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 import SupportScreen from '../screens/SupportScreen';
@@ -26,6 +29,9 @@ const MainNavigator = () => {
       <Stack.Screen name="SupportForm" component={SupportForm} />
       <Stack.Screen name="RechargeScreen" component={RechargeScreen} />
       <Stack.Screen name="Payment" component={Payment} />
+      <Stack.Screen name="Wallet" component={Wallet} />
+      <Stack.Screen name="WithdrawScreen" component={WithdrawScreen} />
+      <Stack.Screen name="TransferScreen" component={TransferScreen} />
     </Stack.Navigator>
   );
 };
