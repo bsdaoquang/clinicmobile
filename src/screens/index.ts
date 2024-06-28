@@ -17,6 +17,7 @@ import Payment from "./profiles/Payment";
 import Wallet from "./profiles/Wallet";
 import TransferScreen from "./profiles/TransferScreen";
 import WithdrawScreen from "./profiles/WithdrawScreen";
+import Comingsoon from "./Comingsoon";
 
 export {
   HomeProfile,
@@ -37,5 +38,6 @@ export {
   Payment,
   Wallet,
   TransferScreen,
-  WithdrawScreen
+  WithdrawScreen,
+  Comingsoon
 };

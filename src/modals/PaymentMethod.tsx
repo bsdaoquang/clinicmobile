@@ -18,6 +18,7 @@ import {fontFamilies} from '../constants/fontFamilies';
 interface Props {
   visible: boolean;
   onClose: () => void;
+  onSelected: (val: BankModel) => void;
 }
 
 export interface BankModel {
@@ -32,15 +33,12 @@ export interface BankModel {
 }
 
 const PaymentMethod = (props: Props) => {
-  const {visible, onClose} = props;
+  const {visible, onClose, onSelected} = props;
 
   const [banks, setBanks] = useState<BankModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [bankSelected, setBankSelected] = useState<BankModel>();
   const [searchKey, setSearchKey] = useState('');
   const [results, setResults] = useState<BankModel[]>([]);
-
-  const user = auth().currentUser;
 
   useEffect(() => {
     getBankList();
@@ -75,6 +73,31 @@ const PaymentMethod = (props: Props) => {
     }
   };
 
+  const renderBankItem = (item: BankModel) => (
+    <Row
+      onPress={() => {
+        onSelected(item);
+        onClose();
+      }}
+      key={item.id}
+      styles={{marginBottom: 16}}
+      alignItems="flex-start">
+      <Image
+        source={{uri: item.logo}}
+        style={{
+          width: 80,
+          height: 30,
+          resizeMode: 'contain',
+        }}
+      />
+      <Space width={12} />
+      <Col>
+        <TextComponent text={item.shortName} transform="uppercase" />
+        <TextComponent text={item.name} size={13} color={colors.gray600} />
+      </Col>
+    </Row>
+  );
+
   return (
     <Modal
       style={{flex: 1}}
@@ -97,45 +120,28 @@ const PaymentMethod = (props: Props) => {
             </TouchableOpacity>
           </Row>
         </Section>
-        <Section>
-          <Input
-            value={searchKey}
-            placeholder="Tên ngân hàng"
-            clear
-            radius={12}
-            onChange={val => setSearchKey(val)}
-          />
-          <FlatList
-            style={{marginBottom: 100}}
-            showsVerticalScrollIndicator={false}
-            data={results}
-            renderItem={({item}) => (
-              <Row
-                onPress={() => setBankSelected(item)}
-                key={item.id}
-                styles={{marginBottom: 16}}
-                alignItems="flex-start">
-                <Image
-                  source={{uri: item.logo}}
-                  style={{
-                    width: 80,
-                    height: 30,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Space width={12} />
-                <Col>
-                  <TextComponent text={item.shortName} transform="uppercase" />
-                  <TextComponent
-                    text={item.name}
-                    size={13}
-                    color={colors.gray600}
-                  />
-                </Col>
-              </Row>
-            )}
-          />
-        </Section>
+
+        {banks.length > 0 ? (
+          <Section>
+            <Input
+              value={searchKey}
+              placeholder="Tên ngân hàng"
+              clear
+              radius={12}
+              onChange={val => setSearchKey(val)}
+            />
+            <FlatList
+              style={{marginBottom: 100}}
+              showsVerticalScrollIndicator={false}
+              data={results}
+              renderItem={({item}) => renderBankItem(item)}
+            />
+          </Section>
+        ) : (
+          <>
+            <TextComponent text="Không tìm thấy dữ liệu ngân hàng" />
+          </>
+        )}
       </View>
     </Modal>
   );

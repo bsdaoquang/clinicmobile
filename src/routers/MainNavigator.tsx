@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   AddService,
+  Comingsoon,
   Payment,
   ProfileScreen,
   RechargeScreen,
@@ -32,6 +33,7 @@ const MainNavigator = () => {
       <Stack.Screen name="Wallet" component={Wallet} />
       <Stack.Screen name="WithdrawScreen" component={WithdrawScreen} />
       <Stack.Screen name="TransferScreen" component={TransferScreen} />
+      <Stack.Screen name="Comingsoon" component={Comingsoon} />
     </Stack.Navigator>
   );
 };

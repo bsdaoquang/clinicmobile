@@ -1,22 +1,26 @@
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {Container, TextComponent} from '../../components';
 import {
   Button,
+  Col,
   Row,
   Section,
   Space,
   Tabbar,
   colors,
+  globalStyles,
 } from '@bsdaoquang/rncomponent';
-import {VND} from '../../utils/handleCurrency';
-import {fontFamilies} from '../../constants/fontFamilies';
+import React, {useState} from 'react';
+import {Container, TextComponent} from '../../components';
 import {PaymentMethod} from '../../modals';
+import {BankModel} from '../../modals/PaymentMethod';
+import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Bank} from 'iconsax-react-native';
 
 const WithdrawScreen = ({navigation}: any) => {
   const [amount, setAmount] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [isVisibleModalPayment, setIsVisibleModalPayment] = useState(false);
+  const [bankSelected, setBankSelected] = useState<BankModel>();
+  const [methodSelected, setMethodSelected] = useState<'momo' | 'bank'>('momo');
 
   const handleCurrency = (val: string) => {
     const cleanValue = val.replace(/[^0-9]/g, '');
@@ -42,6 +46,38 @@ const WithdrawScreen = ({navigation}: any) => {
         <TextComponent text="Rút tiền về tài khoản ngân hàng hoặc ví MoMo của bạn, phí giao dịch là 1% tối thiểu là 5000 VND, số tiền tối thiểu cho 1 lần rút là 100.000 VND" />
       </Section>
       <Section>
+        <Row>
+          <TouchableOpacity
+            onPress={() => setMethodSelected('momo')}
+            style={[
+              globalStyles.center,
+              localStyles.selected,
+              {borderWidth: methodSelected === 'momo' ? 1 : 0},
+            ]}>
+            <Image
+              source={require('../../assets/images/momo-logo.png')}
+              style={{
+                width: 32,
+                height: 32,
+                resizeMode: 'contain',
+              }}
+            />
+            <TextComponent text="Đến ví MoMo" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setMethodSelected('bank')}
+            style={[
+              globalStyles.center,
+              localStyles.selected,
+              {borderWidth: methodSelected === 'bank' ? 1 : 0},
+            ]}>
+            <Bank size={32} color={colors.blue400} />
+            <TextComponent text="Đến ngân hàng" />
+          </TouchableOpacity>
+        </Row>
+      </Section>
+      <Section>{methodSelected === 'momo' ? <></> : <></>}</Section>
+      {/* <Section>
         <TextComponent text="Số tiền cần rút" />
 
         <TextInput
@@ -168,7 +204,7 @@ const WithdrawScreen = ({navigation}: any) => {
             />
           </Row>
         </Section>
-      )}
+      )} */}
       <Section>
         <Tabbar title="Phương thức thanh toán" showSeeMore={false} />
         {paymentMethods.length > 0 ? (
@@ -193,12 +229,24 @@ const WithdrawScreen = ({navigation}: any) => {
           </>
         )}
       </Section>
+
       <PaymentMethod
         visible={isVisibleModalPayment}
         onClose={() => setIsVisibleModalPayment(false)}
+        onSelected={val => console.log(val)}
       />
     </Container>
   );
 };
 
 export default WithdrawScreen;
+
+const localStyles = StyleSheet.create({
+  selected: {
+    borderColor: colors.primary,
+    borderRadius: 12,
+    borderWidth: 0,
+    paddingVertical: 16,
+    flex: 1,
+  },
+});

@@ -106,7 +106,7 @@ const Wallet = ({navigation}: any) => {
 
           <TouchableOpacity
             style={[globalStyles.center, {flex: 1}]}
-            onPress={() => navigation.navigate('WithdrawScreen')}>
+            onPress={() => navigation.navigate('Comingsoon')}>
             <MaterialCommunityIcons
               name="bank-transfer-out"
               size={22}
@@ -116,7 +116,7 @@ const Wallet = ({navigation}: any) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[globalStyles.center, {flex: 1}]}
-            onPress={() => navigation.navigate('TransferScreen')}>
+            onPress={() => navigation.navigate('Comingsoon')}>
             <MaterialCommunityIcons
               name="bank-transfer"
               size={22}
