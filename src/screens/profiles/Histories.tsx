@@ -1,11 +1,14 @@
-import {View, Text} from 'react-native';
+import {Section} from '@bsdaoquang/rncomponent';
 import React from 'react';
+import {Container, TextComponent} from '../../components';
 
-const Histories = () => {
+const Histories = ({navigation}: any) => {
   return (
-    <View>
-      <Text>lịch sử nhận bệnh</Text>
-    </View>
+    <Container isScroll={false} back title="Lịch sử nhận bệnh">
+      <Section>
+        <TextComponent text="Hiển thị lịch sử nhận bệnh của người dùng" />
+      </Section>
+    </Container>
   );
 };
 
