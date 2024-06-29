@@ -5,4 +5,5 @@ export interface NotificationModel {
   title: string;
   uid: string;
   id: string;
+  module: string;
 }

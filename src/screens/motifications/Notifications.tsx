@@ -7,20 +7,16 @@ import {
   colors,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, FlatList, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Container, TextComponent} from '../../components';
-import firestore, {updateDoc} from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import {NotificationModel} from '../../models/NotificationModel';
 import {fontFamilies} from '../../constants/fontFamilies';
+import {NotificationModel} from '../../models/NotificationModel';
 import {showToast} from '../../utils/showToast';
+import {getDateUpdate} from '../../utils/getDateUpdate';
 
 let pageNumber = 1;
 
@@ -68,7 +64,7 @@ const Notifications = ({navigation}: any) => {
         } else {
           const items: NotificationModel[] = [];
           snap.forEach((item: any) => {
-            items.push({
+            items.unshift({
               id: item.id,
               ...item.data(),
             });
@@ -87,7 +83,7 @@ const Notifications = ({navigation}: any) => {
   const handleReadNotification = async (id: string) => {
     try {
       await fsRef.doc(id).update({
-        idRead: true,
+        isRead: true,
       });
 
       const items = [...notifications];
@@ -106,7 +102,13 @@ const Notifications = ({navigation}: any) => {
   const renderNotificationItem = (item: NotificationModel) => {
     return (
       <TouchableOpacity
-        onPress={() => handleReadNotification(item.id)}
+        onPress={async () => {
+          // console.log(item);
+          await handleReadNotification(item.id);
+          if (item.module) {
+            navigation.navigate(item.module);
+          }
+        }}
         key={item.id}
         style={{
           marginHorizontal: 16,
@@ -128,7 +130,7 @@ const Notifications = ({navigation}: any) => {
           </Col>
           <Space width={12} />
           <TextComponent
-            text={DateTime.dateToDateString(new Date(item.createdAt))}
+            text={getDateUpdate(item.createdAt)}
             size={12}
             color={colors.gray500}
           />

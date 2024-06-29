@@ -160,9 +160,12 @@ const ServicesScreen = ({navigation}: any) => {
           )}
         />
       ) : (
-        <Section flex={1} styles={[globalStyles.center]}>
-          <TextComponent text="Khách hàng sẽ tìm thấy bạn dựa trên những dịch vụ mà bạn cung cấp" />
+        <Section flex={1}>
           <TextComponent text="Bạn chưa có dịch vụ nào được cung cấp, hãy tạo dịch vụ của bạn" />
+          <TextComponent
+            text="Khách hàng sẽ tìm thấy bạn dựa trên những dịch vụ mà bạn cung cấp"
+            color={colors.gray2}
+          />
           <Space height={12} />
           <Row justifyContent="flex-start">
             <Button
