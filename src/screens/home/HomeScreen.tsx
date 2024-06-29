@@ -30,7 +30,7 @@ import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {userRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
-import {MoneyRecive} from 'iconsax-react-native';
+import {MoneyRecive, Notification} from 'iconsax-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
@@ -44,6 +44,7 @@ const HomeScreen = ({navigation}: any) => {
   const [isOnline, setIsOnline] = useState(false);
   const [profile, setProfile] = useState<any>();
   const [services, setservices] = useState<number>(0);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const user = auth().currentUser;
   const menus = [
@@ -110,6 +111,14 @@ const HomeScreen = ({navigation}: any) => {
         if (snap.exists) {
           setProfile(snap.data());
         }
+      });
+
+    firestore()
+      .collection('notifications')
+      .where('uid', '==', user?.uid)
+      .where('isRead', '==', false)
+      .onSnapshot(snap => {
+        setNotificationCount(snap.size);
       });
 
     messaging().onMessage(mess => {
@@ -284,6 +293,20 @@ const HomeScreen = ({navigation}: any) => {
                 </Row>
               </Card>
               <Row alignItems="center" onPress={() => navigation.openDrawer()}>
+                <Badge
+                  show={notificationCount > 0}
+                  dotStylesProps={{
+                    width: 12,
+                    height: 12,
+                    top: 0,
+                    right: 0,
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Notifications')}>
+                    <Notification size={24} color={colors.gray} />
+                  </TouchableOpacity>
+                </Badge>
+                <Space width={12} />
                 {profile && profile.avatar && profile.avatar.downloadUrl && (
                   <Badge
                     dotStylesProps={{

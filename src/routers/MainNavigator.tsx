@@ -18,6 +18,7 @@ import {
 } from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 import SupportScreen from '../screens/SupportScreen';
+import Notifications from '../screens/motifications/Notifications';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -42,6 +43,7 @@ const MainNavigator = () => {
       <Stack.Screen name="PaymentMethod" component={PaymentMethod} />
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="ReferentProgram" component={ReferentProgram} />
+      <Stack.Screen name="Notifications" component={Notifications} />
     </Stack.Navigator>
   );
 };

@@ -29,7 +29,7 @@ const DrawerCustom = ({navigation}: any) => {
     {
       icon: <FontAwesome6 name="user-nurse" size={size} color={color} />,
       label: 'Tài khoản',
-      key: 'Profile',
+      key: 'ProfileScreen',
     },
     {
       icon: <MaterialCommunityIcons name="history" size={size} color={color} />,
@@ -39,7 +39,7 @@ const DrawerCustom = ({navigation}: any) => {
     {
       icon: <Ionicons name="notifications" size={size} color={color} />,
       label: 'Thông báo',
-      key: 'Notification',
+      key: 'Notifications',
     },
     {
       icon: <Ionicons name="wallet" size={size} color={color} />,
@@ -71,12 +71,12 @@ const DrawerCustom = ({navigation}: any) => {
         />
       ),
       label: 'Hỗ trợ',
-      key: 'Support',
+      key: 'SupportScreen',
     },
     {
       icon: <Ionicons name="settings" size={size} color={color} />,
       label: 'Cài đặt',
-      key: 'Setting',
+      key: 'Settings',
     },
   ];
 
@@ -139,7 +139,7 @@ const DrawerCustom = ({navigation}: any) => {
           <Row
             key={item.key}
             styles={{marginVertical: 10}}
-            onPress={() => navigation.navigate(`${item.key}Screen`)}>
+            onPress={() => navigation.navigate(`${item.key}`)}>
             {item.icon}
             <Space width={20} />
             <Col>
