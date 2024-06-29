@@ -2,11 +2,15 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   AddService,
+  ChangePassword,
   Comingsoon,
   Payment,
+  PaymentMethod,
   ProfileScreen,
   RechargeScreen,
+  ReferentProgram,
   ServicesScreen,
+  Settings,
   SupportForm,
   TransferScreen,
   Wallet,
@@ -34,6 +38,10 @@ const MainNavigator = () => {
       <Stack.Screen name="WithdrawScreen" component={WithdrawScreen} />
       <Stack.Screen name="TransferScreen" component={TransferScreen} />
       <Stack.Screen name="Comingsoon" component={Comingsoon} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="PaymentMethod" component={PaymentMethod} />
+      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="ReferentProgram" component={ReferentProgram} />
     </Stack.Navigator>
   );
 };

@@ -28,6 +28,10 @@ const Avatar = ({navigation}: any) => {
               verify: false,
             },
           });
+
+          await user.updateProfile({
+            photoURL: res.downloadUrl,
+          });
         }
         setIsUploading(false);
         navigation.goBack();

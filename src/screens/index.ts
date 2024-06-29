@@ -18,6 +18,10 @@ import Wallet from "./profiles/Wallet";
 import TransferScreen from "./profiles/TransferScreen";
 import WithdrawScreen from "./profiles/WithdrawScreen";
 import Comingsoon from "./Comingsoon";
+import ChangePassword from "./profiles/ChangePassword";
+import PaymentMethod from "./profiles/PaymentMethod";
+import Settings from "./Settings";
+import ReferentProgram from "./profiles/ReferentProgram";
 
 export {
   HomeProfile,
@@ -39,5 +43,9 @@ export {
   Wallet,
   TransferScreen,
   WithdrawScreen,
-  Comingsoon
+  Comingsoon,
+  ChangePassword,
+  PaymentMethod,
+  Settings,
+  ReferentProgram
 };

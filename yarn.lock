@@ -1662,16 +1662,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bsdaoquang/rncomponent@npm:^0.1.14":
-  version: 0.1.14
-  resolution: "@bsdaoquang/rncomponent@npm:0.1.14"
+"@bsdaoquang/rncomponent@npm:^0.1.16":
+  version: 0.1.16
+  resolution: "@bsdaoquang/rncomponent@npm:0.1.16"
   dependencies:
     "@react-native-community/checkbox": ^0.5.17
     react-native-vector-icons: ^10.1.0
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 435caeffbcb63c01c1969bb4a5c68f86fa792ba9e0e28d981f62f02955d98aa815cb3c5a801d676f6f784abdf8e66be2211ea84a3d5184b9d27ba526a3e9c897
+  checksum: ae41c0fb7b15da8d41da4bad8c78e23171f3638d2cc7f954b4ba670263bdf21a2b5d767bbb6f6a289a322243ee67af3868830cbebe924badbce5f74672642e84
   languageName: node
   linkType: hard
 
@@ -4241,7 +4241,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@bsdaoquang/rncomponent": ^0.1.14
+    "@bsdaoquang/rncomponent": ^0.1.16
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-clipboard/clipboard": ^1.14.1
     "@react-native-community/geolocation": ^3.2.1
