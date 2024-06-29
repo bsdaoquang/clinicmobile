@@ -34,7 +34,7 @@ const DrawerCustom = ({navigation}: any) => {
     {
       icon: <MaterialCommunityIcons name="history" size={size} color={color} />,
       label: 'Lịch sử',
-      key: 'History',
+      key: 'Histories',
     },
     {
       icon: <Ionicons name="notifications" size={size} color={color} />,
@@ -49,7 +49,7 @@ const DrawerCustom = ({navigation}: any) => {
     {
       icon: <Ionicons name="calendar" size={size} color={color} />,
       label: 'Lịch hẹn',
-      key: 'Scheduler',
+      key: 'Schedulers',
     },
     {
       icon: (
@@ -60,7 +60,7 @@ const DrawerCustom = ({navigation}: any) => {
         />
       ),
       label: 'Cộng đồng',
-      key: 'Blog',
+      key: 'Communitications',
     },
     {
       icon: (

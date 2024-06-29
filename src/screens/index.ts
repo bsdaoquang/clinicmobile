@@ -22,6 +22,9 @@ import ChangePassword from "./profiles/ChangePassword";
 import PaymentMethod from "./profiles/PaymentMethod";
 import Settings from "./Settings";
 import ReferentProgram from "./profiles/ReferentProgram";
+import Histories from "./profiles/Histories";
+import Schedulers from "./profiles/Schedulers";
+import Communitications from "./Communitications";
 
 export {
   HomeProfile,
@@ -47,5 +50,8 @@ export {
   ChangePassword,
   PaymentMethod,
   Settings,
-  ReferentProgram
+  ReferentProgram,
+  Histories,
+  Schedulers,
+  Communitications
 };

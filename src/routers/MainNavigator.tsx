@@ -4,11 +4,14 @@ import {
   AddService,
   ChangePassword,
   Comingsoon,
+  Communitications,
+  Histories,
   Payment,
   PaymentMethod,
   ProfileScreen,
   RechargeScreen,
   ReferentProgram,
+  Schedulers,
   ServicesScreen,
   Settings,
   SupportForm,
@@ -44,6 +47,9 @@ const MainNavigator = () => {
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="ReferentProgram" component={ReferentProgram} />
       <Stack.Screen name="Notifications" component={Notifications} />
+      <Stack.Screen name="Histories" component={Histories} />
+      <Stack.Screen name="Schedulers" component={Schedulers} />
+      <Stack.Screen name="Communitications" component={Communitications} />
     </Stack.Navigator>
   );
 };
