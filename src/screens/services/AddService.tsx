@@ -51,6 +51,7 @@ const AddService = ({navigation, route}: any) => {
             ...formData,
             updatedAt: Date.now(),
             searchIndex: replaceName(formData.title).split('-'),
+            slug: replaceName(formData.title),
           });
       } else {
         await fs()
@@ -61,6 +62,7 @@ const AddService = ({navigation, route}: any) => {
             createdAt: Date.now(),
             updatedAt: Date.now(),
             searchIndex: replaceName(formData.title).split('-'),
+            slug: replaceName(formData.title),
           });
       }
 
