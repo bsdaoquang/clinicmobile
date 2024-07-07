@@ -2,7 +2,7 @@ import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StatusBar, View} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
@@ -96,25 +96,27 @@ const App = () => {
   };
 
   return (
-    <NavigationContainer>
-      <Provider store={store}>
-        {isWelcome ? (
-          <Splash />
-        ) : isLogin ? (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'white',
-            }}>
-            <Router />
-          </View>
-        ) : (
-          <AuthNavigator />
-        )}
-      </Provider>
+    <>
+      <NavigationContainer>
+        <Provider store={store}>
+          {isWelcome ? (
+            <Splash />
+          ) : isLogin ? (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'white',
+              }}>
+              <Router />
+            </View>
+          ) : (
+            <AuthNavigator />
+          )}
+        </Provider>
 
-      <Toast config={toastConfig} />
-    </NavigationContainer>
+        <Toast config={toastConfig} />
+      </NavigationContainer>
+    </>
   );
 };
 

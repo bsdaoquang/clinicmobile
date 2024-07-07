@@ -8,9 +8,13 @@ import {
   Space,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
-import GeoLocation from '@react-native-community/geolocation';
+import GeoLocation, {
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
+import {MoneyRecive, Notification} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
@@ -23,17 +27,16 @@ import {
   View,
 } from 'react-native';
 import MapView from 'react-native-maps';
+import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {userRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
-import {MoneyRecive, Notification} from 'iconsax-react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import messaging from '@react-native-firebase/messaging';
-import Toast from 'react-native-toast-message';
+import {ServiceModel} from '../../models/ServiceModel';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -43,7 +46,7 @@ const HomeScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [profile, setProfile] = useState<any>();
-  const [services, setservices] = useState<number>(0);
+  const [services, setservices] = useState<ServiceModel[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
   const user = auth().currentUser;
@@ -98,7 +101,19 @@ const HomeScreen = ({navigation}: any) => {
       .collection('services')
       .where('uid', '==', user?.uid)
       .get()
-      .then(snap => setservices(snap.size))
+      .then(snap => {
+        if (!snap.empty) {
+          const items: ServiceModel[] = [];
+          snap.forEach((item: any) =>
+            items.push({
+              id: item.id,
+              ...item.data(),
+            }),
+          );
+
+          setservices(items);
+        }
+      })
       .catch(error => console.log(error));
 
     // nếu khi kích hoạt, kiểm tra thấy không có dịch vụ sẽ yêu cầu tạo dịch vụ
@@ -186,7 +201,7 @@ const HomeScreen = ({navigation}: any) => {
   };
 
   const handleOnline = async (val: boolean) => {
-    if (services > 0) {
+    if (services.length > 0) {
       setIsLoading(true);
       try {
         await firestore()
@@ -196,9 +211,7 @@ const HomeScreen = ({navigation}: any) => {
             isOnline: val,
             currentLocation: val ? currentLocation : '',
           });
-
         await handleListenLocation(val);
-
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -227,12 +240,14 @@ const HomeScreen = ({navigation}: any) => {
     try {
       watch = GeoLocation.watchPosition(
         position => {
-          console.log(position);
+          handleUpdatePosition(position);
         },
         error => console.log(error),
         {
           timeout: 300,
           interval: 15,
+          enableHighAccuracy: false,
+          distanceFilter: 500,
         },
       );
 
@@ -240,6 +255,10 @@ const HomeScreen = ({navigation}: any) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleUpdatePosition = (position: GeolocationResponse) => {
+    console.log(position);
   };
 
   const handleLockAccount = async () => {};
@@ -404,7 +423,7 @@ const HomeScreen = ({navigation}: any) => {
                   style={{
                     width: 12,
                     height: 12,
-                    backgroundColor: isOnline ? '#40A578' : '#e0e0e0',
+                    backgroundColor: profile.isOnline ? '#40A578' : '#e0e0e0',
                     borderRadius: 100,
                   }}
                 />
@@ -412,7 +431,7 @@ const HomeScreen = ({navigation}: any) => {
                 <Col>
                   <TextComponent
                     text={
-                      isOnline
+                      profile.isOnline
                         ? 'Bạn đang trong chế độ làm việc'
                         : 'Bạn đang ở chế độ nghỉ ngơi'
                     }
