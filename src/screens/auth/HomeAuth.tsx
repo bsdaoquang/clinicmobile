@@ -18,7 +18,7 @@ import auth from '@react-native-firebase/auth';
 import {HandleAuthen} from '../../utils/handleAuthentication';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import TextComponent from '../../components/TextComponent';
-import {ArrowRight} from 'iconsax-react-native';
+import {Apple, ArrowRight, Call} from 'iconsax-react-native';
 
 const HomeAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,8 +69,8 @@ const HomeAuth = () => {
             text="Doctor Bee"
             size={42}
             color={colors.white}
-            font={fontFamilies.RobotoBold}
-            weight={'bold'}
+            // font={fontFamilies.}
+            // weight={'bold'}
           />
           <Text
             color={colors.white}
@@ -86,17 +86,40 @@ const HomeAuth = () => {
           />
         </Section>
         <Section>
-          <Divider>
-            <Text text="Đăng nhập với" color="white" size={14} />
-          </Divider>
           <Button
             inline
             isShadow={false}
             color={colors.danger}
             styles={{paddingVertical: 12}}
-            textStyleProps={{fontSize: 18}}
+            textStyleProps={{fontSize: 14}}
             icon={<AntDesign name="google" size={20} color={colors.white} />}
             title="Google"
+            iconExtra
+            onPress={handleLoginWithGoogle}
+          />
+          <Space height={12} />
+          <Button
+            inline
+            isShadow={false}
+            styles={{paddingVertical: 12}}
+            textStyleProps={{fontSize: 14}}
+            title="Apple"
+            iconExtra
+            icon={<Apple variant="Bold" size={24} color={colors.gray} />}
+            onPress={handleLoginWithGoogle}
+          />
+        </Section>
+        <Section>
+          <Divider>
+            <Text text="Đăng nhập với" color="white" size={14} />
+          </Divider>
+          <Button
+            inline
+            icon={<Call size={22} color={colors.gray} />}
+            isShadow={false}
+            styles={{paddingVertical: 12}}
+            textStyleProps={{fontSize: 14}}
+            title="Số điện thoại"
             onPress={handleLoginWithGoogle}
           />
         </Section>

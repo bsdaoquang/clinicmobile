@@ -1,7 +1,7 @@
 export const colors = {
   primary: '#219C90',
   warning: '#FFC700',
-  danger: '#EE4E4E',
+  danger: '#e74c3c',
   white: 'white',
   text: '#0C0C0C',
   light: '#EEEEEE',
