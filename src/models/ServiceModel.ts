@@ -7,4 +7,7 @@ export interface ServiceModel {
   title: string;
   uid: string;
   updatedAt: number;
+  id: string,
+  position: any,
+  isOnline: boolean;
 }

@@ -15,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {MoneyRecive, Notification} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import React, {lazy, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -237,34 +237,55 @@ const HomeScreen = ({navigation}: any) => {
 
   const handleListenLocation = async (val: boolean) => {
     let watch;
-    try {
-      watch = GeoLocation.watchPosition(
-        position => {
-          handleUpdatePosition(position);
-        },
-        error => console.log(error),
-        {
-          timeout: 300,
-          interval: 15,
-          enableHighAccuracy: false,
-          distanceFilter: 500,
-        },
+    if (val) {
+      try {
+        watch = GeoLocation.watchPosition(
+          position => {
+            handleUpdatePosition(position);
+          },
+          error => console.log(error),
+          {
+            timeout: 300,
+            interval: 15,
+            enableHighAccuracy: false,
+            distanceFilter: 500,
+          },
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      services.forEach(
+        async item =>
+          await firestore().collection('services').doc(item.id).update({
+            position: '',
+            isOnline: false,
+          }),
       );
-
-      !val && watch && GeoLocation.clearWatch(watch);
-    } catch (error) {
-      console.log(error);
+      watch && GeoLocation.clearWatch(watch);
     }
   };
 
   const handleUpdatePosition = (position: GeolocationResponse) => {
-    console.log(position);
+    services.forEach(async item => {
+      await firestore()
+        .collection('services')
+        .doc(item.id)
+        .update({
+          position: {
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          },
+          isOnline: true,
+        });
+      console.log('Service is updated');
+    });
   };
 
   const handleLockAccount = async () => {};
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, paddingTop: Platform.OS === 'ios' ? 40 : 0}}>
       {currentLocation && profile && (
         <View style={{flex: 1}}>
           <View

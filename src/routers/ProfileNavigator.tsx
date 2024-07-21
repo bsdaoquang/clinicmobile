@@ -20,21 +20,38 @@ import {Button, Section, Space, colors} from '@bsdaoquang/rncomponent';
 import TextComponent from '../components/TextComponent';
 import Terms from '../screens/Terms';
 import Policy from '../screens/Policy';
+import {HandleAPI} from '../apis/handleAPI';
+import {useDispatch, useSelector} from 'react-redux';
+import {authSelector, logout} from '../redux/reducers/authReducer';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localNames} from '../constants/localNames';
 
 const ProfileNavigator = () => {
   const [doctorProfile, setDoctorProfile] = useState<any>();
-  const user = auth().currentUser;
+
   const [isLoading, setIsLoading] = useState(true);
   const Stack = createNativeStackNavigator();
+  const auth = useSelector(authSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    profileRef.doc(user?.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        setDoctorProfile(snap.data());
-      }
-      setIsLoading(false);
-    });
+    getDoctorProfile();
   }, []);
+
+  const getDoctorProfile = async () => {
+    const api = `/doctors/profile?id=${auth._id}`;
+    setIsLoading(true);
+
+    try {
+      const res = await HandleAPI(api);
+      setDoctorProfile(res);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
 
   return isLoading ? (
     <Section flex={1} styles={{justifyContent: 'center', alignItems: 'center'}}>
@@ -86,8 +103,10 @@ const ProfileNavigator = () => {
       <Button
         title="Đăng nhập lại"
         type="link"
-        onPress={() => {
-          auth().signOut();
+        onPress={async () => {
+          await AsyncStorage.removeItem(localNames.authData);
+          dispatch(logout({}));
+          await GoogleSignin.signOut();
         }}
       />
     </Section>

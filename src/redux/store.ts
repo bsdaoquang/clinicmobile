@@ -1,10 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { appReducer } from './reducers/appReducer';
-import { authReducer } from './reducers/authReducer';
+import { configureStore } from "@reduxjs/toolkit";
+import { positionReducer } from "./reducers/positionReducer";
+import { authReducer } from "./reducers/authReducer";
 
 const store = configureStore({
   reducer: {
-    appReducer,
+    positionReducer,
     authReducer
   }
 });

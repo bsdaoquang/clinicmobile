@@ -1,45 +1,23 @@
 import {
   Button,
   Col,
-  Divider,
   Loading,
   Row,
   Section,
   Space,
   Text,
 } from '@bsdaoquang/rncomponent';
+import {ArrowRight} from 'iconsax-react-native';
 import React, {useState} from 'react';
 import {Linking, Platform, SafeAreaView, View} from 'react-native';
-import {colors} from '../../constants/colors';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {fontFamilies} from '../../constants/fontFamilies';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
-import {HandleAuthen} from '../../utils/handleAuthentication';
-import {useStatusBar} from '../../hooks/useStatusBar';
+import SocicalLogin from '../../components/SocicalLogin';
 import TextComponent from '../../components/TextComponent';
-import {Apple, ArrowRight, Call} from 'iconsax-react-native';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
+import {useStatusBar} from '../../hooks/useStatusBar';
 
 const HomeAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleLoginWithGoogle = async () => {
-    // setIsLoading(true);
-    try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      const {idToken} = await GoogleSignin.signIn();
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      const userCreadential = await auth().signInWithCredential(
-        googleCredential,
-      );
-      await HandleAuthen.Update(userCreadential.user);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
   useStatusBar({
     color: 'transparent',
   });
@@ -55,8 +33,8 @@ const HomeAuth = () => {
         <Section styles={{paddingVertical: 20}}>
           <Row justifyContent="flex-end">
             <Button
-              title="Bạn cần hỗ trợ"
-              onPress={() => Linking.openURL('https://rncomponent.com')}
+              title="Bạn cần hỗ trợ?"
+              onPress={() => Linking.openURL('https://yhocso.com/helps')}
               type="text"
               textStyleProps={{
                 color: 'white',
@@ -70,59 +48,22 @@ const HomeAuth = () => {
             size={42}
             color={colors.white}
             // font={fontFamilies.}
-            // weight={'bold'}
+            weight={'bold'}
           />
           <Text
             color={colors.white}
-            size={18}
+            size={16}
             text="Mạng lưới chăm sóc sức khoẻ tại nhà"
           />
 
           <Text
             color={colors.white}
-            size={16}
+            size={14}
             weight={'300'}
-            text="Kiếm thêm thu nhập với thời gian rảnh của bạn"
+            text="Kiếm thêm thu nhập bất kỳ lúc nào và bất kỳ nơi đâu"
           />
         </Section>
-        <Section>
-          <Button
-            inline
-            isShadow={false}
-            color={colors.danger}
-            styles={{paddingVertical: 12}}
-            textStyleProps={{fontSize: 14}}
-            icon={<AntDesign name="google" size={20} color={colors.white} />}
-            title="Google"
-            iconExtra
-            onPress={handleLoginWithGoogle}
-          />
-          <Space height={12} />
-          <Button
-            inline
-            isShadow={false}
-            styles={{paddingVertical: 12}}
-            textStyleProps={{fontSize: 14}}
-            title="Apple"
-            iconExtra
-            icon={<Apple variant="Bold" size={24} color={colors.gray} />}
-            onPress={handleLoginWithGoogle}
-          />
-        </Section>
-        <Section>
-          <Divider>
-            <Text text="Đăng nhập với" color="white" size={14} />
-          </Divider>
-          <Button
-            inline
-            icon={<Call size={22} color={colors.gray} />}
-            isShadow={false}
-            styles={{paddingVertical: 12}}
-            textStyleProps={{fontSize: 14}}
-            title="Số điện thoại"
-            onPress={handleLoginWithGoogle}
-          />
-        </Section>
+        <SocicalLogin />
         <Section>
           <Row>
             <Col>
@@ -131,7 +72,8 @@ const HomeAuth = () => {
                 text="Bạn là nhân viên phòng khám?"
                 color={`#e0e0e0`}
               />
-              <Row>
+              <Space height={6} />
+              <Row justifyContent="flex-start">
                 <TextComponent
                   font={fontFamilies.RobotoMedium}
                   text="Đăng nhập phòng khám"
