@@ -18,7 +18,8 @@ const deviceType = DeviceInfo.getDeviceType();
 GoogleSignin.configure({
   webClientId:
     '1081533478969-81j3vbblqcl12a9fh3pdpmjolav13jph.apps.googleusercontent.com',
-  iosClientId: '',
+  iosClientId:
+    '1081533478969-bc7nagnoejhngoslqqaigh3k8e8cdd9h.apps.googleusercontent.com',
 });
 
 const App = () => {

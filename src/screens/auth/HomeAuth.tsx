@@ -1,11 +1,13 @@
 import {
   Button,
   Col,
+  Input,
   Loading,
   Row,
   Section,
   Space,
   Text,
+  Validator,
 } from '@bsdaoquang/rncomponent';
 import {ArrowRight} from 'iconsax-react-native';
 import React, {useState} from 'react';
@@ -15,8 +17,35 @@ import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
+import auth from '@react-native-firebase/auth';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const HomeAuth = () => {
+const HomeAuth = ({navigation}: any) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [errorText, seterrorText] = useState('');
+
+  const handleLoginWithPhone = async () => {
+    const validator = Validator.PhoneNumber(phoneNumber);
+
+    if (validator) {
+      setIsLoading(true);
+      seterrorText('');
+      try {
+        const confirm = await auth().signInWithPhoneNumber(
+          `+84${phoneNumber.substring(1)}`,
+          true,
+        );
+        console.log(confirm);
+        setIsLoading(false);
+        navigation.navigate('VerificationCode', {confirm});
+      } catch (error: any) {
+        seterrorText(error.message);
+        setIsLoading(false);
+      }
+    } else {
+      seterrorText('Số điện thoại không đúng, vui lòng kiểm tra lại');
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   useStatusBar({
     color: 'transparent',
@@ -42,7 +71,7 @@ const HomeAuth = () => {
             />
           </Row>
         </Section>
-        <Section styles={{flex: 1, justifyContent: 'center'}}>
+        <Section styles={{flex: 1}}>
           <Text
             text="Doctor Bee"
             size={42}
@@ -63,6 +92,35 @@ const HomeAuth = () => {
             text="Kiếm thêm thu nhập bất kỳ lúc nào và bất kỳ nơi đâu"
           />
         </Section>
+        <View
+          style={[
+            {backgroundColor: colors.primary, padding: 16, paddingVertical: 20},
+          ]}>
+          <Input
+            value={phoneNumber}
+            onChange={val => setPhoneNumber(val)}
+            placeholder="01234"
+            clear
+            bordered
+            max={10}
+            styles={{
+              borderColor: errorText ? colors.danger : colors.white,
+            }}
+            prefix={
+              <MaterialIcons name="phone" color={colors.gray2} size={22} />
+            }
+            keyboardType="phone-pad"
+          />
+          {errorText && <TextComponent text={errorText} />}
+          <Button
+            inline
+            isShadow={false}
+            styles={{paddingVertical: Platform.OS === 'ios' ? 16 : 14}}
+            title="Tiếp tục"
+            disable={phoneNumber.length < 10}
+            onPress={handleLoginWithPhone}
+          />
+        </View>
         <SocicalLogin />
         <Section>
           <Row>
@@ -85,7 +143,6 @@ const HomeAuth = () => {
             </Col>
           </Row>
         </Section>
-
         <Loading loading={isLoading} />
       </View>
     </SafeAreaView>

@@ -6,6 +6,7 @@ import {
   Comingsoon,
   Communitications,
   Histories,
+  Notifications,
   Payment,
   PaymentMethod,
   ProfileScreen,
@@ -21,7 +22,6 @@ import {
 } from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 import SupportScreen from '../screens/SupportScreen';
-import Notifications from '../screens/motifications/Notifications';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();

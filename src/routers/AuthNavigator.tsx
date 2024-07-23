@@ -1,8 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Login from '../screens/auth/Login';
-import Register from '../screens/auth/Register';
 import HomeAuth from '../screens/auth/HomeAuth';
+import {VerificationCode} from '../screens';
 
 const AuthNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -13,8 +12,7 @@ const AuthNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="HomeAuth" component={HomeAuth} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="VerificationCode" component={VerificationCode} />
     </Stack.Navigator>
   );
 };

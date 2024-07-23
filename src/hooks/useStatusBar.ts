@@ -9,13 +9,15 @@ export const useStatusBar = ({ style, hidden, color }: {
 }) => {
   useFocusEffect(
     useCallback(() => {
-      color &&
-        StatusBar.setBackgroundColor(color);
-      Platform.OS === 'android' &&
+      if (Platform.OS === 'android') {
+        color &&
+          StatusBar.setBackgroundColor(color);
         StatusBar.setTranslucent(true);
-      StatusBar.setHidden(hidden ?? false);
-      style &&
-        StatusBar.setBarStyle(style);
+        StatusBar.setHidden(hidden ?? false);
+        style &&
+          StatusBar.setBarStyle(style);
+      }
+
     }, []),
   );
 };

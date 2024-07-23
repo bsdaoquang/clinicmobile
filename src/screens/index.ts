@@ -25,6 +25,8 @@ import ReferentProgram from "./profiles/ReferentProgram";
 import Histories from "./profiles/Histories";
 import Schedulers from "./profiles/Schedulers";
 import Communitications from "./Communitications";
+import Notifications from "./notifications/Notifications";
+import VerificationCode from "./auth/VerificationCode";
 
 export {
   HomeProfile,
@@ -53,5 +55,7 @@ export {
   ReferentProgram,
   Histories,
   Schedulers,
-  Communitications
+  Communitications,
+  Notifications,
+  VerificationCode
 };

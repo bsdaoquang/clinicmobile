@@ -1,37 +1,33 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Container} from '../../components';
 import {
   Button,
-  Col,
-  Input,
   Loading,
   Row,
   Section,
   Space,
   Text,
-  Validator,
 } from '@bsdaoquang/rncomponent';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../constants/colors';
-import TextComponent from '../../components/TextComponent';
-import {fontFamilies} from '../../constants/fontFamilies';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, StyleSheet, TextInput} from 'react-native';
-import {HandleAuthen} from '../../utils/handleAuthentication';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useDispatch} from 'react-redux';
+import {HandleAPI} from '../../apis/handleAPI';
+import {Container} from '../../components';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
+import {localNames} from '../../constants/localNames';
+import {login} from '../../redux/reducers/authReducer';
 
 const WIDTH = (Dimensions.get('window').width - 82) / 6;
 
-const Login = () => {
-  const [phonenumber, setPhonenumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+const VerificationCode = ({navigation, route}: any) => {
+  const confirm = route.params.confirm;
+
   const [errorText, setErrorText] = useState('');
-  const [confirm, setConfirm] =
-    useState<FirebaseAuthTypes.ConfirmationResult>();
   const [numcodes, setNumcodes] = useState<string[]>([]);
-  const [existimes, setExistimes] = useState(60);
+  const [existimes, setExistimes] = useState(120);
   const [isVerifing, setIsVerifing] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (confirm && existimes > 0) {
@@ -50,29 +46,6 @@ const Login = () => {
   const inp5 = useRef<TextInput>(null);
   const inp6 = useRef<TextInput>(null);
 
-  const handleLoginWithPhone = async () => {
-    const validator = Validator.PhoneNumber(phonenumber);
-
-    if (validator) {
-      setErrorText('');
-      setIsLoading(true);
-      try {
-        const confirm = await auth().signInWithPhoneNumber(
-          `+84${phonenumber.substring(1)}`,
-          true,
-        );
-
-        setConfirm(confirm);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-    } else {
-      setErrorText('Số điện thoại không đúng định dạng');
-    }
-  };
-
   const handleComfirmCode = async () => {
     if (numcodes.length === 6) {
       let code = ``;
@@ -83,12 +56,32 @@ const Login = () => {
         const userCreadential = await confirm?.confirm(code);
 
         if (userCreadential) {
-          HandleAuthen.Update(userCreadential.user);
-        }
+          const user = userCreadential.user;
 
-        setIsVerifing(false);
+          const data = {
+            email: user.email,
+            phone: user.phoneNumber,
+            photo: user.photoURL,
+            name: user.displayName,
+          };
+
+          const res: any = await HandleAPI(
+            `/auth/doctor-register`,
+            data,
+            'post',
+          );
+
+          dispatch(login(res));
+          await AsyncStorage.setItem(localNames.authData, JSON.stringify(res));
+
+          setIsVerifing(false);
+
+          navigation.navigate(
+            res.isRequireUpdateProfile ? 'UpdateHealthInfo' : 'Main',
+          );
+        }
       } catch (error: any) {
-        console.log(error);
+        navigation.goBack();
         setErrorText(error.message);
         setIsVerifing(false);
       }
@@ -103,34 +96,9 @@ const Login = () => {
     setNumcodes(items);
   };
 
-  const handleLoginWithGoogle = async () => {
-    setIsVerifing(true);
-    try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      const {idToken} = await GoogleSignin.signIn();
-
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      const userCreadential = await auth().signInWithCredential(
-        googleCredential,
-      );
-
-      await HandleAuthen.Update(userCreadential.user);
-      setIsVerifing(false);
-    } catch (error) {
-      console.log(error);
-      setIsVerifing(false);
-    }
-  };
-
-  return confirm ? (
-    <Container isFlex>
+  return (
+    <Container title="Xác minh đăng nhập" back isFlex>
       <Section>
-        <TextComponent
-          size={28}
-          font={fontFamilies.RobotoBold}
-          text={'Xác minh đăng nhập'}
-        />
         <Text text="Nhập vào 6 số bảo mật được gửi đến số điện thoại của bạn" />
       </Section>
       <Section styles={{flex: 1, justifyContent: 'center'}}>
@@ -157,7 +125,6 @@ const Login = () => {
             onChangeText={val => {
               handleChangeNumCode(1, val);
               inp3.current?.focus();
-              !val && inp1.current?.focus();
             }}
             onSubmitEditing={() => inp3.current?.focus()}
           />
@@ -171,7 +138,6 @@ const Login = () => {
             onChangeText={val => {
               handleChangeNumCode(2, val);
               inp4.current?.focus();
-              !val && inp2.current?.focus();
             }}
             onSubmitEditing={() => inp4.current?.focus()}
           />
@@ -185,7 +151,6 @@ const Login = () => {
             onChangeText={val => {
               handleChangeNumCode(3, val);
               inp5.current?.focus();
-              !val && inp3.current?.focus();
             }}
             onSubmitEditing={() => inp5.current?.focus()}
           />
@@ -199,7 +164,6 @@ const Login = () => {
             onChangeText={val => {
               handleChangeNumCode(4, val);
               inp6.current?.focus();
-              !val && inp4.current?.focus();
             }}
             onSubmitEditing={() => inp6.current?.focus()}
           />
@@ -212,7 +176,6 @@ const Login = () => {
             maxLength={1}
             onChangeText={val => {
               handleChangeNumCode(5, val);
-              !val && inp5.current?.focus();
             }}
             onSubmitEditing={handleComfirmCode}
           />
@@ -228,8 +191,7 @@ const Login = () => {
           <Row
             onPress={() => {
               setNumcodes([]);
-              setConfirm(undefined);
-              handleLoginWithPhone();
+              navigation.goBack();
             }}>
             <Text text="Gửi lại mã xác minh" color={colors.primary} />
           </Row>
@@ -237,71 +199,18 @@ const Login = () => {
       </Section>
       <Section>
         <Button
-          loading={isLoading}
-          disable={phonenumber.length === 0}
-          title="Xác minh"
-          // type="primary"
           color={colors.primary}
+          title="Xác minh"
           onPress={handleComfirmCode}
         />
       </Section>
+
       <Loading loading={isVerifing} />
-    </Container>
-  ) : (
-    <Container isFlex>
-      <Section>
-        <TextComponent
-          size={28}
-          font={fontFamilies.RobotoBold}
-          text={'Rhino'}
-        />
-        <Text text="Tìm kiếm dịch vụ y tế uy tín chất lượng ngay gần bạn" />
-      </Section>
-      <Section styles={{flex: 1, justifyContent: 'center'}}>
-        <Input
-          placeholder="Số điện thoại"
-          clear
-          disable={isLoading}
-          prefix={<FontAwesome name="phone" size={22} color={colors.gray} />}
-          value={phonenumber}
-          onChange={val => setPhonenumber(val)}
-          inputStyles={{
-            fontFamily: fontFamilies.RobotoBold,
-            color: colors.text,
-            fontSize: 16,
-          }}
-          required
-          keyboardType="phone-pad"
-        />
-        {errorText && <Text text={errorText} color={colors.danger} />}
-      </Section>
-      <Section>
-        <Row>
-          <Button
-            disable={isLoading}
-            // title="Google"
-            color={colors.danger}
-            icon={<AntDesign name="google" color={colors.white} size={22} />}
-            onPress={handleLoginWithGoogle}
-          />
-          <Space width={12} />
-          <Col>
-            <Button
-              loading={isLoading}
-              disable={phonenumber.length === 0}
-              title="Đăng nhập"
-              // type="primary"
-              color={colors.primary}
-              onPress={handleLoginWithPhone}
-            />
-          </Col>
-        </Row>
-      </Section>
     </Container>
   );
 };
 
-export default Login;
+export default VerificationCode;
 
 const localStyles = StyleSheet.create({
   input: {
