@@ -16,8 +16,7 @@ const Router = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    HandleNotification.CheckNotificationPerson();
-
+    // HandleNotification.CheckNotificationPerson();
     getLocalData();
   }, []);
 

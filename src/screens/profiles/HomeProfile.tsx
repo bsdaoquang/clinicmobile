@@ -3,35 +3,90 @@ import {
   Input,
   Loading,
   Section,
+  SelectModel,
   Validator,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Container} from '../../components';
+import {Container, DropdownPicker} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {profileRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {showToast} from '../../utils/showToast';
-
-const user = auth().currentUser;
+import {HandleAPI} from '../../apis/handleAPI';
+import {useDispatch, useSelector} from 'react-redux';
+import {authSelector, logout} from '../../redux/reducers/authReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localNames} from '../../constants/localNames';
 
 const HomeProfile = ({navigation}: any) => {
+  const user = useSelector(authSelector);
+
   const initstate = {
     phoneNumber: user ? (user.phoneNumber ? user.phoneNumber : '') : '',
-    displayName: user ? (user.displayName ? user.displayName : '') : '',
+    displayName: user ? (user.name ? user.name : '') : '',
     address: '',
+    title: '',
+    special: '',
+    expTime: 1,
+    workAddress: '',
     referentCode: '',
   };
 
   const [formData, setFormData] = useState(initstate);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [titles, setTitles] = useState<SelectModel[]>([
+    {
+      label: 'Kỹ thuật viên',
+      value: 'ktv',
+    },
+    {
+      label: 'Điều dưỡng',
+      value: 'dd',
+    },
+    {
+      label: 'Nữ hộ sinh',
+      value: 'nhs',
+    },
+    {
+      label: 'Bác sĩ',
+      value: 'bs',
+    },
+    {
+      label: 'Khác',
+      value: 'other',
+    },
+  ]);
+  const [specials, setSpecials] = useState<SelectModel[]>([
+    {
+      label: 'Nội khoa',
+      value: 'noi-khoa',
+    },
+    {
+      label: 'Ngoại khoa',
+      value: 'ngoai-khoa',
+    },
+    {
+      label: 'Phục hồi chức năng',
+      value: 'phuc-hoi-chuc-nang',
+    },
+    {
+      label: 'Sản phụ khoa',
+      value: 'san-phu-khoa',
+    },
+    {
+      label: 'Khác',
+      value: 'other',
+    },
+  ]);
+
+  const dispatch = useDispatch();
 
   useStatusBar({
     style: 'dark-content',
@@ -39,14 +94,8 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
-    if (user) {
-      setIsLoading(true);
-      if (user.email && user.phoneNumber && user.emailVerified) {
-        checkValues();
-      } else {
-        setIsLoading(false);
-      }
-    }
+    user && checkValues();
+    console.log(user);
   }, [user]);
 
   useEffect(() => {
@@ -59,21 +108,14 @@ const HomeProfile = ({navigation}: any) => {
     setIsLoading(true);
 
     try {
-      profileRef
-        .doc(user?.uid)
-        .get()
-        .then(snap => {
-          if (snap.exists) {
-            const data: any = snap.data();
-            if (!data.isVerifing) {
-              navigation.navigate(
-                !data.status || data.status !== 'pending'
-                  ? 'UploadCurriculumVitae'
-                  : 'VerifyStatus',
-              );
-            }
-          }
-        });
+      const res: any = await HandleAPI(`/doctors/profile?id=${user._id}`);
+      if (res.isVerifing) {
+        navigation.navigate(
+          !res.status || res.status !== 'pending'
+            ? 'UploadCurriculumVitae'
+            : 'VerifyStatus',
+        );
+      }
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -82,49 +124,42 @@ const HomeProfile = ({navigation}: any) => {
   };
 
   const handleUpdateProfile = async () => {
-    // check phone number
-    setIsLoading(true);
-    const isValidPhone = Validator.PhoneNumber(formData.phoneNumber);
-    if (isValidPhone) {
-      setErrorText('');
-
-      try {
-        const phoneNumber = `+84${formData.phoneNumber.substring(1)}`;
-        const confirm = await auth().verifyPhoneNumber(phoneNumber, true);
-
-        if (confirm) {
-          const user = auth().currentUser;
-
-          await user?.updateProfile({
-            displayName: formData.displayName,
-          });
-
-          await profileRef.doc(user?.uid).set({
-            ...formData,
-            createdAt: Date.now(),
-            email: user?.email ?? '',
-            amount: 0,
-          });
-
-          navigation.navigate('Verification', {
-            confirm,
-          });
-        } else {
-          showToast(`Không thể xác minh số điện thoại`);
-          setIsLoading(false);
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      setErrorText('Số điện thoại không đúng định dạng');
-    }
+    // // check phone number
+    // setIsLoading(true);
+    // const isValidPhone = Validator.PhoneNumber(formData.phoneNumber);
+    // if (isValidPhone) {
+    //   setErrorText('');
+    //   try {
+    //     const phoneNumber = `+84${formData.phoneNumber.substring(1)}`;
+    //     const confirm = await auth().verifyPhoneNumber(phoneNumber, true);
+    //     if (confirm) {
+    //       const user = auth().currentUser;
+    //       await user?.updateProfile({
+    //         displayName: formData.displayName,
+    //       });
+    //       await profileRef.doc(user?.uid).set({
+    //         ...formData,
+    //         createdAt: Date.now(),
+    //         email: user?.email ?? '',
+    //         amount: 0,
+    //       });
+    //       navigation.navigate('Verification', {
+    //         confirm,
+    //       });
+    //     } else {
+    //       showToast(`Không thể xác minh số điện thoại`);
+    //       setIsLoading(false);
+    //     }
+    //     setIsLoading(false);
+    //   } catch (error) {
+    //     console.log(error);
+    //     setIsLoading(false);
+    //   }
+    //   setIsLoading(false);
+    // } else {
+    //   setIsLoading(false);
+    //   setErrorText('Số điện thoại không đúng định dạng');
+    // }
   };
 
   const handleChangeData = (key: string, val: string) => {
@@ -163,6 +198,28 @@ const HomeProfile = ({navigation}: any) => {
           label="Số điện thoại"
           required
           helpText="Nhập số điện thoại của bạn"
+        />
+        <DropdownPicker
+          data={{
+            title: 'Chức danh nghề nghiệp',
+            values: titles,
+          }}
+          onSelect={val => handleChangeData('title', val as string)}
+          selected={formData.title}
+          label="Chức danh nghề nghiệp"
+          placeholder="Chọn"
+          onAddNew={val => setTitles([...titles, val])}
+        />
+        <DropdownPicker
+          data={{
+            title: 'Lĩnh vực chuyên môn',
+            values: specials,
+          }}
+          onSelect={val => handleChangeData('special', val as string)}
+          selected={formData.special}
+          label="Lĩnh vực chuyên môn"
+          placeholder="Chọn"
+          onAddNew={val => setSpecials([...specials, val])}
         />
         <Input
           value={formData.address}
@@ -233,7 +290,9 @@ const HomeProfile = ({navigation}: any) => {
           type="link"
           onPress={async () => {
             await GoogleSignin.signOut();
-            await auth().signOut();
+            await AsyncStorage.removeItem(localNames.authData);
+            dispatch(logout({}));
+            // await auth().signOut();
           }}
         />
       </Section>

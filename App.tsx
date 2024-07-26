@@ -12,6 +12,8 @@ import {colors} from './src/constants/colors';
 import {fontFamilies} from './src/constants/fontFamilies';
 import store from './src/redux/store';
 import Router from './src/routers/Router';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Host} from 'react-native-portalize';
 
 const deviceType = DeviceInfo.getDeviceType();
 
@@ -81,12 +83,16 @@ const App = () => {
 
   return (
     <>
-      <NavigationContainer>
-        <Provider store={store}>
-          <Router />
-        </Provider>
-        <Toast config={toastConfig} />
-      </NavigationContainer>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <NavigationContainer>
+          <Provider store={store}>
+            <Host>
+              <Router />
+            </Host>
+          </Provider>
+          <Toast config={toastConfig} />
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </>
   );
 };

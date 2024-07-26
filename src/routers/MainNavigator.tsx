@@ -6,6 +6,7 @@ import {
   Comingsoon,
   Communitications,
   Histories,
+  HomeProfile,
   Notifications,
   Payment,
   PaymentMethod,

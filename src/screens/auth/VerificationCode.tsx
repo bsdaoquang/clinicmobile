@@ -57,10 +57,9 @@ const VerificationCode = ({navigation, route}: any) => {
 
         if (userCreadential) {
           const user = userCreadential.user;
-
           const data = {
             email: user.email,
-            phone: user.phoneNumber,
+            phoneNumber: user.phoneNumber,
             photo: user.photoURL,
             name: user.displayName,
           };
@@ -71,14 +70,14 @@ const VerificationCode = ({navigation, route}: any) => {
             'post',
           );
 
-          dispatch(login(res));
           await AsyncStorage.setItem(localNames.authData, JSON.stringify(res));
+          dispatch(login(res));
 
           setIsVerifing(false);
 
-          navigation.navigate(
-            res.isRequireUpdateProfile ? 'UpdateHealthInfo' : 'Main',
-          );
+          // navigation.navigate(
+          //   res.isRequireUpdateProfile ? 'UpdateHealthInfo' : 'Main',
+          // );
         }
       } catch (error: any) {
         navigation.goBack();

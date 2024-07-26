@@ -4278,7 +4278,9 @@ __metadata:
     react-native-gesture-handler: ^2.17.1
     react-native-image-crop-picker: ^0.41.2
     react-native-maps: ^1.15.6
+    react-native-modalize: ^2.1.1
     react-native-orientation-locker: ^1.7.0
+    react-native-portalize: ^1.0.7
     react-native-pure-jwt: ^3.0.2
     react-native-ratings: ^8.1.0
     react-native-reanimated: ^3.12.1
@@ -9001,6 +9003,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-modalize@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "react-native-modalize@npm:2.1.1"
+  peerDependencies:
+    react: "> 15.0.0"
+    react-native: "> 0.50.0"
+    react-native-gesture-handler: "> 1.0.0"
+  checksum: c383c79d9397d72e285b67eb8c50e0743037bb72f0d12dc5a743ae45d092a4aa87e6fba0cd8cb8bef4ce675ffe784adb24bc996c137b4a30d9b8a882e7610c30
+  languageName: node
+  linkType: hard
+
 "react-native-orientation-locker@npm:^1.7.0":
   version: 1.7.0
   resolution: "react-native-orientation-locker@npm:1.7.0"
@@ -9012,6 +9025,16 @@ __metadata:
     react-native-windows:
       optional: true
   checksum: 495010b3150adcbc1dcb24e0ca5c13838f02dbcee7c6ec391fe07bd47f9b75ac57b0ec1144aaab5d6ed62e7a354497e9fa5399359d896099ecbea439908817cf
+  languageName: node
+  linkType: hard
+
+"react-native-portalize@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "react-native-portalize@npm:1.0.7"
+  peerDependencies:
+    react: "> 15.0.0"
+    react-native: "> 0.50.0"
+  checksum: 93c728c086f52bae20a75c0932d718f553d3bcf6383d3f0bb3a2c37865f22a28a41dcbe02787cb88a708dc8423b69b71bcf8ee02421238805042eda595c271e0
   languageName: node
   linkType: hard
 

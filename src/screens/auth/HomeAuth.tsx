@@ -35,9 +35,8 @@ const HomeAuth = ({navigation}: any) => {
           `+84${phoneNumber.substring(1)}`,
           true,
         );
-        console.log(confirm);
         setIsLoading(false);
-        navigation.navigate('VerificationCode', {confirm});
+        confirm && navigation.navigate('VerificationCode', {confirm});
       } catch (error: any) {
         seterrorText(error.message);
         setIsLoading(false);

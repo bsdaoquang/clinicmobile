@@ -1,22 +1,31 @@
-import {Row, Section, Space} from '@bsdaoquang/rncomponent';
-import {TickCircle} from 'iconsax-react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {
+  Button,
+  Col,
+  globalStyles,
+  Input,
+  replaceName,
+  Row,
+  Section,
+  SelectModel,
+  Space,
+} from '@bsdaoquang/rncomponent';
+import {TickCircle, TickSquare} from 'iconsax-react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Keyboard, TouchableOpacity, View} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {ButtonComponent, Input, Tag, TextComponent} from '.';
 import {colors} from '../constants/colors';
 import {fontFamilies} from '../constants/fontFamilies';
-import {Select} from '../models/Select';
-import {SelectModel} from '../models/SelectModel';
-import {globalStyles} from '../styles/globalStyles';
-import {replaceName} from '../utils/replaceName';
+import TextComponent from './TextComponent';
 
 interface Props {
-  data: Select;
+  data: {
+    title: string;
+    values: SelectModel[];
+  };
   onSelect: (val: string | string[]) => void;
   selected: string | string[];
   placeholder?: string;
@@ -25,9 +34,10 @@ interface Props {
   type?: 'button' | 'link' | 'input';
   disable?: boolean;
   inline?: boolean;
+  onAddNew?: (val: SelectModel) => void;
 }
 
-export const DropdownPicker = (props: Props) => {
+const DropdownPicker = (props: Props) => {
   const {
     data,
     onSelect,
@@ -38,11 +48,14 @@ export const DropdownPicker = (props: Props) => {
     type,
     disable,
     inline,
+    onAddNew,
   } = props;
 
   const [searchKey, setSearchKey] = useState('');
   const [results, setResults] = useState<SelectModel[]>(data.values ?? []);
   const [itemsSelected, setItemsSelected] = useState<string[]>([]);
+  const [value, setValue] = useState('');
+  const [isAddNewValue, setIsAddNewValue] = useState(false);
 
   const modalizeRef = useRef<Modalize>();
 
@@ -60,7 +73,7 @@ export const DropdownPicker = (props: Props) => {
     if (!searchKey) {
       setResults(data.values);
     } else {
-      const items = data.values.filter(element =>
+      const items = data.values.filter((element: any) =>
         replaceName(element.label).includes(replaceName(searchKey)),
       );
 
@@ -69,7 +82,7 @@ export const DropdownPicker = (props: Props) => {
   }, [searchKey]);
 
   const renderSelectedLabel = (id: string) => {
-    const item = data.values.find(element => element.value === id);
+    const item = data.values.find((element: any) => element.value === id);
 
     return item ? item?.label : '';
   };
@@ -100,14 +113,15 @@ export const DropdownPicker = (props: Props) => {
 
     return (
       item && (
-        <Tag
-          onPress={disable ? undefined : () => handleSelectItem(id)}
-          text={item.label}
-          onClose={disable ? undefined : () => handleSelectItem(id)}
-          key={item.value}
-          textColor={`${colors.primary}80`}
-          color={`${colors.blue10}`}
-        />
+        <></>
+        // <Tag
+        //   onPress={disable ? undefined : () => handleSelectItem(id)}
+        //   text={item.label}
+        //   onClose={disable ? undefined : () => handleSelectItem(id)}
+        //   key={item.value}
+        //   textColor={`${colors.primary}80`}
+        //   color={`${colors.blue10}`}
+        // />
       )
     );
   };
@@ -119,9 +133,9 @@ export const DropdownPicker = (props: Props) => {
           {label && (
             <TextComponent
               text={label}
-              type="title"
               size={14}
-              font={fontFamilies.medium}
+              font={fontFamilies.RobotoMedium}
+              styles={{marginBottom: 8}}
             />
           )}
           <Row
@@ -131,6 +145,7 @@ export const DropdownPicker = (props: Props) => {
                 ? undefined
                 : () => {
                     modalizeRef.current?.open();
+                    Keyboard.dismiss();
                   }
             }
             styles={[
@@ -138,8 +153,8 @@ export const DropdownPicker = (props: Props) => {
               {
                 minHeight: 48,
                 marginBottom: inline ? 0 : 12,
-                borderColor: disable ? colors.gray90 : colors.gray70,
-                backgroundColor: disable ? colors.gray90 : colors.white,
+                borderColor: disable ? colors.light : `#e0e0e0`,
+                backgroundColor: disable ? colors.light : colors.white,
               },
             ]}>
             {multible ? (
@@ -153,30 +168,33 @@ export const DropdownPicker = (props: Props) => {
                     <TextComponent
                       text={placeholder ?? 'Chọn'}
                       flex={1}
-                      color={colors.gray70}
+                      color={colors.gray}
                     />
                   )}
                 </Row>
               </View>
             ) : (
-              <TextComponent
-                numberOfLine={1}
-                text={
-                  selected
-                    ? renderSelectedLabel(selected as string)
-                    : placeholder ?? ''
-                }
-                flex={1}
-                color={selected ? colors.primary : colors.gray70}
-                font={fontFamilies.medium}
-              />
+              <Col>
+                <TextComponent
+                  numberOfLine={1}
+                  text={
+                    selected
+                      ? renderSelectedLabel(selected as string)
+                      : placeholder
+                      ? placeholder
+                      : ''
+                  }
+                  flex={1}
+                  color={selected ? colors.text : colors.gray2}
+                />
+              </Col>
             )}
 
             <Space width={8} />
             <MaterialIcons
               name="arrow-drop-down"
-              size={24}
-              color={colors.gray50}
+              size={28}
+              color={colors.gray2}
             />
           </Row>
         </>
@@ -190,17 +208,17 @@ export const DropdownPicker = (props: Props) => {
             text={
               label
                 ? label
-                : data.values.find(element => element.value === selected)
+                : data.values.find((element: any) => element.value === selected)
                     ?.label ?? ''
             }
-            font={fontFamilies.medium}
-            color={disable ? colors.dark10 : colors.primary}
+            font={fontFamilies.RobotoMedium}
+            color={disable ? colors.text : colors.primary}
           />
           <Space width={4} />
           <FontAwesome5
             name="caret-down"
             size={18}
-            color={disable ? colors.dark10 : colors.primary}
+            color={disable ? colors.text : colors.primary}
           />
         </Row>
       )}
@@ -218,33 +236,29 @@ export const DropdownPicker = (props: Props) => {
           HeaderComponent={
             <Row
               styles={[
-                globalStyles.borderBottom,
                 {
                   padding: 16,
+                  paddingTop: 20,
                 },
               ]}>
-              <TextComponent
-                type="title"
-                bottom={0}
-                text={data.title}
-                size={16}
-                styles={{marginBottom: 0}}
-                flex={1}
-              />
-              <ButtonComponent
-                icon={
-                  <AntDesign name="close" color={colors.dark20} size={22} />
-                }
-                onPress={() => modalizeRef.current?.close()}
-              />
+              <Col>
+                <TextComponent
+                  text={data.title}
+                  size={16}
+                  fontFamilies={fontFamilies.RobotoMedium}
+                />
+              </Col>
+              <TouchableOpacity onPress={() => modalizeRef.current?.close()}>
+                <AntDesign name="close" color={colors.text} size={22} />
+              </TouchableOpacity>
             </Row>
           }
           FooterComponent={
             multible && data.values.length > 0 ? (
               <>
                 <Section styles={{paddingTop: 20}}>
-                  <ButtonComponent
-                    text="Đồng ý"
+                  <Button
+                    title="Đồng ý"
                     onPress={() => {
                       // onSelect(itemsSelected);
                       modalizeRef.current?.close();
@@ -253,7 +267,9 @@ export const DropdownPicker = (props: Props) => {
                   />
                 </Section>
               </>
-            ) : undefined
+            ) : (
+              <Space height={40} />
+            )
           }
           flatListProps={{
             data: searchKey ? results : data.values,
@@ -275,59 +291,97 @@ export const DropdownPicker = (props: Props) => {
             maxToRenderPerBatch: 20,
             removeClippedSubviews: true,
             renderItem: ({item, index}) => (
-              <Row
-                onPress={() => {
-                  if (multible) {
-                    handleSelectItem(item.value);
-                  } else {
-                    onSelect(item.value);
-                    modalizeRef.current?.close();
-                  }
-                }}
-                key={item.value}
-                styles={[
-                  globalStyles.borderBottom,
-                  globalStyles.center,
-                  {
-                    paddingVertical: 14,
-                    paddingHorizontal: 16,
-                    borderBottomColor: colors.white93,
-                    borderBottomWidth: index < data.values.length - 1 ? 1 : 0,
-                  },
-                ]}>
-                {multible ? (
-                  <TextComponent
-                    text={item.label}
-                    color={
-                      itemsSelected && itemsSelected.includes(item.value)
-                        ? colors.primary
-                        : colors.dark20
+              <View key={item.value}>
+                <Row
+                  onPress={() => {
+                    if (multible) {
+                      handleSelectItem(item.value);
+                    } else {
+                      if (item.value === 'other') {
+                        setIsAddNewValue(true);
+                      } else {
+                        onSelect(item.value);
+                        modalizeRef.current?.close();
+                      }
                     }
-                    flex={1}
-                    font={
-                      itemsSelected && itemsSelected.includes(item.value)
-                        ? fontFamilies.medium
-                        : fontFamilies.regular
-                    }
-                  />
-                ) : (
-                  <TextComponent
-                    text={item.label}
-                    color={
-                      selected === item.value ? colors.primary : colors.dark20
-                    }
-                    flex={1}
-                    font={
-                      selected === item.value
-                        ? fontFamilies.medium
-                        : fontFamilies.regular
-                    }
-                  />
+                  }}
+                  styles={[
+                    globalStyles.center,
+                    {
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                      borderBottomColor: colors.white,
+                      borderBottomWidth: index < data.values.length - 1 ? 1 : 0,
+                    },
+                  ]}>
+                  {multible ? (
+                    <TextComponent
+                      text={item.label}
+                      color={
+                        itemsSelected && itemsSelected.includes(item.value)
+                          ? colors.primary
+                          : colors.gray
+                      }
+                      flex={1}
+                      font={
+                        itemsSelected && itemsSelected.includes(item.value)
+                          ? fontFamilies.RobotoMedium
+                          : fontFamilies.RobotoRegular
+                      }
+                    />
+                  ) : (
+                    <Col>
+                      <TextComponent
+                        text={item.label}
+                        color={
+                          selected === item.value ? colors.primary : colors.text
+                        }
+                        flex={1}
+                        font={
+                          selected === item.value
+                            ? fontFamilies.RobotoMedium
+                            : fontFamilies.RobotoRegular
+                        }
+                      />
+                    </Col>
+                  )}
+                  {itemsSelected && itemsSelected.includes(item.value) && (
+                    <TickCircle size={20} color={colors.primary} />
+                  )}
+                </Row>
+                {item.value === 'other' && isAddNewValue && (
+                  <Row styles={{paddingHorizontal: 16}}>
+                    <Col>
+                      <Input
+                        inline
+                        radius={8}
+                        value={value}
+                        onChange={val => setValue(val)}
+                        placeholder="Nội dung"
+                      />
+                    </Col>
+                    <Space width={12} />
+                    <TouchableOpacity
+                      onPress={() => {
+                        onSelect(replaceName(value));
+                        setValue('');
+                        setIsAddNewValue(false);
+                        onAddNew &&
+                          onAddNew({
+                            label: value,
+                            value: replaceName(value),
+                          });
+                        modalizeRef.current?.close();
+                      }}>
+                      <TickSquare
+                        variant="Bold"
+                        size={28}
+                        color={colors.primary}
+                      />
+                    </TouchableOpacity>
+                  </Row>
                 )}
-                {itemsSelected && itemsSelected.includes(item.value) && (
-                  <TickCircle size={20} color={colors.primary} />
-                )}
-              </Row>
+              </View>
             ),
             showsVerticalScrollIndicator: false,
           }}
@@ -336,3 +390,5 @@ export const DropdownPicker = (props: Props) => {
     </>
   );
 };
+
+export default DropdownPicker;

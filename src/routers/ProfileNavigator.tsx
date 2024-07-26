@@ -40,7 +40,7 @@ const ProfileNavigator = () => {
   }, []);
 
   const getDoctorProfile = async () => {
-    const api = `/doctors/profile?id=${auth._id}`;
+    const api = `/doctors/documents?id=${auth._id}`;
     setIsLoading(true);
 
     try {
