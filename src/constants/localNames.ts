@@ -1,3 +1,4 @@
 export const localNames = {
-  authData: 'authData'
+  authData: 'authData',
+  profile: 'profile',
 };

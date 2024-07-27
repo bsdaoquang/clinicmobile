@@ -7,9 +7,9 @@ import App from './App';
 import {name as appName} from './app.json';
 import messaging from '@react-native-firebase/messaging';
 
-if (Platform.OS === 'ios') {
-  messaging().registerDeviceForRemoteMessages();
-}
+// if (Platform.OS === 'ios') {
+//   messaging().registerDeviceForRemoteMessages();
+// }
 
 messaging().setBackgroundMessageHandler(async mess => {
   console.log(mess);

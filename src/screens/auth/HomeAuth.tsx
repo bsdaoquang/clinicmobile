@@ -23,6 +23,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const HomeAuth = ({navigation}: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorText, seterrorText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  useStatusBar({
+    color: 'transparent',
+  });
 
   const handleLoginWithPhone = async () => {
     const validator = Validator.PhoneNumber(phoneNumber);
@@ -45,10 +49,6 @@ const HomeAuth = ({navigation}: any) => {
       seterrorText('Số điện thoại không đúng, vui lòng kiểm tra lại');
     }
   };
-  const [isLoading, setIsLoading] = useState(false);
-  useStatusBar({
-    color: 'transparent',
-  });
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.primary}}>

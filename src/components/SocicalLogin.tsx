@@ -16,6 +16,8 @@ import {HandleAPI} from '../apis/handleAPI';
 import TextComponent from './TextComponent';
 import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
+import appleAuth from '@invertase/react-native-apple-authentication';
+import auth from '@react-native-firebase/auth';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +57,28 @@ const SocicalLogin = () => {
     }
   };
 
-  const handleLoginWithApple = async () => {};
+  const handleLoginWithApple = async () => {
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+
+      if (!appleAuthRequestResponse.identityToken) {
+        throw new Error('Apple Sign-In failed - no identify token returned');
+      }
+
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user,
+      );
+
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        console.log(credentialState);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Section>
@@ -73,14 +96,14 @@ const SocicalLogin = () => {
         title="Tiếp tục với Google"
         onPress={handleLoginWithGoogle}
       />
-      {Platform.OS === 'ios' && (
+      {/* {Platform.OS === 'ios' && (
         <Button
           icon={<Apple size={24} color={colors.black} variant="Bold" />}
           iconExtra
           title="Tiếp tục với Apple"
           onPress={handleLoginWithApple}
         />
-      )}
+      )} */}
       <Loading loading={isLoading} />
     </Section>
   );

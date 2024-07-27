@@ -369,7 +369,7 @@ const DropdownPicker = (props: Props) => {
                         onAddNew &&
                           onAddNew({
                             label: value,
-                            value: replaceName(value),
+                            value: value,
                           });
                         modalizeRef.current?.close();
                       }}>

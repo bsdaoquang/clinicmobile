@@ -1,11 +1,4 @@
-import {
-  Button,
-  Col,
-  Row,
-  Section,
-  Space,
-  colors,
-} from '@bsdaoquang/rncomponent';
+import {Button, Col, Row, Section, Space} from '@bsdaoquang/rncomponent';
 import React from 'react';
 import ImageCropPicker, {
   ImageOrVideo,
@@ -15,6 +8,7 @@ import ImageCropPicker, {
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {showToast} from '../utils/showToast';
+import {colors} from '../constants/colors';
 
 type Props = {
   onSelectedFile: (files: ImageOrVideo) => void;
@@ -39,6 +33,7 @@ const UploadButton = (props: Props) => {
             type="link"
             isShadow={false}
             title="Chụp ảnh"
+            textStyleProps={{color: colors.primary}}
             icon={<Ionicons name="camera" color={colors.primary} size={22} />}
             onPress={async () =>
               await ImageCropPicker.openCamera({...options})
@@ -59,7 +54,8 @@ const UploadButton = (props: Props) => {
             inline
             type="link"
             isShadow={false}
-            title="Thư viện"
+            title="Chọn từ Thư viện"
+            textStyleProps={{color: colors.primary}}
             icon={<Entypo name="images" color={colors.primary} size={22} />}
             onPress={async () =>
               await ImageCropPicker.openPicker({...options})

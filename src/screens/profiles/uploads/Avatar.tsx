@@ -1,37 +1,56 @@
-import {Button, Loading, Row, Section, colors} from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
+import {
+  Button,
+  Loading,
+  Row,
+  Section,
+  Space,
+  colors,
+} from '@bsdaoquang/rncomponent';
 import React, {useState} from 'react';
 import {Image} from 'react-native';
 import {ImageOrVideo} from 'react-native-image-crop-picker';
+import {useSelector} from 'react-redux';
 import {Container, UploadButton} from '../../../components';
 import TextComponent from '../../../components/TextComponent';
 import {sizes} from '../../../constants/sizes';
-import {profileRef} from '../../../firebase/firebaseConfig';
+import {authSelector} from '../../../redux/reducers/authReducer';
 import {HandleFile} from '../../../utils/handleFile';
 import {showToast} from '../../../utils/showToast';
+import {HandleAPI} from '../../../apis/handleAPI';
 
 const Avatar = ({navigation}: any) => {
   const [file, setfile] = useState<ImageOrVideo>();
   const [isUploading, setIsUploading] = useState(false);
-  const user = auth().currentUser;
+  const auth = useSelector(authSelector);
 
   const handleUploadFile = async () => {
-    if (file && user) {
+    if (file && auth) {
       setIsUploading(true);
 
       try {
         const res = await HandleFile.Upload(file);
-        if (res) {
-          await profileRef.doc(user.uid).update({
-            avatar: {
-              ...res,
-              verify: false,
-            },
-          });
 
-          await user.updateProfile({
-            photoURL: res.downloadUrl,
-          });
+        if (res) {
+          await HandleAPI(
+            `/doctors/update-document?id=${auth._id}`,
+            {
+              avatar: [
+                {
+                  ...res,
+                  verify: false,
+                },
+              ],
+            },
+            'put',
+          );
+
+          await HandleAPI(
+            `/doctors/update?id=${auth._id}`,
+            {
+              photoUrl: res.downloadUrl,
+            },
+            'put',
+          );
         }
         setIsUploading(false);
         navigation.goBack();
@@ -48,6 +67,7 @@ const Avatar = ({navigation}: any) => {
     <Container isFlex back title="Cập nhật ảnh đại diện">
       <Section>
         <TextComponent text="Được sử dụng làm ảnh đại diện, giúp khách hàng dễ dàng nhận ra bạn" />
+        <Space height={8} />
         <TextComponent
           text="Ảnh chân dung, ảnh thật của bạn"
           color={colors.gray500}

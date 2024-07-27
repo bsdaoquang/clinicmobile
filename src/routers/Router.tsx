@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {HandleNotification} from '../utils/handleNotification';
-import DrawerNavigator from './DrawerNavigator';
-import ProfileNavigator from './ProfileNavigator';
-import {useDispatch, useSelector} from 'react-redux';
-import {authSelector, login} from '../redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {localNames} from '../constants/localNames';
+import {authSelector, login} from '../redux/reducers/authReducer';
+import {addProfile} from '../redux/reducers/profileReducer';
 import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
+import DrawerNavigator from './DrawerNavigator';
+import ProfileNavigator from './ProfileNavigator';
 
 const Router = () => {
   const [isWelcome, setIsWelcome] = useState(true);
@@ -23,9 +23,13 @@ const Router = () => {
   const getLocalData = async () => {
     try {
       const res = await AsyncStorage.getItem(localNames.authData);
+      const resProfile = await AsyncStorage.getItem(localNames.profile);
       if (res) {
+        // console.log(res);
         dispatch(login(JSON.parse(res)));
       }
+
+      resProfile && dispatch(addProfile(JSON.parse(resProfile)));
 
       setIsWelcome(false);
     } catch (error) {

@@ -8,7 +8,7 @@ import {
 } from '@bsdaoquang/rncomponent';
 import auth from '@react-native-firebase/auth';
 import React, {memo, useEffect, useState} from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, Linking} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
@@ -130,7 +130,14 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       isScroll={false}
       title=""
       back
-      right={<Button title="Hỗ trợ" type="link" inline onPress={() => {}} />}>
+      right={
+        <Button
+          title="Hỗ trợ"
+          type="link"
+          inline
+          onPress={() => Linking.openURL('https://yhocso.com/helps')}
+        />
+      }>
       <Section>
         <TextComponent
           text="Tải lên hồ sơ cá nhân"

@@ -1,7 +1,14 @@
-import auth from '@react-native-firebase/auth';
+import {Button, Section, Space, colors} from '@bsdaoquang/rncomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {profileRef} from '../firebase/firebaseConfig';
+import {ActivityIndicator} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {HandleAPI} from '../apis/handleAPI';
+import TextComponent from '../components/TextComponent';
+import {localNames} from '../constants/localNames';
+import {authSelector, logout} from '../redux/reducers/authReducer';
 import {
   Avatar,
   BangTotNghiep,
@@ -15,24 +22,17 @@ import {
   VerifyStatus,
 } from '../screens';
 import Verification from '../screens/auth/Verification';
-import {ActivityIndicator} from 'react-native';
-import {Button, Section, Space, colors} from '@bsdaoquang/rncomponent';
-import TextComponent from '../components/TextComponent';
-import Terms from '../screens/Terms';
 import Policy from '../screens/Policy';
-import {HandleAPI} from '../apis/handleAPI';
-import {useDispatch, useSelector} from 'react-redux';
-import {authSelector, logout} from '../redux/reducers/authReducer';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {localNames} from '../constants/localNames';
+import Terms from '../screens/Terms';
+import {profileSelector} from '../redux/reducers/profileReducer';
 
 const ProfileNavigator = () => {
-  const [doctorProfile, setDoctorProfile] = useState<any>();
+  const [documents, setDocuments] = useState<any>();
 
   const [isLoading, setIsLoading] = useState(true);
   const Stack = createNativeStackNavigator();
   const auth = useSelector(authSelector);
+  const profile = useSelector(profileSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,16 +40,18 @@ const ProfileNavigator = () => {
   }, []);
 
   const getDoctorProfile = async () => {
-    const api = `/doctors/documents?id=${auth._id}`;
     setIsLoading(true);
 
     try {
-      const res = await HandleAPI(api);
-      setDoctorProfile(res);
+      const res: any = await HandleAPI(`/doctors/documents?id=${auth._id}`);
+
+      if (res) {
+        setDocuments(res);
+      }
       setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -58,8 +60,8 @@ const ProfileNavigator = () => {
       <ActivityIndicator color={colors.gray300} size={22} />
       <TextComponent text="Đang tải dữ liệu hồ sơ" color={colors.gray400} />
     </Section>
-  ) : doctorProfile ? (
-    doctorProfile.status === 'pending' ? (
+  ) : documents ? (
+    documents.status === 'pending' ? (
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -67,7 +69,7 @@ const ProfileNavigator = () => {
         <Stack.Screen
           name="VerifyStatus"
           component={VerifyStatus}
-          initialParams={{doctorProfile}}
+          initialParams={{documents}}
         />
       </Stack.Navigator>
     ) : (

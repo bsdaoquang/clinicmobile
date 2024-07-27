@@ -42,10 +42,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Sử dụng để tải lên hình ảnh thiết bị hoặc cập nhật thông tin người dùng</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Tìm sự kiện đang diễn ra gần bạn</string>
+	<string>Sử dụng để tìm vị trí của thiết bị</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Tìm sự kiện đang diễn ra gần bạn</string>
+	<string>Sử dụng để tìm vị trí của thiết bị</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sử dụng để tải lên hình ảnh thiết bị hoặc cập nhật thông tin người dùng</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

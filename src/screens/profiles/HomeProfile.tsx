@@ -4,38 +4,43 @@ import {
   Loading,
   Section,
   SelectModel,
-  Validator,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
+import {HandleAPI} from '../../apis/handleAPI';
 import {Container, DropdownPicker} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
-import {profileRef} from '../../firebase/firebaseConfig';
-import {useStatusBar} from '../../hooks/useStatusBar';
-import {showToast} from '../../utils/showToast';
-import {HandleAPI} from '../../apis/handleAPI';
-import {useDispatch, useSelector} from 'react-redux';
-import {authSelector, logout} from '../../redux/reducers/authReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {localNames} from '../../constants/localNames';
+import {useStatusBar} from '../../hooks/useStatusBar';
+import {authSelector, logout} from '../../redux/reducers/authReducer';
+import {showToast} from '../../utils/showToast';
+import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
 
 const HomeProfile = ({navigation}: any) => {
-  const user = useSelector(authSelector);
+  const auth = useSelector(authSelector);
+  const profile = useSelector(profileSelector);
 
   const initstate = {
-    phoneNumber: user ? (user.phoneNumber ? user.phoneNumber : '') : '',
-    displayName: user ? (user.name ? user.name : '') : '',
+    phoneNumber: auth
+      ? auth.phoneNumber
+        ? auth.phoneNumber.replace('+84', '0')
+        : ''
+      : '',
+    displayName: auth ? (auth.name ? auth.name : '') : '',
     address: '',
     title: '',
     special: '',
-    expTime: 1,
+    expTime: `${profile.expTime}` ?? '',
     workAddress: '',
     referentCode: '',
+    ...profile,
   };
 
   const [formData, setFormData] = useState(initstate);
@@ -44,19 +49,19 @@ const HomeProfile = ({navigation}: any) => {
   const [titles, setTitles] = useState<SelectModel[]>([
     {
       label: 'Kỹ thuật viên',
-      value: 'ktv',
+      value: 'Kỹ thuật viên',
     },
     {
       label: 'Điều dưỡng',
-      value: 'dd',
+      value: 'Điều dưỡng',
     },
     {
       label: 'Nữ hộ sinh',
-      value: 'nhs',
+      value: 'Nữ hộ sinh',
     },
     {
       label: 'Bác sĩ',
-      value: 'bs',
+      value: 'Bác sĩ',
     },
     {
       label: 'Khác',
@@ -66,19 +71,19 @@ const HomeProfile = ({navigation}: any) => {
   const [specials, setSpecials] = useState<SelectModel[]>([
     {
       label: 'Nội khoa',
-      value: 'noi-khoa',
+      value: 'Nội khoa',
     },
     {
       label: 'Ngoại khoa',
-      value: 'ngoai-khoa',
+      value: 'Ngoại khoa',
     },
     {
       label: 'Phục hồi chức năng',
-      value: 'phuc-hoi-chuc-nang',
+      value: 'Phục hồi chức năng',
     },
     {
       label: 'Sản phụ khoa',
-      value: 'san-phu-khoa',
+      value: 'Sản phụ khoa',
     },
     {
       label: 'Khác',
@@ -94,9 +99,8 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
-    user && checkValues();
-    console.log(user);
-  }, [user]);
+    auth && checkDocumentStatus();
+  }, [auth]);
 
   useEffect(() => {
     if (!formData.phoneNumber) {
@@ -104,12 +108,12 @@ const HomeProfile = ({navigation}: any) => {
     }
   }, [formData]);
 
-  const checkValues = async () => {
+  const checkDocumentStatus = async () => {
     setIsLoading(true);
 
     try {
-      const res: any = await HandleAPI(`/doctors/profile?id=${user._id}`);
-      if (res.isVerifing) {
+      const res: any = await HandleAPI(`/doctors/documents?id=${auth._id}`);
+      if (profile._id || res.isVerified) {
         navigation.navigate(
           !res.status || res.status !== 'pending'
             ? 'UploadCurriculumVitae'
@@ -124,42 +128,30 @@ const HomeProfile = ({navigation}: any) => {
   };
 
   const handleUpdateProfile = async () => {
-    // // check phone number
-    // setIsLoading(true);
-    // const isValidPhone = Validator.PhoneNumber(formData.phoneNumber);
-    // if (isValidPhone) {
-    //   setErrorText('');
-    //   try {
-    //     const phoneNumber = `+84${formData.phoneNumber.substring(1)}`;
-    //     const confirm = await auth().verifyPhoneNumber(phoneNumber, true);
-    //     if (confirm) {
-    //       const user = auth().currentUser;
-    //       await user?.updateProfile({
-    //         displayName: formData.displayName,
-    //       });
-    //       await profileRef.doc(user?.uid).set({
-    //         ...formData,
-    //         createdAt: Date.now(),
-    //         email: user?.email ?? '',
-    //         amount: 0,
-    //       });
-    //       navigation.navigate('Verification', {
-    //         confirm,
-    //       });
-    //     } else {
-    //       showToast(`Không thể xác minh số điện thoại`);
-    //       setIsLoading(false);
-    //     }
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.log(error);
-    //     setIsLoading(false);
-    //   }
-    //   setIsLoading(false);
-    // } else {
-    //   setIsLoading(false);
-    //   setErrorText('Số điện thoại không đúng định dạng');
-    // }
+    setIsLoading(true);
+
+    try {
+      const res: any = await HandleAPI(
+        `/doctors/update?id=${auth._id}`,
+        {
+          ...formData,
+          expTime: parseInt(formData.expTime),
+          photoUrl: auth.photo ?? '',
+          email: auth.email,
+          isOnline: false,
+          isVerified: false,
+        },
+        'put',
+      );
+      showToast(res.message);
+      dispatch(addProfile(res.data));
+      await AsyncStorage.setItem(localNames.profile, JSON.stringify(res.data));
+      setIsLoading(false);
+    } catch (error) {
+      showToast('Không thể cập nhật thông tin');
+      setIsLoading(false);
+      console.log(error);
+    }
   };
 
   const handleChangeData = (key: string, val: string) => {
@@ -199,6 +191,12 @@ const HomeProfile = ({navigation}: any) => {
           required
           helpText="Nhập số điện thoại của bạn"
         />
+        <Input
+          value={formData.address}
+          onChange={val => handleChangeData('address', val)}
+          placeholder="Địa chỉ của bạn"
+          label="Địa chỉ"
+        />
         <DropdownPicker
           data={{
             title: 'Chức danh nghề nghiệp',
@@ -210,6 +208,7 @@ const HomeProfile = ({navigation}: any) => {
           placeholder="Chọn"
           onAddNew={val => setTitles([...titles, val])}
         />
+
         <DropdownPicker
           data={{
             title: 'Lĩnh vực chuyên môn',
@@ -221,12 +220,22 @@ const HomeProfile = ({navigation}: any) => {
           placeholder="Chọn"
           onAddNew={val => setSpecials([...specials, val])}
         />
+
         <Input
-          value={formData.address}
-          onChange={val => handleChangeData('address', val)}
-          placeholder="Địa chỉ của bạn"
-          label="Địa chỉ"
+          value={formData.expTime}
+          label="Thời gian công tác (năm)"
+          keyboardType="number-pad"
+          placeholder="0"
+          onChange={val => handleChangeData('expTime', val)}
         />
+
+        <Input
+          value={formData.workAddress}
+          onChange={val => handleChangeData('workAddress', val)}
+          label="Nơi làm việc"
+          placeholder="BV ĐKKV ABC"
+        />
+
         <Input
           value={formData.referentCode}
           onChange={val => handleChangeData('referentCode', val)}
