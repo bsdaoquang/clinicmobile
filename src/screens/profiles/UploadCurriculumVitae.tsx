@@ -6,57 +6,33 @@ import {
   Space,
   colors,
 } from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
-import React, {memo, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FlatList, Linking} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {useSelector} from 'react-redux';
+import {HandleAPI} from '../../apis/handleAPI';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {fontFamilies} from '../../constants/fontFamilies';
-import {profileRef} from '../../firebase/firebaseConfig';
-import {HandleNotification} from '../../utils/handleNotification';
-import {Timestamp} from '@react-native-firebase/firestore';
+import {
+  DocumentModel,
+  DocumentStatus,
+  DocumentStatusColor,
+} from '../../models/DocumentModel';
+import {authSelector} from '../../redux/reducers/authReducer';
+import {showToast} from '../../utils/showToast';
+import {useIsFocused} from '@react-navigation/native';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
-  const [profileData, setProfileData] = useState<any>();
+  const [documents, setDocuments] = useState<DocumentModel[]>([]);
+  const auth = useSelector(authSelector);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const user = auth().currentUser;
-
-  useEffect(() => {
-    profileRef.doc(user?.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        setProfileData(snap.data());
-      }
-    });
-  }, []);
+  const isFocus = useIsFocused();
 
   useEffect(() => {
-    const values: string[] = [];
-    if (profileData) {
-      profiles.forEach(item => {
-        const val = profileData[`${item.key.toLocaleLowerCase()}`];
-        if (!val) {
-          values.push(item.key);
-        }
-      });
-      if (values.length === 0) {
-        profileRef.doc(user?.uid).update({
-          status: 'pending',
-          createdAt: Date.now(),
-        });
-
-        // send notification to admin
-        HandleNotification.pushNotification(
-          '9QCbsLHRR5ZNihzyrExOWedAvJk2',
-          {
-            title: 'Đăng ký mới',
-            body: 'Có người mới đăng ký cần xét duyệt',
-          },
-          {id: ''},
-        );
-      }
-    }
-  }, [profileData]);
+    isFocus && getDocuments();
+  }, [isFocus]);
 
   const profiles = [
     {
@@ -94,24 +70,48 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       key: 'EmergenciyContact',
       compulsory: false,
       title: 'Thông tin liên hệ khẩn cấp và địa chỉ tạm trú',
+      onPress: () => {
+        navigation.navigate('EmergenciyContact', {
+          title: 'Thông tin liên hệ khẩn cấp và địa chỉ tạm trú',
+        });
+      },
     },
   ];
 
-  const RenderButtonText = memo(({item}: {item: any}) => {
-    const val = profileData ? profileData[`${item.key}`] : undefined;
+  const getDocuments = async () => {
+    const api = `/doctors/documents?id=${auth._id}`;
+    setIsLoading(true);
+    try {
+      const res = await HandleAPI(api);
+      res && res.data && setDocuments(res.data);
+      setIsLoading(false);
+    } catch (error: any) {
+      setIsLoading(false);
+      showToast(error.message);
+    }
+  };
+
+  const renderButtonText = (item: any) => {
+    const val = documents.find(
+      element => element.type === item.key.toLowerCase(),
+    );
+
     return (
       <>
         {item.compulsory ? (
           val ? (
             <>
               <TextComponent
-                text={!val.verify ? 'Chờ duyệt' : 'Đã duyệt'}
-                color={!val.verify ? colors.gray500 : colors.success}
+                text={DocumentStatus[val.status]}
+                color={DocumentStatusColor[val.status]}
               />
             </>
           ) : (
-            <Row>
-              <TextComponent text="Bắt buộc" color={'coral'} />
+            <Row
+              onPress={() =>
+                navigation.navigate(item.key, {title: item.title})
+              }>
+              <TextComponent text={'Bắt buộc'} color={'coral'} />
               <Space width={8} />
               <SimpleLineIcons
                 name="arrow-right"
@@ -123,7 +123,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         ) : null}
       </>
     );
-  });
+  };
 
   return (
     <Container
@@ -140,7 +140,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       }>
       <Section>
         <TextComponent
-          text="Tải lên hồ sơ cá nhân"
+          text="Hồ sơ cá nhân"
           font={fontFamilies.RobotoMedium}
           size={16}
         />
@@ -150,13 +150,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         data={profiles}
         renderItem={({item}) => (
           <Row
-            onPress={
-              profileData && profileData[`${item.key.toLowerCase()}`]
-                ? undefined
-                : () => {
-                    navigation.navigate(item.key, {title: item.title});
-                  }
-            }
+            onPress={item.onPress ? () => item.onPress() : undefined}
             styles={{
               marginHorizontal: 16,
               borderBottomColor: '#e0e0e0',
@@ -168,12 +162,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
             </Col>
             <Space width={16} />
             {item.compulsory ? (
-              <RenderButtonText
-                item={{
-                  ...item,
-                  key: `${item.key.toLowerCase()}`,
-                }}
-              />
+              renderButtonText(item)
             ) : (
               <SimpleLineIcons
                 name="arrow-right"

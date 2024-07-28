@@ -113,7 +113,7 @@ const HomeProfile = ({navigation}: any) => {
 
     try {
       const res: any = await HandleAPI(`/doctors/documents?id=${auth._id}`);
-      if (profile._id || res.isVerified) {
+      if (profile._id || res || res.isVerified) {
         navigation.navigate(
           !res.status || res.status !== 'pending'
             ? 'UploadCurriculumVitae'
@@ -122,6 +122,7 @@ const HomeProfile = ({navigation}: any) => {
       }
       setIsLoading(false);
     } catch (error) {
+      profile._id && navigation.navigate('UploadCurriculumVitae');
       console.log(error);
       setIsLoading(false);
     }
@@ -145,6 +146,7 @@ const HomeProfile = ({navigation}: any) => {
       );
       showToast(res.message);
       dispatch(addProfile(res.data));
+      checkDocumentStatus();
       await AsyncStorage.setItem(localNames.profile, JSON.stringify(res.data));
       setIsLoading(false);
     } catch (error) {

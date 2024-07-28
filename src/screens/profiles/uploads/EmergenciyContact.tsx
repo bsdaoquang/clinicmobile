@@ -3,6 +3,9 @@ import {Container} from '../../../components';
 import {Button, Input, Loading, Section} from '@bsdaoquang/rncomponent';
 import auth from '@react-native-firebase/auth';
 import {profileRef} from '../../../firebase/firebaseConfig';
+import {HandleAPI} from '../../../apis/handleAPI';
+import {useSelector} from 'react-redux';
+import {authSelector} from '../../../redux/reducers/authReducer';
 
 const EmergenciyContact = ({navigation, route}: any) => {
   const [formData, setFormData] = useState({
@@ -11,8 +14,7 @@ const EmergenciyContact = ({navigation, route}: any) => {
     phone: '',
   });
   const [isLoading, setIsLoading] = useState(false);
-
-  const user = auth().currentUser;
+  const auth = useSelector(authSelector);
 
   const handleChangeData = (val: string, key: string) => {
     const items: any = {...formData};
@@ -25,9 +27,12 @@ const EmergenciyContact = ({navigation, route}: any) => {
     setIsLoading(true);
 
     try {
-      await profileRef.doc(user?.uid).update({
-        emergenciycontact: formData,
-      });
+      const res = await HandleAPI(
+        `/doctors/update?id=${auth._id}`,
+        {emergencyContact: formData},
+        'put',
+      );
+      console.log(res);
 
       setIsLoading(false);
       navigation.goBack();

@@ -1,12 +1,13 @@
 import {Button, Loading, Section, colors} from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
 import React, {useState} from 'react';
 import {Image, View} from 'react-native';
 import {ImageOrVideo} from 'react-native-image-crop-picker';
+import {useSelector} from 'react-redux';
+import {HandleAPI} from '../../../apis/handleAPI';
 import {Container, UploadButton} from '../../../components';
 import TextComponent from '../../../components/TextComponent';
 import {sizes} from '../../../constants/sizes';
-import {profileRef} from '../../../firebase/firebaseConfig';
+import {authSelector} from '../../../redux/reducers/authReducer';
 import {HandleFile} from '../../../utils/handleFile';
 import {showToast} from '../../../utils/showToast';
 
@@ -14,24 +15,27 @@ const Driver = ({navigation, route}: any) => {
   const [front, setFront] = useState<ImageOrVideo>();
   const [back, setBack] = useState<ImageOrVideo>();
   const [isUploading, setIsUploading] = useState(false);
-  const user = auth().currentUser;
+  const auth = useSelector(authSelector);
 
   const handleUploadFile = async () => {
-    if (front && back && user) {
+    if (front && back) {
       setIsUploading(true);
       try {
         const frontImg = await HandleFile.Upload(front);
         const backImg = await HandleFile.Upload(back);
 
-        await profileRef.doc(user.uid).update({
-          driver: {
-            back: backImg,
-            front: frontImg,
-            verify: false,
+        const res: any = await HandleAPI(
+          `/doctors/update-document`,
+          {
+            type: 'driver',
+            uid: auth._id,
+            files: [frontImg, backImg],
+            status: 0,
           },
-        });
+          'post',
+        );
 
-        showToast(`Đã tải lên ${route.params.title ?? ''}`);
+        showToast(res.message);
         navigation.goBack();
         setIsUploading(false);
       } catch (error: any) {

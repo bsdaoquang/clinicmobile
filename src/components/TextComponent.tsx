@@ -9,7 +9,7 @@ const TextComponent = (props: TextProps | any) => {
       text={props.text}
       flex={props.flex}
       styles={{
-        lineHeight: 20,
+        lineHeight: props.size ? props.size + 4 : 20,
         fontSize: props.size ?? 14,
         fontFamily: props.font ?? fontFamilies.RobotoRegular,
         color: props.color ?? '#212121',

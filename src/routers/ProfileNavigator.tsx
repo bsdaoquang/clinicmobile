@@ -32,7 +32,6 @@ const ProfileNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const Stack = createNativeStackNavigator();
   const auth = useSelector(authSelector);
-  const profile = useSelector(profileSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -60,58 +59,42 @@ const ProfileNavigator = () => {
       <ActivityIndicator color={colors.gray300} size={22} />
       <TextComponent text="Đang tải dữ liệu hồ sơ" color={colors.gray400} />
     </Section>
-  ) : documents ? (
-    documents.status === 'pending' ? (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen
-          name="VerifyStatus"
-          component={VerifyStatus}
-          initialParams={{documents}}
-        />
-      </Stack.Navigator>
-    ) : (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="updateProfile" component={HomeProfile} />
-        <Stack.Screen name="Terms" component={Terms} />
-        <Stack.Screen name="Policy" component={Policy} />
-        <Stack.Screen name="Verification" component={Verification} />
-        <Stack.Screen name="Avatar" component={Avatar} />
-        <Stack.Screen name="CCCD" component={CCCD} />
-        <Stack.Screen name="BangTotNghiep" component={BangTotNghiep} />
-        <Stack.Screen name="Driver" component={Driver} />
-        <Stack.Screen name="CV" component={CV} />
-        <Stack.Screen name="EmergenciyContact" component={EmergenciyContact} />
-        <Stack.Screen name="VerifyStatus" component={VerifyStatus} />
-        <Stack.Screen
-          name="PracticingCertificate"
-          component={PracticingCertificate}
-        />
-        <Stack.Screen
-          name="UploadCurriculumVitae"
-          component={UploadCurriculumVitae}
-        />
-      </Stack.Navigator>
-    )
-  ) : (
-    <Section flex={1} styles={{justifyContent: 'center', alignItems: 'center'}}>
-      <TextComponent text="Không tìm thấy dữ liệu hồ sơ của bạn" />
-      <Space height={22} />
-      <Button
-        title="Đăng nhập lại"
-        type="link"
-        onPress={async () => {
-          await AsyncStorage.removeItem(localNames.authData);
-          dispatch(logout({}));
-          await GoogleSignin.signOut();
-        }}
+  ) : documents && documents.status === 'pending' ? (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="VerifyStatus"
+        component={VerifyStatus}
+        initialParams={{documents}}
       />
-    </Section>
+    </Stack.Navigator>
+  ) : (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen name="updateProfile" component={HomeProfile} />
+      <Stack.Screen name="Terms" component={Terms} />
+      <Stack.Screen name="Policy" component={Policy} />
+      <Stack.Screen name="Verification" component={Verification} />
+      <Stack.Screen name="Avatar" component={Avatar} />
+      <Stack.Screen name="CCCD" component={CCCD} />
+      <Stack.Screen name="BangTotNghiep" component={BangTotNghiep} />
+      <Stack.Screen name="Driver" component={Driver} />
+      <Stack.Screen name="CV" component={CV} />
+      <Stack.Screen name="EmergenciyContact" component={EmergenciyContact} />
+      <Stack.Screen name="VerifyStatus" component={VerifyStatus} />
+      <Stack.Screen
+        name="PracticingCertificate"
+        component={PracticingCertificate}
+      />
+      <Stack.Screen
+        name="UploadCurriculumVitae"
+        component={UploadCurriculumVitae}
+      />
+    </Stack.Navigator>
   );
 };
 

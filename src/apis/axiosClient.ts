@@ -2,7 +2,7 @@ import axios from 'axios';
 import queryString from 'query-string';
 
 const axiosClient = axios.create({
-  baseURL: 'http://192.168.1.245:3001',
+  baseURL: 'http://192.168.1.244:3001',
   paramsSerializer: params => queryString.stringify(params),
 });
 

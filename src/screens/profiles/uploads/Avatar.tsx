@@ -32,16 +32,14 @@ const Avatar = ({navigation}: any) => {
 
         if (res) {
           await HandleAPI(
-            `/doctors/update-document?id=${auth._id}`,
+            `/doctors/update-document`,
             {
-              avatar: [
-                {
-                  ...res,
-                  verify: false,
-                },
-              ],
+              type: 'avatar',
+              uid: auth._id,
+              files: [res],
+              status: 0,
             },
-            'put',
+            'post',
           );
 
           await HandleAPI(

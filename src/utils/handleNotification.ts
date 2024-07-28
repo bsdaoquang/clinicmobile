@@ -1,14 +1,9 @@
-
-import { Notification } from '@bsdaoquang/rncomponent';
+import {Notification} from '@bsdaoquang/rncomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import auth from '@react-native-firebase/auth';
-import { arrayUnion } from '@react-native-firebase/firestore';
-import messaging from '@react-native-firebase/messaging';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 const profileRef = firestore().collection('profiles');
-const user = auth().currentUser;
-
 const seviceaccout = require('../../service-account.json');
 
 export class HandleNotification {
@@ -31,9 +26,7 @@ export class HandleNotification {
         private_key: seviceaccout.private_key,
       });
 
-
-      return (res.access_token);
-
+      return res.access_token;
     } catch (error) {
       console.log(error);
     }
@@ -55,28 +48,26 @@ export class HandleNotification {
   };
 
   static updateFcmTokenToDatabase = async (token: string) => {
-    if (user) {
-      try {
-        const snap: any = await profileRef.doc(user.uid).get();
-        if (snap.exists) {
-          const tokens: string[] = snap.data().tokens ? snap.data().tokens : [];
+    try {
+      // const snap: any = await profileRef.doc(user.uid).get();
+      // if (snap.exists) {
+      //   const tokens: string[] = snap.data().tokens ? snap.data().tokens : [];
+      //   if (!tokens.includes(token)) {
+      //     await profileRef.doc(user.uid).update({
+      //       tokens: arrayUnion(token),
+      //     });
+      //   }
+      // }
 
-          if (!tokens.includes(token)) {
-            await profileRef.doc(user.uid).update({
-              tokens: arrayUnion(token),
-            });
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-
+      console.log(token);
+    } catch (error) {
+      console.log(error);
     }
   };
   static pushNotification = async (
     uid: string,
-    notificationData: { title: string; body: string; },
-    values: any
+    notificationData: {title: string; body: string},
+    values: any,
   ) => {
     try {
       const snap = await profileRef.doc(uid).get();
@@ -100,7 +91,7 @@ export class HandleNotification {
                   title: notificationData.title,
                   body: notificationData.body,
                 },
-                data: values
+                data: values,
               },
             });
 

@@ -1,34 +1,39 @@
-import {Button, Loading, Section, colors} from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
+import {Button, Loading, Section} from '@bsdaoquang/rncomponent';
 import React, {useState} from 'react';
-import {Image, View} from 'react-native';
+import {Image} from 'react-native';
 import {ImageOrVideo} from 'react-native-image-crop-picker';
+import {useSelector} from 'react-redux';
+import {HandleAPI} from '../../../apis/handleAPI';
 import {Container, UploadButton} from '../../../components';
 import TextComponent from '../../../components/TextComponent';
 import {sizes} from '../../../constants/sizes';
-import {profileRef} from '../../../firebase/firebaseConfig';
+import {authSelector} from '../../../redux/reducers/authReducer';
 import {HandleFile} from '../../../utils/handleFile';
 import {showToast} from '../../../utils/showToast';
 
 const CV = ({navigation, route}: any) => {
   const [front, setFront] = useState<ImageOrVideo>();
   const [isUploading, setIsUploading] = useState(false);
-  const user = auth().currentUser;
+  const auth = useSelector(authSelector);
 
   const handleUploadFile = async () => {
-    if (front && user) {
+    if (front) {
       setIsUploading(true);
       try {
         const frontImg = await HandleFile.Upload(front);
 
-        await profileRef.doc(user.uid).update({
-          cv: {
-            ...frontImg,
-            verify: false,
+        const res: any = await HandleAPI(
+          `/doctors/update-document`,
+          {
+            type: 'cv',
+            uid: auth._id,
+            files: [frontImg],
+            status: 0,
           },
-        });
+          'post',
+        );
 
-        showToast(`Đã tải lên ${route.params.title ?? ''}`);
+        showToast(res.message);
         navigation.goBack();
         setIsUploading(false);
       } catch (error: any) {

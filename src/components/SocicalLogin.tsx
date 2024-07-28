@@ -1,23 +1,15 @@
-import {
-  Button,
-  Divider,
-  Loading,
-  Section,
-  colors,
-} from '@bsdaoquang/rncomponent';
+import {Button, Divider, Loading, Section} from '@bsdaoquang/rncomponent';
+import appleAuth from '@invertase/react-native-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useNavigation} from '@react-navigation/native';
-import {Apple} from 'iconsax-react-native';
 import React, {useState} from 'react';
-import {Image, Platform, View} from 'react-native';
+import {Image} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {HandleAPI} from '../apis/handleAPI';
-import TextComponent from './TextComponent';
 import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
-import appleAuth from '@invertase/react-native-apple-authentication';
-import auth from '@react-native-firebase/auth';
+import TextComponent from './TextComponent';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,8 +39,11 @@ const SocicalLogin = () => {
           'post',
         );
 
-        await AsyncStorage.setItem(localNames.authData, JSON.stringify(res));
-        dispatch(login(res));
+        await AsyncStorage.setItem(
+          localNames.authData,
+          JSON.stringify(res.data),
+        );
+        dispatch(login(res.data));
       }
       setIsLoading(false);
     } catch (error: any) {

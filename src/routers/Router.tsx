@@ -8,6 +8,8 @@ import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import DrawerNavigator from './DrawerNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import {HandleAPI} from '../apis/handleAPI';
+import {HandleNotification} from '../utils/handleNotification';
 
 const Router = () => {
   const [isWelcome, setIsWelcome] = useState(true);
@@ -16,7 +18,7 @@ const Router = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // HandleNotification.CheckNotificationPerson();
+    HandleNotification.CheckNotificationPerson();
     getLocalData();
   }, []);
 
@@ -29,7 +31,19 @@ const Router = () => {
         dispatch(login(JSON.parse(res)));
       }
 
-      resProfile && dispatch(addProfile(JSON.parse(resProfile)));
+      if (resProfile) {
+        dispatch(addProfile(JSON.parse(resProfile)));
+      } else {
+        const val = await HandleAPI(`/doctors/profile?id=${auth._id}`);
+
+        if (val) {
+          await AsyncStorage.setItem(
+            localNames.profile,
+            JSON.stringify(val.data),
+          );
+          dispatch(addProfile(val.data));
+        }
+      }
 
       setIsWelcome(false);
     } catch (error) {
@@ -37,7 +51,6 @@ const Router = () => {
       setIsWelcome(false);
     }
   };
-
   return isWelcome ? (
     <Splash />
   ) : !auth.accesstoken ? (
