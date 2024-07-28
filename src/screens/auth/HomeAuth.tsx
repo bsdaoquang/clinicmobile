@@ -11,7 +11,7 @@ import {
 } from '@bsdaoquang/rncomponent';
 import {ArrowRight} from 'iconsax-react-native';
 import React, {useState} from 'react';
-import {Linking, Platform, SafeAreaView, View} from 'react-native';
+import {Linking, Platform, SafeAreaView, StatusBar, View} from 'react-native';
 import SocicalLogin from '../../components/SocicalLogin';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
@@ -26,6 +26,7 @@ const HomeAuth = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   useStatusBar({
     color: 'transparent',
+    style: 'light-content',
   });
 
   const handleLoginWithPhone = async () => {
@@ -130,7 +131,9 @@ const HomeAuth = ({navigation}: any) => {
                 color={`#e0e0e0`}
               />
               <Space height={6} />
-              <Row justifyContent="flex-start">
+              <Row
+                justifyContent="flex-start"
+                onPress={() => navigation.navigate('LoginClinic')}>
                 <TextComponent
                   font={fontFamilies.RobotoMedium}
                   text="Đăng nhập phòng khám"

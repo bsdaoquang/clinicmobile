@@ -92,7 +92,7 @@ const SocicalLogin = () => {
         icon={
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
-            style={{width: 22, height: 22}}
+            style={{width: 24, height: 24}}
           />
         }
         iconExtra

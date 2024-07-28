@@ -1,35 +1,34 @@
-import {Button, Card, Loading, Section, Space} from '@bsdaoquang/rncomponent';
+import {Card, Loading, Section, Space} from '@bsdaoquang/rncomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState} from 'react';
-import {Container, TextComponent} from '../../components';
-import {useStatusBar} from '../../hooks/useStatusBar';
-import {fontFamilies} from '../../constants/fontFamilies';
-import {colors} from '../../constants/colors';
 import {Image} from 'react-native';
-import {useSelector} from 'react-redux';
-import {authSelector} from '../../redux/reducers/authReducer';
+import {useDispatch, useSelector} from 'react-redux';
 import {HandleAPI} from '../../apis/handleAPI';
+import {Container, TextComponent} from '../../components';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
+import {localNames} from '../../constants/localNames';
+import {authSelector} from '../../redux/reducers/authReducer';
+import {addProfile} from '../../redux/reducers/profileReducer';
 
 const Welcome = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
-
-  // useStatusBar({style: 'dark-content'});
+  const dispatch = useDispatch();
   const auth = useSelector(authSelector);
 
   const handleUpdateProfile = async (type: string) => {
     const api = `/doctors/update?id=${auth._id}`;
     setIsLoading(true);
     try {
-      await HandleAPI(
+      const res = await HandleAPI(
         api,
         {
           type,
         },
         'put',
       );
-      navigation.navigate(
-        type === 'doctor' ? 'updateProfile' : 'HomeProfileClinic',
-        {type},
-      );
+
+      dispatch(addProfile(res.data));
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -42,8 +41,7 @@ const Welcome = ({navigation}: any) => {
       <Section>
         <TextComponent
           text="Chào mừng!"
-          fontFamilies={fontFamilies.RobotoBold}
-          weight="bold"
+          font={fontFamilies.RobotoBold}
           size={22}
         />
         <Space height={12} />

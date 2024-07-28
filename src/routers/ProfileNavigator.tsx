@@ -1,17 +1,12 @@
-import {Section, colors} from '@bsdaoquang/rncomponent';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {HandleAPI} from '../apis/handleAPI';
-import TextComponent from '../components/TextComponent';
-import {authSelector} from '../redux/reducers/authReducer';
+import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {profileSelector} from '../redux/reducers/profileReducer';
 import {
   Agreements,
   Avatar,
   BangTotNghiep,
   CCCD,
-  ChoiceLocation,
   CV,
   Driver,
   EmergenciyContact,
@@ -26,13 +21,16 @@ import {
 import Verification from '../screens/auth/Verification';
 import Policy from '../screens/Policy';
 import Terms from '../screens/Terms';
-import {profileSelector} from '../redux/reducers/profileReducer';
 
 const ProfileNavigator = () => {
   const Stack = createNativeStackNavigator();
   const profile = useSelector(profileSelector);
 
-  return profile && profile.status === 'pending' ? (
+  return !profile || !profile.type ? (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Welcome" component={Welcome} />
+    </Stack.Navigator>
+  ) : profile.status === 'pending' ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
@@ -52,9 +50,6 @@ const ProfileNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      {(!profile || !profile.type) && (
-        <Stack.Screen name="Welcome" component={Welcome} />
-      )}
       <Stack.Screen name="updateProfile" component={HomeProfile} />
       <Stack.Screen name="MapScreen" component={MapScreen} />
       <Stack.Screen name="HomeProfileClinic" component={HomeProfileClinic} />

@@ -32,6 +32,7 @@ import Welcome from './profiles/Welcome';
 import HomeProfileClinic from './profiles/HomeProfileClinic';
 import ChoiceLocation from './maps/ChoiceLocation';
 import MapScreen from './maps/MapScreen';
+import LoginClinic from './auth/LoginClinic';
 
 export {
   HomeProfile,
@@ -68,4 +69,5 @@ export {
   HomeProfileClinic,
   ChoiceLocation,
   MapScreen,
+  LoginClinic,
 };

@@ -6,6 +6,7 @@ import {
   Space,
   colors,
 } from '@bsdaoquang/rncomponent';
+import {useIsFocused} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {FlatList, Linking} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -20,11 +21,9 @@ import {
   DocumentStatusColor,
 } from '../../models/DocumentModel';
 import {authSelector} from '../../redux/reducers/authReducer';
-import {showToast} from '../../utils/showToast';
-import {useIsFocused} from '@react-navigation/native';
 import {addProfile} from '../../redux/reducers/profileReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {localNames} from '../../constants/localNames';
+import {showToast} from '../../utils/showToast';
+import {sendMail} from '../../utils/sendMail';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
   const [documents, setDocuments] = useState<DocumentModel[]>([]);
@@ -113,8 +112,14 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         'put',
       );
 
-      await AsyncStorage.setItem(localNames.profile, JSON.stringify(res.data));
       res && res.data && dispatch(addProfile(res.data));
+      //Send mail to admin
+      // send email to admin
+      await sendMail('bsdaoquang@gmail.com', {
+        html: '<h1>Có người đăng ký mới đang chờ duyệt hồ sơ</h1>',
+        subject: 'Hồ sơ đang chờ duyệt',
+      });
+      navigation.navigate('VerifyStatus');
     } catch (error) {
       console.log(error);
     }
@@ -157,7 +162,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
   return (
     <Container
       isScroll={false}
-      title=""
+      title="Hồ sơ cá nhân"
       back
       right={
         <Button
@@ -167,14 +172,6 @@ const UploadCurriculumVitae = ({navigation}: any) => {
           onPress={() => Linking.openURL('https://yhocso.com/helps')}
         />
       }>
-      <Section>
-        <TextComponent
-          text="Hồ sơ cá nhân"
-          font={fontFamilies.RobotoMedium}
-          size={16}
-        />
-      </Section>
-
       <FlatList
         data={profiles}
         renderItem={({item}) => (

@@ -11,6 +11,7 @@ import {
 } from '@bsdaoquang/rncomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {TickSquare} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {Alert, Text, TouchableOpacity} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,12 +21,10 @@ import {Container, DropdownPicker} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
-import {localNames} from '../../constants/localNames';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {authSelector, logout} from '../../redux/reducers/authReducer';
-import {showToast} from '../../utils/showToast';
 import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
-import {TickSquare} from 'iconsax-react-native';
+import {showToast} from '../../utils/showToast';
 
 const HomeProfile = ({navigation}: any) => {
   const auth = useSelector(authSelector);
@@ -109,10 +108,6 @@ const HomeProfile = ({navigation}: any) => {
     }
   }, [formData]);
 
-  useEffect(() => {
-    profile && profile._id && navigation.navigate('UploadCurriculumVitae');
-  }, [profile]);
-
   const handleUpdateProfile = async () => {
     if (!isApproved) {
       Alert.alert(
@@ -150,10 +145,7 @@ const HomeProfile = ({navigation}: any) => {
         );
         showToast(res.message);
         dispatch(addProfile(res.data));
-        await AsyncStorage.setItem(
-          localNames.profile,
-          JSON.stringify(res.data),
-        );
+        navigation.navigate('UploadCurriculumVitae');
         setIsLoading(false);
       } catch (error) {
         showToast('Không thể cập nhật thông tin');
@@ -170,9 +162,14 @@ const HomeProfile = ({navigation}: any) => {
   };
 
   return (
-    <Container back>
+    <Container>
       <Section>
-        <TextComponent text="Đăng ký đối tác" size={22} weight={'bold'} />
+        <TextComponent
+          text="Đăng ký đối tác"
+          size={22}
+          font={fontFamilies.RobotoBold}
+        />
+        <Space height={8} />
         <TextComponent
           color={colors.gray}
           text="Đối tác là người cung cấp dịch vụ y tế tại nhà tự do, không thuộc phòng khám, có quyền tự chủ về thời gian, địa điểm làm việc và những dịch vụ y tế sẽ cung cấp đến khách hàng."
@@ -326,8 +323,9 @@ const HomeProfile = ({navigation}: any) => {
           type="link"
           onPress={async () => {
             await GoogleSignin.signOut();
-            await AsyncStorage.removeItem(localNames.authData);
+            await AsyncStorage.clear();
             dispatch(logout({}));
+            dispatch(addProfile({}));
           }}
         />
       </Section>

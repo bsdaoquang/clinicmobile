@@ -102,10 +102,7 @@ const HomeProfileClinic = ({navigation}: any) => {
         );
         showToast(res.message);
         dispatch(addProfile(res.data));
-        await AsyncStorage.setItem(
-          localNames.profile,
-          JSON.stringify(res.data),
-        );
+
         setIsLoading(false);
       } catch (error) {
         showToast('Không thể cập nhật thông tin');
