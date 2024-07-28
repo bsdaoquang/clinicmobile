@@ -1,17 +1,15 @@
 import {Section, Space, globalStyles} from '@bsdaoquang/rncomponent';
 import React from 'react';
-import {ActivityIndicator, View} from 'react-native';
+import {ActivityIndicator, StatusBar, View} from 'react-native';
 import {colors} from '../constants/colors';
 import {useStatusBar} from '../hooks/useStatusBar';
 import TextComponent from '../components/TextComponent';
 import {fontFamilies} from '../constants/fontFamilies';
 
 const Splash = () => {
-  useStatusBar({
-    style: 'light-content',
-  });
   return (
     <View style={{flex: 1, backgroundColor: colors.primary}}>
+      <StatusBar hidden />
       <Section styles={[globalStyles.center, {flex: 1}]}>
         <TextComponent
           text="Doctor Bee"

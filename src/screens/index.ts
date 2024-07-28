@@ -29,6 +29,9 @@ import Notifications from './notifications/Notifications';
 import VerificationCode from './auth/VerificationCode';
 import Agreements from './Agreements';
 import Welcome from './profiles/Welcome';
+import HomeProfileClinic from './profiles/HomeProfileClinic';
+import ChoiceLocation from './maps/ChoiceLocation';
+import MapScreen from './maps/MapScreen';
 
 export {
   HomeProfile,
@@ -62,4 +65,7 @@ export {
   VerificationCode,
   Agreements,
   Welcome,
+  HomeProfileClinic,
+  ChoiceLocation,
+  MapScreen,
 };

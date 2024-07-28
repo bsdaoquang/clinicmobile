@@ -27,7 +27,7 @@ import {showToast} from '../../utils/showToast';
 import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
 import {TickSquare} from 'iconsax-react-native';
 
-const HomeProfile = ({navigation}: any) => {
+const HomeProfileClinic = ({navigation}: any) => {
   const auth = useSelector(authSelector);
   const profile = useSelector(profileSelector);
 
@@ -39,10 +39,6 @@ const HomeProfile = ({navigation}: any) => {
       : '',
     displayName: auth ? (auth.name ? auth.name : '') : '',
     address: '',
-    title: '',
-    special: '',
-    expTime: `${profile && profile.expTime ? profile.expTime : ''}`,
-    workAddress: '',
     referentCode: '',
     ...profile,
   };
@@ -50,50 +46,6 @@ const HomeProfile = ({navigation}: any) => {
   const [formData, setFormData] = useState(initstate);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
-  const [titles, setTitles] = useState<SelectModel[]>([
-    {
-      label: 'Kỹ thuật viên',
-      value: 'Kỹ thuật viên',
-    },
-    {
-      label: 'Điều dưỡng',
-      value: 'Điều dưỡng',
-    },
-    {
-      label: 'Nữ hộ sinh',
-      value: 'Nữ hộ sinh',
-    },
-    {
-      label: 'Bác sĩ',
-      value: 'Bác sĩ',
-    },
-    {
-      label: 'Khác',
-      value: 'other',
-    },
-  ]);
-  const [specials, setSpecials] = useState<SelectModel[]>([
-    {
-      label: 'Nội khoa',
-      value: 'Nội khoa',
-    },
-    {
-      label: 'Ngoại khoa',
-      value: 'Ngoại khoa',
-    },
-    {
-      label: 'Phục hồi chức năng',
-      value: 'Phục hồi chức năng',
-    },
-    {
-      label: 'Sản phụ khoa',
-      value: 'Sản phụ khoa',
-    },
-    {
-      label: 'Khác',
-      value: 'other',
-    },
-  ]);
   const [isApproved, setIsApproved] = useState(true);
 
   const dispatch = useDispatch();
@@ -172,20 +124,19 @@ const HomeProfile = ({navigation}: any) => {
   return (
     <Container back>
       <Section>
-        <TextComponent text="Đăng ký đối tác" size={22} weight={'bold'} />
+        <TextComponent text="Đăng ký phòng khám" size={22} weight={'bold'} />
         <TextComponent
           color={colors.gray}
-          text="Đối tác là người cung cấp dịch vụ y tế tại nhà tự do, không thuộc phòng khám, có quyền tự chủ về thời gian, địa điểm làm việc và những dịch vụ y tế sẽ cung cấp đến khách hàng."
+          text="Phòng khám là cơ sở y tế có cung cấp dịch vụ y tế tại nhà, có thể quản lý dịch vụ, nhân viên phụ trách thực hiện dịch vụ..."
         />
       </Section>
       <Section>
         <Input
           value={formData.displayName}
           onChange={val => handleChangeData('displayName', val)}
-          placeholder="Tên của bạn"
-          label="Họ và Tên"
+          placeholder="Tên phòng khám"
+          label="Tên phòng khám"
           required
-          helpText="Họ tên của bạn theo CCCD"
           autoCapitalize="sentences"
           autoComplete="name"
           clear
@@ -197,53 +148,25 @@ const HomeProfile = ({navigation}: any) => {
           keyboardType="phone-pad"
           label="Số điện thoại"
           required
-          helpText="Nhập số điện thoại của bạn"
+          helpText="Nhập số điện thoại"
         />
-        <Input
-          value={formData.address}
+
+        <TextComponent
+          text="Vị trí phòng khám"
+          styles={{marginBottom: 8}}
+          font={fontFamilies.RobotoMedium}
+        />
+        <Row
+          styles={[globalStyles.inputContainer, {marginBottom: 16}]}
+          onPress={() => navigation.navigate('MapScreen')}>
+          <TextComponent text="fafa" />
+        </Row>
+        {/* <Input
+          value={formData.address} 
           onChange={val => handleChangeData('address', val)}
-          placeholder="Địa chỉ của bạn"
-          label="Địa chỉ"
-        />
-        <DropdownPicker
-          data={{
-            title: 'Chức danh nghề nghiệp',
-            values: titles,
-          }}
-          onSelect={val => handleChangeData('title', val as string)}
-          selected={formData.title}
-          label="Chức danh nghề nghiệp"
-          placeholder="Chọn"
-          onAddNew={val => setTitles([...titles, val])}
-        />
-
-        <DropdownPicker
-          data={{
-            title: 'Lĩnh vực chuyên môn',
-            values: specials,
-          }}
-          onSelect={val => handleChangeData('special', val as string)}
-          selected={formData.special}
-          label="Lĩnh vực chuyên môn"
-          placeholder="Chọn"
-          onAddNew={val => setSpecials([...specials, val])}
-        />
-
-        <Input
-          value={formData.expTime}
-          label="Thời gian công tác (năm)"
-          keyboardType="number-pad"
-          placeholder="0"
-          onChange={val => handleChangeData('expTime', val)}
-        />
-
-        <Input
-          value={formData.workAddress}
-          onChange={val => handleChangeData('workAddress', val)}
-          label="Nơi làm việc"
-          placeholder="BV ĐKKV ABC"
-        />
-
+          placeholder="Địa chỉ phòng khám"
+          label="Địa chỉ phòng khám"
+        /> */}
         <Input
           value={formData.referentCode}
           onChange={val => handleChangeData('referentCode', val)}
@@ -336,4 +259,4 @@ const HomeProfile = ({navigation}: any) => {
   );
 };
 
-export default HomeProfile;
+export default HomeProfileClinic;

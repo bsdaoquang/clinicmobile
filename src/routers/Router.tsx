@@ -25,15 +25,19 @@ const Router = () => {
   const getLocalData = async () => {
     try {
       const res = await AsyncStorage.getItem(localNames.authData);
-      const resProfile = await AsyncStorage.getItem(localNames.profile);
+
       if (res) {
         dispatch(login(JSON.parse(res)));
+      } else {
       }
 
-      if (resProfile) {
+      const resProfile = await AsyncStorage.getItem(localNames.profile);
+
+      if (resProfile && resProfile !== 'null') {
         dispatch(addProfile(JSON.parse(resProfile)));
       } else {
         const val = await HandleAPI(`/doctors/profile?id=${auth._id}`);
+
         if (val) {
           await AsyncStorage.setItem(
             localNames.profile,

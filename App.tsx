@@ -1,7 +1,7 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
-import {View} from 'react-native';
+import {StatusBar, View} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
@@ -83,6 +83,11 @@ const App = () => {
 
   return (
     <>
+      <StatusBar
+        translucent
+        backgroundColor={'white'}
+        barStyle="dark-content"
+      />
       <GestureHandlerRootView style={{flex: 1}}>
         <NavigationContainer>
           <Provider store={store}>

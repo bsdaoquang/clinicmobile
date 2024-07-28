@@ -12,7 +12,7 @@ import {HandleAPI} from '../../apis/handleAPI';
 const Welcome = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  useStatusBar({style: 'dark-content'});
+  // useStatusBar({style: 'dark-content'});
   const auth = useSelector(authSelector);
 
   const handleUpdateProfile = async (type: string) => {
@@ -26,7 +26,10 @@ const Welcome = ({navigation}: any) => {
         },
         'put',
       );
-      navigation.navigate('updateProfile', {type});
+      navigation.navigate(
+        type === 'doctor' ? 'updateProfile' : 'HomeProfileClinic',
+        {type},
+      );
       setIsLoading(false);
     } catch (error) {
       console.log(error);

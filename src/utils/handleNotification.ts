@@ -58,8 +58,7 @@ export class HandleNotification {
       //     });
       //   }
       // }
-
-      console.log(token);
+      // console.log(token);
     } catch (error) {
       console.log(error);
     }

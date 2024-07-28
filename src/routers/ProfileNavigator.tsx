@@ -11,10 +11,13 @@ import {
   Avatar,
   BangTotNghiep,
   CCCD,
+  ChoiceLocation,
   CV,
   Driver,
   EmergenciyContact,
   HomeProfile,
+  HomeProfileClinic,
+  MapScreen,
   PracticingCertificate,
   UploadCurriculumVitae,
   VerifyStatus,
@@ -49,8 +52,12 @@ const ProfileNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Welcome" component={Welcome} />
+      {(!profile || !profile.type) && (
+        <Stack.Screen name="Welcome" component={Welcome} />
+      )}
       <Stack.Screen name="updateProfile" component={HomeProfile} />
+      <Stack.Screen name="MapScreen" component={MapScreen} />
+      <Stack.Screen name="HomeProfileClinic" component={HomeProfileClinic} />
       <Stack.Screen name="Agreements" component={Agreements} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Policy" component={Policy} />

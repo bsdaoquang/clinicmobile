@@ -4283,6 +4283,7 @@ __metadata:
     react-native-currency-input: ^1.1.1
     react-native-device-info: ^11.1.0
     react-native-document-picker: ^9.3.0
+    react-native-dotenv: ^3.4.11
     react-native-gesture-handler: ^2.17.1
     react-native-image-crop-picker: ^0.41.2
     react-native-maps: ^1.15.6
@@ -4922,6 +4923,13 @@ __metadata:
     no-case: ^3.0.4
     tslib: ^2.0.3
   checksum: a65e3519414856df0228b9f645332f974f2bf5433370f544a681122eab59e66038fc3349b4be1cdc47152779dac71a5864f1ccda2f745e767c46e9c6543b1169
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.4.5":
+  version: 16.4.5
+  resolution: "dotenv@npm:16.4.5"
+  checksum: 301a12c3d44fd49888b74eb9ccf9f07a1f5df43f489e7fcb89647a2edcd84c42d6bc349dc8df099cd18f07c35c7b04685c1a4f3e6a6a9e6b30f8d48c15b7f49c
   languageName: node
   linkType: hard
 
@@ -8968,6 +8976,17 @@ __metadata:
     react-native-windows:
       optional: true
   checksum: 622c9bd3a17b7b92ff6b13571ccf2a916dd2477f2aa8c22b79e4b204156742ba95680dea912ee5ee56718f13c537107f5937e5bcf88d93cdf2142d508dc16351
+  languageName: node
+  linkType: hard
+
+"react-native-dotenv@npm:^3.4.11":
+  version: 3.4.11
+  resolution: "react-native-dotenv@npm:3.4.11"
+  dependencies:
+    dotenv: ^16.4.5
+  peerDependencies:
+    "@babel/runtime": ^7.20.6
+  checksum: 3ebac2c2ed79dd7e4920fd3fc2da9187413b7190231618e4858b46c47833677838b96d531afe7bd5c4b0a60454dba40cb8708722210df5d522e30aefbf41da05
   languageName: node
   linkType: hard
 
