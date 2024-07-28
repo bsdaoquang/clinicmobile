@@ -1,15 +1,13 @@
-import {Button, Section, Space, colors} from '@bsdaoquang/rncomponent';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Section, colors} from '@bsdaoquang/rncomponent';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {HandleAPI} from '../apis/handleAPI';
 import TextComponent from '../components/TextComponent';
-import {localNames} from '../constants/localNames';
-import {authSelector, logout} from '../redux/reducers/authReducer';
+import {authSelector} from '../redux/reducers/authReducer';
 import {
+  Agreements,
   Avatar,
   BangTotNghiep,
   CCCD,
@@ -20,6 +18,7 @@ import {
   PracticingCertificate,
   UploadCurriculumVitae,
   VerifyStatus,
+  Welcome,
 } from '../screens';
 import Verification from '../screens/auth/Verification';
 import Policy from '../screens/Policy';
@@ -27,39 +26,10 @@ import Terms from '../screens/Terms';
 import {profileSelector} from '../redux/reducers/profileReducer';
 
 const ProfileNavigator = () => {
-  const [documents, setDocuments] = useState<any>();
-
-  const [isLoading, setIsLoading] = useState(true);
   const Stack = createNativeStackNavigator();
-  const auth = useSelector(authSelector);
-  const dispatch = useDispatch();
+  const profile = useSelector(profileSelector);
 
-  useEffect(() => {
-    getDoctorProfile();
-  }, []);
-
-  const getDoctorProfile = async () => {
-    setIsLoading(true);
-
-    try {
-      const res: any = await HandleAPI(`/doctors/documents?id=${auth._id}`);
-
-      if (res) {
-        setDocuments(res);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
-  return isLoading ? (
-    <Section flex={1} styles={{justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator color={colors.gray300} size={22} />
-      <TextComponent text="Đang tải dữ liệu hồ sơ" color={colors.gray400} />
-    </Section>
-  ) : documents && documents.status === 'pending' ? (
+  return profile && profile.status === 'pending' ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
@@ -67,7 +37,11 @@ const ProfileNavigator = () => {
       <Stack.Screen
         name="VerifyStatus"
         component={VerifyStatus}
-        initialParams={{documents}}
+        initialParams={{profile}}
+      />
+      <Stack.Screen
+        name="UploadCurriculumVitae"
+        component={UploadCurriculumVitae}
       />
     </Stack.Navigator>
   ) : (
@@ -75,7 +49,9 @@ const ProfileNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="updateProfile" component={HomeProfile} />
+      <Stack.Screen name="Agreements" component={Agreements} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Policy" component={Policy} />
       <Stack.Screen name="Verification" component={Verification} />

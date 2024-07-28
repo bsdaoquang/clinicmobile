@@ -27,7 +27,6 @@ const Router = () => {
       const res = await AsyncStorage.getItem(localNames.authData);
       const resProfile = await AsyncStorage.getItem(localNames.profile);
       if (res) {
-        // console.log(res);
         dispatch(login(JSON.parse(res)));
       }
 
@@ -35,7 +34,6 @@ const Router = () => {
         dispatch(addProfile(JSON.parse(resProfile)));
       } else {
         const val = await HandleAPI(`/doctors/profile?id=${auth._id}`);
-
         if (val) {
           await AsyncStorage.setItem(
             localNames.profile,

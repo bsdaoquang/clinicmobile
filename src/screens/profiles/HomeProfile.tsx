@@ -1,15 +1,18 @@
 import {
   Button,
+  Col,
   Input,
   Loading,
+  Row,
   Section,
   SelectModel,
+  Space,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {useEffect, useState} from 'react';
-import {Text} from 'react-native';
+import {Alert, Text, TouchableOpacity} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {HandleAPI} from '../../apis/handleAPI';
@@ -22,6 +25,7 @@ import {useStatusBar} from '../../hooks/useStatusBar';
 import {authSelector, logout} from '../../redux/reducers/authReducer';
 import {showToast} from '../../utils/showToast';
 import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
+import {TickSquare} from 'iconsax-react-native';
 
 const HomeProfile = ({navigation}: any) => {
   const auth = useSelector(authSelector);
@@ -37,7 +41,7 @@ const HomeProfile = ({navigation}: any) => {
     address: '',
     title: '',
     special: '',
-    expTime: `${profile.expTime}` ?? '',
+    expTime: `${profile && profile.expTime ? profile.expTime : ''}`,
     workAddress: '',
     referentCode: '',
     ...profile,
@@ -90,6 +94,7 @@ const HomeProfile = ({navigation}: any) => {
       value: 'other',
     },
   ]);
+  const [isApproved, setIsApproved] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -99,60 +104,62 @@ const HomeProfile = ({navigation}: any) => {
   });
 
   useEffect(() => {
-    auth && checkDocumentStatus();
-  }, [auth]);
-
-  useEffect(() => {
     if (!formData.phoneNumber) {
       setErrorText('');
     }
   }, [formData]);
 
-  const checkDocumentStatus = async () => {
-    setIsLoading(true);
-
-    try {
-      const res: any = await HandleAPI(`/doctors/documents?id=${auth._id}`);
-      if (profile._id || res || res.isVerified) {
-        navigation.navigate(
-          !res.status || res.status !== 'pending'
-            ? 'UploadCurriculumVitae'
-            : 'VerifyStatus',
-        );
-      }
-      setIsLoading(false);
-    } catch (error) {
-      profile._id && navigation.navigate('UploadCurriculumVitae');
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    profile && profile._id && navigation.navigate('UploadCurriculumVitae');
+  }, [profile]);
 
   const handleUpdateProfile = async () => {
-    setIsLoading(true);
-
-    try {
-      const res: any = await HandleAPI(
-        `/doctors/update?id=${auth._id}`,
-        {
-          ...formData,
-          expTime: parseInt(formData.expTime),
-          photoUrl: auth.photo ?? '',
-          email: auth.email,
-          isOnline: false,
-          isVerified: false,
-        },
-        'put',
+    if (!isApproved) {
+      Alert.alert(
+        'Thông báo',
+        'Bạn cần phải đồng ý với "Thoả thuận hợp tác cung cấp dịch vụ y tế tại nhà" của chúng tôi để có thể tiếp tục',
+        [
+          {
+            style: 'cancel',
+            onPress: () => navigation.navigate('Agreements'),
+            text: 'Xem thoả thuận',
+          },
+          {
+            style: 'default',
+            onPress: () => setIsApproved(true),
+            text: 'Đồng ý',
+          },
+        ],
       );
-      showToast(res.message);
-      dispatch(addProfile(res.data));
-      checkDocumentStatus();
-      await AsyncStorage.setItem(localNames.profile, JSON.stringify(res.data));
-      setIsLoading(false);
-    } catch (error) {
-      showToast('Không thể cập nhật thông tin');
-      setIsLoading(false);
-      console.log(error);
+    } else {
+      setIsLoading(true);
+
+      try {
+        const res: any = await HandleAPI(
+          `/doctors/update?id=${auth._id}`,
+          {
+            ...formData,
+            expTime: parseInt(formData.expTime),
+            photoUrl: auth.photo ?? '',
+            email: auth.email,
+            isOnline: false,
+            isVerified: false,
+            isApproved,
+          },
+          'put',
+        );
+        showToast(res.message);
+        dispatch(addProfile(res.data));
+        await AsyncStorage.setItem(
+          localNames.profile,
+          JSON.stringify(res.data),
+        );
+        setIsLoading(false);
+      } catch (error) {
+        showToast('Không thể cập nhật thông tin');
+        setIsLoading(false);
+        console.log(error);
+      }
     }
   };
 
@@ -165,11 +172,10 @@ const HomeProfile = ({navigation}: any) => {
   return (
     <Container>
       <Section>
-        <TextComponent text="Đăng ký" size={28} weight={'bold'} />
+        <TextComponent text="Đăng ký đối tác" size={22} weight={'bold'} />
         <TextComponent
-          size={18}
           color={colors.gray}
-          text="Cho chúng tôi biết thêm thông tin về bạn"
+          text="Đối tác là người cung cấp dịch vụ y tế tại nhà tự do, không thuộc phòng khám, có quyền tự chủ về thời gian, địa điểm làm việc và những dịch vụ y tế sẽ cung cấp đến khách hàng."
         />
       </Section>
       <Section>
@@ -257,6 +263,24 @@ const HomeProfile = ({navigation}: any) => {
           onPress={handleUpdateProfile}
           color={colors.primary}
         />
+
+        <Row>
+          <TouchableOpacity onPress={() => setIsApproved(!isApproved)}>
+            <TickSquare
+              size={22}
+              variant={isApproved ? 'Bold' : 'Outline'}
+              color={isApproved ? colors.primary : colors.gray2}
+            />
+          </TouchableOpacity>
+          <Space width={8} />
+          <Col>
+            <Text
+              onPress={() => navigation.navigate('Agreements')}
+              style={{...globalStyles.text, color: colors.primary}}>
+              Thoả thuận hợp tác cung cấp dịch vụ y tế tại nhà
+            </Text>
+          </Col>
+        </Row>
       </Section>
       <Section>
         <Text
@@ -266,11 +290,12 @@ const HomeProfile = ({navigation}: any) => {
               fontSize: 14,
               color: '#676767',
               fontWeight: '300',
+              textAlign: 'center',
               fontFamily: fontFamilies.RobotoRegular,
               lineHeight: 19,
             },
           ]}>
-          Bằng việc tiếp tục, tôi đồng ý rằng DoctorBee được quyền thu thập chia
+          Bằng việc tiếp tục, Tôi đồng ý rằng DoctorBee được quyền thu thập chia
           sẻ dữ liệu của tôi theo{' '}
           <Text
             onPress={() => navigation.navigate('Terms')}
@@ -282,8 +307,8 @@ const HomeProfile = ({navigation}: any) => {
             onPress={() => navigation.navigate('Policy')}
             style={{color: colors.primary}}>
             Chính sách bảo mật
-          </Text>{' '}
-          của chúng tôi.
+          </Text>
+          .
         </Text>
       </Section>
       <Section>
@@ -303,7 +328,6 @@ const HomeProfile = ({navigation}: any) => {
             await GoogleSignin.signOut();
             await AsyncStorage.removeItem(localNames.authData);
             dispatch(logout({}));
-            // await auth().signOut();
           }}
         />
       </Section>

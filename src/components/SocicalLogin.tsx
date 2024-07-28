@@ -4,12 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Image} from 'react-native';
+import {Alert, Image} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {HandleAPI} from '../apis/handleAPI';
 import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
 import TextComponent from './TextComponent';
+import {showToast} from '../utils/showToast';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +49,13 @@ const SocicalLogin = () => {
       setIsLoading(false);
     } catch (error: any) {
       console.log(error);
+      Alert.alert('Thông báo', `Đăng nhập thất bại, ${error}`, [
+        {
+          style: 'default',
+          text: 'Đồng ý',
+          onPress: async () => await GoogleSignin.signOut(),
+        },
+      ]);
       setIsLoading(false);
     }
   };

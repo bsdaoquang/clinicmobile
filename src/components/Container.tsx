@@ -70,7 +70,7 @@ const Container = (props: Props) => {
       style={{
         flex: 1,
         backgroundColor: color ?? 'white',
-        paddingTop: Platform.OS === 'android' ? 20 : 0,
+        paddingTop: Platform.OS === 'android' ? 30 : 0,
       }}>
       <View style={[{flex: 1, backgroundColor: 'white'}]}>
         {(title || back || left || right) && (

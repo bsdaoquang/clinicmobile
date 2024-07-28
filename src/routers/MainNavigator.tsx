@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   AddService,
+  Agreements,
   ChangePassword,
   Comingsoon,
   Communitications,
@@ -51,6 +52,7 @@ const MainNavigator = () => {
       <Stack.Screen name="Histories" component={Histories} />
       <Stack.Screen name="Schedulers" component={Schedulers} />
       <Stack.Screen name="Communitications" component={Communitications} />
+      <Stack.Screen name="Agreements" component={Agreements} />
     </Stack.Navigator>
   );
 };

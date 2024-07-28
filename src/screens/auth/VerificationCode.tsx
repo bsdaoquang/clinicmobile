@@ -74,10 +74,6 @@ const VerificationCode = ({navigation, route}: any) => {
           dispatch(login(res));
 
           setIsVerifing(false);
-
-          // navigation.navigate(
-          //   res.isRequireUpdateProfile ? 'UpdateHealthInfo' : 'Main',
-          // );
         }
       } catch (error: any) {
         navigation.goBack();

@@ -1,37 +1,25 @@
-import {Button, Section, Space, globalStyles} from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import {Button, Section, Space} from '@bsdaoquang/rncomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
-import {addAuth, authSelector} from '../../redux/reducers/authReducer';
+import {logout} from '../../redux/reducers/authReducer';
+import {addProfile} from '../../redux/reducers/profileReducer';
 
-const VerifyStatus = ({navigation, route}: any) => {
-  const {doctorProfile} = route.params;
-  const user = auth().currentUser;
-  const profile = useSelector(authSelector);
-  const dispatch = useDispatch();
-
+const VerifyStatus = ({navigation}: any) => {
   useStatusBar({
     style: 'dark-content',
   });
-
-  const handleActiveAccount = async () => {
-    await firestore().collection('profiles').doc(user?.uid).update({
-      isVerifing: true,
-      status: 'active',
-    });
-
-    dispatch(addAuth({...profile, isVerifing: true, status: 'active'}));
-  };
+  const dispatch = useDispatch();
 
   return (
     <Container isFlex>
-      <Section styles={[globalStyles.center, {flex: 1}]}>
+      <Section styles={[{flex: 1}]}>
         <TextComponent
           text="Hồ sơ của bạn đã được gửi đi và đang chờ xét duyệt"
           size={28}
@@ -43,10 +31,10 @@ const VerifyStatus = ({navigation, route}: any) => {
 
       <Section>
         <Button
-          title="Kích hoạt tài khoản"
-          onPress={handleActiveAccount}
-          disable={!doctorProfile.verify}
-          color={colors.primary}
+          title="Xem trạng thái hồ sơ"
+          onPress={() => navigation.navigate('UploadCurriculumVitae')}
+          type="link"
+          isShadow={false}
         />
 
         <Button
@@ -54,7 +42,12 @@ const VerifyStatus = ({navigation, route}: any) => {
           isShadow={false}
           textStyleProps={{color: colors.danger}}
           title="Đăng xuất"
-          onPress={() => auth().signOut()}
+          onPress={async () => {
+            await GoogleSignin.signOut();
+            await AsyncStorage.clear();
+            dispatch(logout({}));
+            dispatch(addProfile({}));
+          }}
         />
       </Section>
     </Container>

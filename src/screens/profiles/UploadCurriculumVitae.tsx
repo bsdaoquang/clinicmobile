@@ -9,7 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {FlatList, Linking} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {HandleAPI} from '../../apis/handleAPI';
 import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
@@ -22,18 +22,17 @@ import {
 import {authSelector} from '../../redux/reducers/authReducer';
 import {showToast} from '../../utils/showToast';
 import {useIsFocused} from '@react-navigation/native';
+import {addProfile} from '../../redux/reducers/profileReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localNames} from '../../constants/localNames';
 
 const UploadCurriculumVitae = ({navigation}: any) => {
   const [documents, setDocuments] = useState<DocumentModel[]>([]);
   const auth = useSelector(authSelector);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const isFocus = useIsFocused();
-
-  useEffect(() => {
-    isFocus && getDocuments();
-  }, [isFocus]);
-
   const profiles = [
     {
       key: 'Avatar',
@@ -78,6 +77,21 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     },
   ];
 
+  useEffect(() => {
+    isFocus && getDocuments();
+  }, [isFocus]);
+
+  useEffect(() => {
+    const items: string[] = [];
+    documents.forEach(item => {
+      items.push(item.type);
+    });
+
+    if (items.length === profiles.length - 1) {
+      handleUpdateProfile();
+    }
+  }, [documents]);
+
   const getDocuments = async () => {
     const api = `/doctors/documents?id=${auth._id}`;
     setIsLoading(true);
@@ -88,6 +102,21 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     } catch (error: any) {
       setIsLoading(false);
       showToast(error.message);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      const res = await HandleAPI(
+        `/doctors/update?id=${auth._id}`,
+        {status: 'pending'},
+        'put',
+      );
+
+      await AsyncStorage.setItem(localNames.profile, JSON.stringify(res.data));
+      res && res.data && dispatch(addProfile(res.data));
+    } catch (error) {
+      console.log(error);
     }
   };
 
