@@ -59,8 +59,6 @@ export class HandleNotification {
       if (res.data) {
         const {tokens, accesstoken} = res.data;
 
-        console.log(res.data);
-
         if (tokens.length > 0) {
           tokens.forEach(async (token: string) => {
             const myHeaders = new Headers();
@@ -74,6 +72,18 @@ export class HandleNotification {
                   body: notificationData.body,
                 },
                 data: values,
+                android: {
+                  notification: {
+                    sound: 'default',
+                  },
+                },
+                apns: {
+                  payload: {
+                    aps: {
+                      sound: 'default',
+                    },
+                  },
+                },
               },
             });
             const requestOptions: any = {
