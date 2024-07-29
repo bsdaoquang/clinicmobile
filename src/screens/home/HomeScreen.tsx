@@ -13,9 +13,8 @@ import GeoLocation, {
 } from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import messaging from '@react-native-firebase/messaging';
 import {MoneyRecive, Notification} from 'iconsax-react-native';
-import React, {lazy, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -27,16 +26,19 @@ import {
   View,
 } from 'react-native';
 import MapView from 'react-native-maps';
-import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
-import {userRef} from '../../firebase/firebaseConfig';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {ServiceModel} from '../../models/ServiceModel';
+import {useSelector} from 'react-redux';
+import {profileSelector} from '../../redux/reducers/profileReducer';
+import {HandleNotification} from '../../utils/handleNotification';
+import Toast from 'react-native-toast-message';
+import messaging from '@react-native-firebase/messaging';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -44,10 +46,10 @@ const HomeScreen = ({navigation}: any) => {
     long: number;
   }>();
   const [isLoading, setIsLoading] = useState(false);
-  const [isOnline, setIsOnline] = useState(false);
-  const [profile, setProfile] = useState<any>();
   const [services, setservices] = useState<ServiceModel[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
+
+  const profile = useSelector(profileSelector);
 
   const user = auth().currentUser;
   const menus = [
@@ -97,44 +99,44 @@ const HomeScreen = ({navigation}: any) => {
     getPosition();
 
     // Tạo dịch vụ sẽ tạo khi khởi tạo hồ sơ, hoặc cập nhật trong profile
-    firestore()
-      .collection('services')
-      .where('uid', '==', user?.uid)
-      .get()
-      .then(snap => {
-        if (!snap.empty) {
-          const items: ServiceModel[] = [];
-          snap.forEach((item: any) =>
-            items.push({
-              id: item.id,
-              ...item.data(),
-            }),
-          );
+    // firestore()
+    //   .collection('services')
+    //   .where('uid', '==', user?.uid)
+    //   .get()
+    //   .then(snap => {
+    //     if (!snap.empty) {
+    //       const items: ServiceModel[] = [];
+    //       snap.forEach((item: any) =>
+    //         items.push({
+    //           id: item.id,
+    //           ...item.data(),
+    //         }),
+    //       );
 
-          setservices(items);
-        }
-      })
-      .catch(error => console.log(error));
+    //       setservices(items);
+    //     }
+    //   })
+    //   .catch(error => console.log(error));
 
-    // nếu khi kích hoạt, kiểm tra thấy không có dịch vụ sẽ yêu cầu tạo dịch vụ
+    // // nếu khi kích hoạt, kiểm tra thấy không có dịch vụ sẽ yêu cầu tạo dịch vụ
 
-    // Kiểm tra profile
-    firestore()
-      .collection('profiles')
-      .doc(user?.uid)
-      .onSnapshot(snap => {
-        if (snap.exists) {
-          setProfile(snap.data());
-        }
-      });
+    // // Kiểm tra profile
+    // firestore()
+    //   .collection('profiles')
+    //   .doc(user?.uid)
+    //   .onSnapshot(snap => {
+    //     if (snap.exists) {
+    //       setProfile(snap.data());
+    //     }
+    //   });
 
-    firestore()
-      .collection('notifications')
-      .where('uid', '==', user?.uid)
-      .where('isRead', '==', false)
-      .onSnapshot(snap => {
-        setNotificationCount(snap.size);
-      });
+    // firestore()
+    //   .collection('notifications')
+    //   .where('uid', '==', user?.uid)
+    //   .where('isRead', '==', false)
+    //   .onSnapshot(snap => {
+    //     setNotificationCount(snap.size);
+    //   });
 
     messaging().onMessage(mess => {
       const notification = mess.notification;
@@ -192,31 +194,31 @@ const HomeScreen = ({navigation}: any) => {
       },
       {},
     );
-    userRef.doc(user?.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        const data: any = snap.data();
-        setIsOnline(data.isOnline);
-      }
-    });
+    // userRef.doc(user?.uid).onSnapshot(snap => {
+    //   if (snap.exists) {
+    //     const data: any = snap.data();
+    //     setIsOnline(data.isOnline);
+    //   }
+    // });
   };
 
   const handleOnline = async (val: boolean) => {
     if (services.length > 0) {
-      setIsLoading(true);
-      try {
-        await firestore()
-          .collection('profiles')
-          .doc(user?.uid)
-          .update({
-            isOnline: val,
-            currentLocation: val ? currentLocation : '',
-          });
-        await handleListenLocation(val);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
+      // setIsLoading(true);
+      // try {
+      //   await firestore()
+      //     .collection('profiles')
+      //     .doc(user?.uid)
+      //     .update({
+      //       isOnline: val,
+      //       currentLocation: val ? currentLocation : '',
+      //     });
+      //   await handleListenLocation(val);
+      //   setIsLoading(false);
+      // } catch (error) {
+      //   console.log(error);
+      //   setIsLoading(false);
+      // }
     } else {
       Alert.alert(
         'Lỗi',
@@ -255,31 +257,31 @@ const HomeScreen = ({navigation}: any) => {
         console.log(error);
       }
     } else {
-      services.forEach(
-        async item =>
-          await firestore().collection('services').doc(item.id).update({
-            position: '',
-            isOnline: false,
-          }),
-      );
-      watch && GeoLocation.clearWatch(watch);
+      // services.forEach(
+      //   async item =>
+      //     await firestore().collection('services').doc(item.id).update({
+      //       position: '',
+      //       isOnline: false,
+      //     }),
+      // );
+      // watch && GeoLocation.clearWatch(watch);
     }
   };
 
   const handleUpdatePosition = (position: GeolocationResponse) => {
-    services.forEach(async item => {
-      await firestore()
-        .collection('services')
-        .doc(item.id)
-        .update({
-          position: {
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-          },
-          isOnline: true,
-        });
-      console.log('Service is updated');
-    });
+    // services.forEach(async item => {
+    //   await firestore()
+    //     .collection('services')
+    //     .doc(item.id)
+    //     .update({
+    //       position: {
+    //         lat: position.coords.latitude,
+    //         long: position.coords.longitude,
+    //       },
+    //       isOnline: true,
+    //     });
+    //   console.log('Service is updated');
+    // });
   };
 
   const handleLockAccount = async () => {};
@@ -347,7 +349,7 @@ const HomeScreen = ({navigation}: any) => {
                   </TouchableOpacity>
                 </Badge>
                 <Space width={12} />
-                {profile && profile.avatar && profile.avatar.downloadUrl && (
+                {profile && profile.photoUrl && (
                   <Badge
                     dotStylesProps={{
                       top: 0,
@@ -356,7 +358,7 @@ const HomeScreen = ({navigation}: any) => {
                     dotColor={profile.isOnline ? '#40A578' : '#e0e0e0'}>
                     <Image
                       source={{
-                        uri: profile.avatar.downloadUrl,
+                        uri: profile.photoUrl,
                       }}
                       style={{
                         width: 50,
@@ -400,7 +402,13 @@ const HomeScreen = ({navigation}: any) => {
                   iconExtra
                   icon={<AntDesign name="poweroff" size={18} color={'white'} />}
                   title="Bật kết nối"
-                  onPress={() => handleOnline(true)}
+                  onPress={() =>
+                    HandleNotification.pushNotification(
+                      profile._id,
+                      {title: 'title', body: 'body'},
+                      {id: 'afaf'},
+                    )
+                  }
                   color="#219C90"
                   styles={{paddingVertical: 8, width: '50%'}}
                 />

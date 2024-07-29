@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {HandleAPI} from '../apis/handleAPI';
 import {localNames} from '../constants/localNames';
 import {authSelector, login} from '../redux/reducers/authReducer';
 import {addProfile, profileSelector} from '../redux/reducers/profileReducer';
@@ -8,8 +9,6 @@ import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import DrawerNavigator from './DrawerNavigator';
 import ProfileNavigator from './ProfileNavigator';
-import {HandleAPI} from '../apis/handleAPI';
-import {HandleNotification} from '../utils/handleNotification';
 
 const Router = () => {
   const [isWelcome, setIsWelcome] = useState(true);
@@ -19,7 +18,6 @@ const Router = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // HandleNotification.CheckNotificationPerson();
     getLocalData();
   }, []);
 

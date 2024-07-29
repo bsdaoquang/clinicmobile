@@ -1,10 +1,13 @@
-import {Notification} from '@bsdaoquang/rncomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
+import {HandleAPI} from '../apis/handleAPI';
+import {localNames} from '../constants/localNames';
 
-const profileRef = firestore().collection('profiles');
-const seviceaccout = require('../../service-account.json');
+const getAuth = async () => {
+  const res = await AsyncStorage.getItem(localNames.authData);
+
+  return res ? JSON.parse(res) : undefined;
+};
 
 export class HandleNotification {
   static CheckNotificationPerson = async () => {
@@ -19,21 +22,9 @@ export class HandleNotification {
       console.log(`Can not get FCM Token!`);
     }
   };
-  static getAccesstoken = async () => {
-    try {
-      const res = await Notification.getAccesstoken({
-        client_email: seviceaccout.client_email,
-        private_key: seviceaccout.private_key,
-      });
-
-      return res.access_token;
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   static getFCMToken = async () => {
-    const fcmtoken = await AsyncStorage.getItem('fcmtoken');
+    const fcmtoken = await AsyncStorage.getItem(localNames.fcmtoken);
     if (fcmtoken) {
       // update fcmtoken
       this.updateFcmTokenToDatabase(fcmtoken);
@@ -41,48 +32,40 @@ export class HandleNotification {
       const token = await messaging().getToken();
 
       if (token) {
-        await AsyncStorage.setItem('fcmtoken', token);
         this.updateFcmTokenToDatabase(token);
       }
     }
   };
 
   static updateFcmTokenToDatabase = async (token: string) => {
-    try {
-      // const snap: any = await profileRef.doc(user.uid).get();
-      // if (snap.exists) {
-      //   const tokens: string[] = snap.data().tokens ? snap.data().tokens : [];
-      //   if (!tokens.includes(token)) {
-      //     await profileRef.doc(user.uid).update({
-      //       tokens: arrayUnion(token),
-      //     });
-      //   }
-      // }
-      // console.log(token);
-    } catch (error) {
-      console.log(error);
+    const auth = await getAuth();
+    if (auth) {
+      try {
+        const api = `/update-fcmtoken?id=${auth._id}`;
+        await HandleAPI(api, {token}, 'put');
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
   static pushNotification = async (
-    uid: string,
+    id: string,
     notificationData: {title: string; body: string},
     values: any,
   ) => {
     try {
-      const snap = await profileRef.doc(uid).get();
+      const res = await HandleAPI(`/get-fcmtoken?id=${id}`);
+      if (res.data) {
+        const {tokens, accesstoken} = res.data;
 
-      if (snap.exists) {
-        const data: any = snap.data();
+        console.log(res.data);
 
-        if (data.tokens && data.tokens.length > 0) {
-          data.tokens.forEach(async (token: string) => {
+        if (tokens.length > 0) {
+          tokens.forEach(async (token: string) => {
             const myHeaders = new Headers();
             myHeaders.append('Content-Type', 'application/json');
-            myHeaders.append(
-              'Authorization',
-              `Bearer ${await this.getAccesstoken()}`,
-            );
-
+            myHeaders.append('Authorization', `Bearer ${accesstoken}`);
             const raw = JSON.stringify({
               message: {
                 token,
@@ -93,22 +76,17 @@ export class HandleNotification {
                 data: values,
               },
             });
-
             const requestOptions: any = {
               method: 'POST',
               headers: myHeaders,
               body: raw,
               redirect: 'follow',
             };
-
             const res = await fetch(
               'https://fcm.googleapis.com/v1/projects/clinic-scheduler-e62c2/messages:send',
               requestOptions,
             );
-
             const result = await res.json();
-
-            console.log(result);
           });
         }
       }

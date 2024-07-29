@@ -11,11 +11,11 @@ import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
 import TextComponent from './TextComponent';
 import {showToast} from '../utils/showToast';
+import {addProfile} from '../redux/reducers/profileReducer';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigation: any = useNavigation();
   const dispatch = useDispatch();
 
   const handleLoginWithGoogle = async () => {
@@ -45,6 +45,7 @@ const SocicalLogin = () => {
           JSON.stringify(res.data),
         );
         dispatch(login(res.data));
+        dispatch(addProfile(res.data));
       }
       setIsLoading(false);
     } catch (error: any) {
