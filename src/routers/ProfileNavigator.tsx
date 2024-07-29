@@ -1,8 +1,9 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useSelector} from 'react-redux';
 import {profileSelector} from '../redux/reducers/profileReducer';
 import {
+  AddNewAddress,
   Agreements,
   Avatar,
   BangTotNghiep,
@@ -50,10 +51,14 @@ const ProfileNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="updateProfile" component={HomeProfile} />
+      <Stack.Screen
+        name="updateProfile"
+        component={profile.type === 'doctor' ? HomeProfile : HomeProfileClinic}
+      />
+      {/* <Stack.Screen name="HomeProfileClinic" component={HomeProfileClinic} /> */}
       <Stack.Screen name="MapScreen" component={MapScreen} />
-      <Stack.Screen name="HomeProfileClinic" component={HomeProfileClinic} />
       <Stack.Screen name="Agreements" component={Agreements} />
+      <Stack.Screen name="AddNewAddress" component={AddNewAddress} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Policy" component={Policy} />
       <Stack.Screen name="Verification" component={Verification} />

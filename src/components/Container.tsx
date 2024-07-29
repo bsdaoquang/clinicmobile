@@ -24,6 +24,7 @@ interface Props {
   isFlex?: boolean;
   color?: string;
   bottomComponent?: ReactNode;
+  onBack?: () => void;
 }
 
 const Container = (props: Props) => {
@@ -38,6 +39,7 @@ const Container = (props: Props) => {
     right,
     isFlex,
     color,
+    onBack,
     bottomComponent,
   } = props;
 
@@ -70,7 +72,7 @@ const Container = (props: Props) => {
       style={{
         flex: 1,
         backgroundColor: color ?? 'white',
-        paddingTop: Platform.OS === 'android' ? 30 : 0,
+        paddingTop: Platform.OS === 'android' ? 30 : 40,
       }}>
       <View style={[{flex: 1, backgroundColor: 'white'}]}>
         {(title || back || left || right) && (
@@ -86,7 +88,7 @@ const Container = (props: Props) => {
             ]}>
             {back && (
               <TouchableOpacity
-                onPress={() => navigation.goBack()}
+                onPress={() => (onBack ? onBack() : navigation.goBack())}
                 style={[
                   {
                     minWidth: 32,

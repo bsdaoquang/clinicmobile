@@ -33,6 +33,7 @@ import HomeProfileClinic from './profiles/HomeProfileClinic';
 import ChoiceLocation from './maps/ChoiceLocation';
 import MapScreen from './maps/MapScreen';
 import LoginClinic from './auth/LoginClinic';
+import AddNewAddress from './maps/AddNewAddress';
 
 export {
   HomeProfile,
@@ -70,4 +71,5 @@ export {
   ChoiceLocation,
   MapScreen,
   LoginClinic,
+  AddNewAddress,
 };

@@ -1,17 +1,14 @@
-import {Button, Col, Input, Row, Section, Space} from '@bsdaoquang/rncomponent';
-import axios from 'axios';
-import {ArrowLeft2, MessageEdit} from 'iconsax-react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {Button, Row, Space} from '@bsdaoquang/rncomponent';
+import Geolocation from '@react-native-community/geolocation';
+import {ArrowLeft2} from 'iconsax-react-native';
+import React, {useEffect, useState} from 'react';
+import {View} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
-import {Modalize} from 'react-native-modalize';
-import {Portal} from 'react-native-portalize';
-import {useDispatch, useSelector} from 'react-redux';
-import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
-import {fontFamilies} from '../../constants/fontFamilies';
+import {TextComponent} from '../../components';
+import axios from 'axios';
 import {AddressModel} from '../../models/AddressModel';
-import {positionSelector} from '../../redux/reducers/positionReducer';
+import {fontFamilies} from '../../constants/fontFamilies';
 
 const MapScreen = ({navigation, route}: any) => {
   const [currentPosition, setCurrentPosition] = useState<{
@@ -19,57 +16,32 @@ const MapScreen = ({navigation, route}: any) => {
     long: number;
   }>();
   const [address, setAddress] = useState<AddressModel>();
-  const [note, setNote] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
-  const [positionSelected, setPositionSelected] = useState<{
-    lat: number;
-    long: number;
-  }>();
-
-  const modalizeRef = useRef<Modalize>();
-  const position = useSelector(positionSelector);
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (currentPosition) {
-      modalizeRef.current?.open();
+    Geolocation.getCurrentPosition(
+      position => {
+        setCurrentPosition({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  }, []);
 
+  useEffect(() => {
+    currentPosition &&
       handleChangeRegion({
         latitude: currentPosition.lat,
         longitude: currentPosition.long,
       });
-    }
   }, [currentPosition]);
-
-  useEffect(() => {
-    if (route.params && route.params.id) {
-      const {id} = route.params;
-      getPositionById(id);
-    } else {
-      setCurrentPosition(position);
-    }
-  }, [route.params]);
-
-  const getPositionById = async (id: string) => {
-    const api = `https://lookup.search.hereapi.com/v1/lookup?id=${id}&apiKey=${process.env.HERE_API_KEY}`;
-    try {
-      const res = await axios.get(api);
-
-      if (res && res.data && res.status === 200) {
-        const data = res.data.position;
-
-        setCurrentPosition({
-          lat: data.lat,
-          long: data.lng,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleChangeRegion = async (val: any) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${val.latitude},${val.longitude}&lang=vi-VI&apiKey=${process.env.HERE_API_KEY}`;
+    console.log(api);
     try {
       const res = await axios(api);
 
@@ -83,33 +55,12 @@ const MapScreen = ({navigation, route}: any) => {
     }
   };
 
-  const handleChoiceLocation = () => {
-    if (route.params) {
-      modalizeRef.current?.close();
-
-      console.log(positionSelected);
-      // if (route.params.service) {
-      //   navigation.navigate('ChoiceDoctors', {
-      //     service: route.params.service,
-      //     note,
-      //     address,
-      //   });
-      // } else {
-      //   dispatch(addPosision(positionSelected));
-
-      //   navigation.navigate('HomeTab', {
-      //     screen: 'HomeNavigator',
-      //   });
-      // }
-    }
-  };
-
   return (
     <View style={{flex: 1}}>
       <View
         style={{
           paddingHorizontal: 16,
-          paddingTop: 22,
+          paddingTop: 40,
           position: 'absolute',
           top: 0,
           right: 0,
@@ -149,6 +100,12 @@ const MapScreen = ({navigation, route}: any) => {
             latitudeDelta: 0.001,
             longitudeDelta: 0.015,
           }}
+          // onRegionChangeComplete={val => {
+          //   setCurrentPosition({
+          //     lat: val.latitude,
+          //     long: val.longitude,
+          //   });
+          // }}
           onPress={val =>
             setCurrentPosition({
               lat: val.nativeEvent.coordinate.latitude,
@@ -169,66 +126,48 @@ const MapScreen = ({navigation, route}: any) => {
         </MapView>
       )}
 
-      <Portal>
-        <Modalize
-          ref={modalizeRef}
-          adjustToContentHeight
-          modalStyle={{
-            paddingVertical: 20,
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+          backgroundColor: 'white',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+        }}>
+        <TextComponent
+          text={`Vị trí hiện tại:`}
+          font={fontFamilies.RobotoMedium}
+        />
+        <Space height={7} />
+        <TextComponent text={address?.label} />
+
+        <Space height={16} />
+        <Button
+          color={colors.primary}
+          onPress={() => {
+            if (route.params && route.params.address) {
+              navigation.navigate(
+                'updateProfile',
+                {
+                  address: route.params.address,
+                  position: currentPosition,
+                },
+                {isMerge: true},
+              );
+            } else {
+              navigation.navigate(
+                'AddNewAddress',
+                {
+                  position: currentPosition,
+                },
+                {isMerge: true},
+              );
+            }
           }}
-          overlayStyle={{
-            backgroundColor: 'transparent',
-          }}
-          handlePosition="inside">
-          <Section>
-            <Row alignItems="flex-start">
-              <Col>
-                <Row justifyContent="flex-start" styles={{marginBottom: 12}}>
-                  <TextComponent
-                    text="Vị trí của bạn"
-                    font={fontFamilies.RobotoMedium}
-                  />
-                  <Space width={12} />
-                  <TouchableOpacity onPress={() => setIsEdit(!isEdit)}>
-                    <MessageEdit size={22} color={colors.primary} />
-                  </TouchableOpacity>
-                </Row>
-                {address && isEdit ? (
-                  <Input
-                    radius={12}
-                    inline
-                    value={address.label}
-                    onChange={val => {
-                      setAddress({...address, label: val});
-                    }}
-                  />
-                ) : (
-                  <TextComponent text={address?.label ?? ''} />
-                )}
-              </Col>
-            </Row>
-            <Space height={12} />
-            <Input
-              value={note}
-              onChange={val => setNote(val)}
-              textAreal
-              rows={2}
-              radius={12}
-              inline
-              placeholder="Lưu ý dành cho chúng tôi, ví dụ vị trí cụ thể của bạn, hoặc gọi điện trước khi đến"
-            />
-          </Section>
-          <Section>
-            <Button
-              radius={12}
-              inline
-              color={colors.primary}
-              title="Chọn địa điểm này"
-              onPress={handleChoiceLocation}
-            />
-          </Section>
-        </Modalize>
-      </Portal>
+          title="Đồng ý"
+          radius={8}
+        />
+      </View>
     </View>
   );
 };

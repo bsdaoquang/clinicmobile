@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Loading,
   Row,
   Section,
   Space,
@@ -21,7 +22,7 @@ import {
   DocumentStatusColor,
 } from '../../models/DocumentModel';
 import {authSelector} from '../../redux/reducers/authReducer';
-import {addProfile} from '../../redux/reducers/profileReducer';
+import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
 import {showToast} from '../../utils/showToast';
 import {sendMail} from '../../utils/sendMail';
 
@@ -30,6 +31,8 @@ const UploadCurriculumVitae = ({navigation}: any) => {
   const auth = useSelector(authSelector);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+
+  const profile = useSelector(profileSelector);
 
   const isFocus = useIsFocused();
   const profiles = [
@@ -80,17 +83,6 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     isFocus && getDocuments();
   }, [isFocus]);
 
-  useEffect(() => {
-    const items: string[] = [];
-    documents.forEach(item => {
-      items.push(item.type);
-    });
-
-    if (items.length === profiles.length - 1) {
-      handleUpdateProfile();
-    }
-  }, [documents]);
-
   const getDocuments = async () => {
     const api = `/doctors/documents?id=${auth._id}`;
     setIsLoading(true);
@@ -105,6 +97,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
   };
 
   const handleUpdateProfile = async () => {
+    setIsLoading(true);
     try {
       const res = await HandleAPI(
         `/doctors/update?id=${auth._id}`,
@@ -113,14 +106,15 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       );
 
       res && res.data && dispatch(addProfile(res.data));
-      //Send mail to admin
-      // send email to admin
       await sendMail('bsdaoquang@gmail.com', {
         html: '<h1>Có người đăng ký mới đang chờ duyệt hồ sơ</h1>',
         subject: 'Hồ sơ đang chờ duyệt',
       });
+
+      setIsLoading(false);
       navigation.navigate('VerifyStatus');
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -161,12 +155,25 @@ const UploadCurriculumVitae = ({navigation}: any) => {
 
   return (
     <Container
+      bottomComponent={
+        <Section>
+          <Button
+            color={colors.primary}
+            title={`Gửi ${
+              profile.status === 'pending' ? 'lại' : ''
+            } yêu cầu phê duyệt`}
+            onPress={handleUpdateProfile}
+            radius={8}
+          />
+        </Section>
+      }
       isScroll={false}
       title="Hồ sơ cá nhân"
       back
       right={
         <Button
           title="Hỗ trợ"
+          isShadow={false}
           type="link"
           inline
           onPress={() => Linking.openURL('https://yhocso.com/helps')}
@@ -200,6 +207,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         )}
         keyExtractor={item => item.key}
       />
+      <Loading loading={isLoading} mess="Đang gửi yêu cầu" />
     </Container>
   );
 };

@@ -9,6 +9,7 @@ const TextComponent = (props: TextProps | any) => {
       {...props}
       text={props.text}
       flex={props.flex}
+      numberOfLine={props.numberOfLine}
       styles={{
         lineHeight: props.size ? props.size + 4 : 20,
         fontSize: props.size ? props.size : Platform.OS === 'ios' ? 16 : 14,

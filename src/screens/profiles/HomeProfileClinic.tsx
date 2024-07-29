@@ -5,29 +5,28 @@ import {
   Loading,
   Row,
   Section,
-  SelectModel,
   Space,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Location, TickSquare} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {Alert, Text, TouchableOpacity} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {HandleAPI} from '../../apis/handleAPI';
-import {Container, DropdownPicker} from '../../components';
+import {Container} from '../../components';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {localNames} from '../../constants/localNames';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {authSelector, logout} from '../../redux/reducers/authReducer';
-import {showToast} from '../../utils/showToast';
 import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
-import {TickSquare} from 'iconsax-react-native';
+import {showToast} from '../../utils/showToast';
 
-const HomeProfileClinic = ({navigation}: any) => {
+const HomeProfileClinic = ({navigation, route}: any) => {
   const auth = useSelector(authSelector);
   const profile = useSelector(profileSelector);
 
@@ -62,8 +61,20 @@ const HomeProfileClinic = ({navigation}: any) => {
   }, [formData]);
 
   useEffect(() => {
-    profile && profile._id && navigation.navigate('UploadCurriculumVitae');
-  }, [profile]);
+    if (route.params) {
+      if (route.params.address) {
+        const data = route.params.address;
+        handleChangeData(
+          'address',
+          `${data.street}, ${data.ward}, ${data.distric}, ${data.province}`,
+        );
+      }
+
+      if (route.params.position) {
+        handleChangeData('position', route.params.position);
+      }
+    }
+  }, [route.params]);
 
   const handleUpdateProfile = async () => {
     if (!isApproved) {
@@ -119,9 +130,11 @@ const HomeProfileClinic = ({navigation}: any) => {
   };
 
   return (
-    <Container back>
+    <Container
+      back
+      onBack={async () => dispatch(addProfile({...profile, type: ''}))}
+      title="Đăng ký phòng khám">
       <Section>
-        <TextComponent text="Đăng ký phòng khám" size={22} weight={'bold'} />
         <TextComponent
           color={colors.gray}
           text="Phòng khám là cơ sở y tế có cung cấp dịch vụ y tế tại nhà, có thể quản lý dịch vụ, nhân viên phụ trách thực hiện dịch vụ..."
@@ -154,16 +167,31 @@ const HomeProfileClinic = ({navigation}: any) => {
           font={fontFamilies.RobotoMedium}
         />
         <Row
-          styles={[globalStyles.inputContainer, {marginBottom: 16}]}
-          onPress={() => navigation.navigate('MapScreen')}>
-          <TextComponent text="fafa" />
+          styles={[
+            globalStyles.inputContainer,
+            {marginBottom: 16, justifyContent: 'flex-start'},
+          ]}
+          onPress={() => navigation.navigate('AddNewAddress')}>
+          <Col>
+            <TextComponent
+              numberOfLine={1}
+              text={formData.address ? formData.address : 'Chọn vị trí'}
+              color={formData.address ? colors.text : colors.gray2}
+            />
+          </Col>
+          <Space width={8} />
+          <Location size={22} color={colors.gray2} />
         </Row>
-        {/* <Input
-          value={formData.address} 
-          onChange={val => handleChangeData('address', val)}
-          placeholder="Địa chỉ phòng khám"
-          label="Địa chỉ phòng khám"
-        /> */}
+        <Input
+          value={formData.description}
+          onChange={val => handleChangeData('description', val)}
+          textAreal
+          rows={3}
+          radius={8}
+          placeholder="Nội dung"
+          label="Giới thiệu phòng khám"
+        />
+
         <Input
           value={formData.referentCode}
           onChange={val => handleChangeData('referentCode', val)}

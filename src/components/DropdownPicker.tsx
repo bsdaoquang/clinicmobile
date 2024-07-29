@@ -234,24 +234,36 @@ const DropdownPicker = (props: Props) => {
           handlePosition="inside"
           ref={modalizeRef}
           HeaderComponent={
-            <Row
-              styles={[
-                {
-                  padding: 16,
-                  paddingTop: 20,
-                },
-              ]}>
-              <Col>
-                <TextComponent
-                  text={data.title}
-                  size={16}
-                  fontFamilies={fontFamilies.RobotoMedium}
-                />
-              </Col>
-              <TouchableOpacity onPress={() => modalizeRef.current?.close()}>
-                <AntDesign name="close" color={colors.text} size={22} />
-              </TouchableOpacity>
-            </Row>
+            <>
+              <Row
+                styles={[
+                  {
+                    padding: 16,
+                    paddingTop: 20,
+                  },
+                ]}>
+                <Col>
+                  <TextComponent
+                    text={data.title}
+                    size={16}
+                    fontFamilies={fontFamilies.RobotoMedium}
+                  />
+                </Col>
+                <TouchableOpacity onPress={() => modalizeRef.current?.close()}>
+                  <AntDesign name="close" color={colors.text} size={22} />
+                </TouchableOpacity>
+              </Row>
+              <Row styles={{paddingHorizontal: 16}}>
+                <Col>
+                  <Input
+                    placeholder="Tìm kiếm"
+                    value={searchKey}
+                    onChange={val => setSearchKey(val)}
+                    clear
+                  />
+                </Col>
+              </Row>
+            </>
           }
           FooterComponent={
             multible && data.values.length > 0 ? (
@@ -267,9 +279,7 @@ const DropdownPicker = (props: Props) => {
                   />
                 </Section>
               </>
-            ) : (
-              <Space height={40} />
-            )
+            ) : null
           }
           flatListProps={{
             data: searchKey ? results : data.values,
@@ -278,17 +288,8 @@ const DropdownPicker = (props: Props) => {
                 <TextComponent text="Dữ liệu trống" />
               </Section>
             ),
-            ListHeaderComponent: (
-              <View style={{paddingHorizontal: 16, paddingTop: 12}}>
-                <Input
-                  placeholder="Tìm kiếm"
-                  value={searchKey}
-                  onChange={val => setSearchKey(val)}
-                  clear
-                />
-              </View>
-            ),
-            maxToRenderPerBatch: 20,
+
+            maxToRenderPerBatch: 10,
             removeClippedSubviews: true,
             renderItem: ({item, index}) => (
               <View key={item.value}>

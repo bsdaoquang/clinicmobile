@@ -1,5 +1,4 @@
 import {Card, Loading, Section, Space} from '@bsdaoquang/rncomponent';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState} from 'react';
 import {Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -7,18 +6,15 @@ import {HandleAPI} from '../../apis/handleAPI';
 import {Container, TextComponent} from '../../components';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
-import {localNames} from '../../constants/localNames';
 import {authSelector} from '../../redux/reducers/authReducer';
 import {addProfile} from '../../redux/reducers/profileReducer';
 
 const Welcome = ({navigation}: any) => {
-  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const auth = useSelector(authSelector);
 
   const handleUpdateProfile = async (type: string) => {
     const api = `/doctors/update?id=${auth._id}`;
-    setIsLoading(true);
     try {
       const res = await HandleAPI(
         api,
@@ -29,10 +25,8 @@ const Welcome = ({navigation}: any) => {
       );
 
       dispatch(addProfile(res.data));
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
     }
   };
 
@@ -91,7 +85,6 @@ const Welcome = ({navigation}: any) => {
           />
         </Card>
       </Section>
-      <Loading loading={isLoading} />
     </Container>
   );
 };
