@@ -18,7 +18,7 @@ import {HandleFile} from '../../../utils/handleFile';
 import {showToast} from '../../../utils/showToast';
 import {HandleAPI} from '../../../apis/handleAPI';
 
-const Avatar = ({navigation}: any) => {
+const Avatar = ({navigation, route}: any) => {
   const [file, setfile] = useState<ImageOrVideo>();
   const [isUploading, setIsUploading] = useState(false);
   const auth = useSelector(authSelector);
@@ -62,13 +62,19 @@ const Avatar = ({navigation}: any) => {
   };
 
   return (
-    <Container isFlex back title="Cập nhật ảnh đại diện">
+    <Container
+      isFlex
+      back
+      title={`Cập nhật ${
+        route.params && route.params.title ? route.params.title : ''
+      }`}>
       <Section>
-        <TextComponent text="Được sử dụng làm ảnh đại diện, giúp khách hàng dễ dàng nhận ra bạn" />
-        <Space height={8} />
         <TextComponent
-          text="Ảnh chân dung, ảnh thật của bạn"
-          color={colors.gray500}
+          text={`${
+            route.params && route.params.description
+              ? route.params.description
+              : 'Được sử dụng làm ảnh đại diện, giúp khách hàng dễ dàng nhận ra bạn'
+          }`}
         />
       </Section>
       <Section styles={{flex: 1}}>

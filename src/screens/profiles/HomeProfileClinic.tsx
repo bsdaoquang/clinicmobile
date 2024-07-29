@@ -113,8 +113,8 @@ const HomeProfileClinic = ({navigation, route}: any) => {
         );
         showToast(res.message);
         dispatch(addProfile(res.data));
-
         setIsLoading(false);
+        navigation.navigate('UploadCurriculumVitae');
       } catch (error) {
         showToast('Không thể cập nhật thông tin');
         setIsLoading(false);
@@ -157,8 +157,6 @@ const HomeProfileClinic = ({navigation, route}: any) => {
           placeholder="090"
           keyboardType="phone-pad"
           label="Số điện thoại"
-          required
-          helpText="Nhập số điện thoại"
         />
 
         <TextComponent
@@ -190,6 +188,21 @@ const HomeProfileClinic = ({navigation, route}: any) => {
           radius={8}
           placeholder="Nội dung"
           label="Giới thiệu phòng khám"
+        />
+
+        <Input
+          value={formData.personOfCharge}
+          onChange={val => handleChangeData('personOfCharge', val)}
+          label="Người phụ trách"
+          placeholder="Nguyễn Văn A"
+          clear
+        />
+        <Input
+          value={formData.operatingLicense}
+          onChange={val => handleChangeData('operatingLicense', val)}
+          label="Giấy phép hoạt động"
+          placeholder=""
+          clear
         />
 
         <Input

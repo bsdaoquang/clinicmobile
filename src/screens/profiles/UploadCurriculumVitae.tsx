@@ -39,6 +39,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
     {
       key: 'Avatar',
       title: 'Ảnh chân dung',
+      description: '',
       compulsory: true,
     },
     {
@@ -76,6 +77,29 @@ const UploadCurriculumVitae = ({navigation}: any) => {
           title: 'Thông tin liên hệ khẩn cấp và địa chỉ tạm trú',
         });
       },
+    },
+  ];
+  const profilesClinic = [
+    {
+      key: 'Avatar',
+      title: 'Ảnh phòng khám',
+      description:
+        'Ảnh chụp mặt trước bao gồm cả bảng hiệu của phòng khám, giúp bệnh nhân có thể dễ dàng tìm thấy phòng khám',
+      compulsory: true,
+    },
+    {
+      key: 'CCCD',
+      title: 'CMND / Thẻ căn cước / Hộ chiếu',
+      description:
+        'Giấy tờ của người đại diện phòng khám, chịu trách nhiệm về hoạt động của phòng khám',
+      compulsory: true,
+    },
+    {
+      key: 'PracticingCertificate',
+      title: 'Giấy phép hoạt động',
+      description:
+        'Giấy phép hoạt động được cấp bởi cơ quan quản ký hoạt động khám chữa bệnh tại địa phương',
+      compulsory: true,
     },
   ];
 
@@ -137,7 +161,10 @@ const UploadCurriculumVitae = ({navigation}: any) => {
           ) : (
             <Row
               onPress={() =>
-                navigation.navigate(item.key, {title: item.title})
+                navigation.navigate(item.key, {
+                  title: item.title,
+                  description: item.description ?? '',
+                })
               }>
               <TextComponent text={'Bắt buộc'} color={'coral'} />
               <Space width={8} />
@@ -158,6 +185,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
       bottomComponent={
         <Section>
           <Button
+            disable={documents.length !== (profile.type === 'doctor' ? 6 : 3)}
             color={colors.primary}
             title={`Gửi ${
               profile.status === 'pending' ? 'lại' : ''
@@ -168,7 +196,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         </Section>
       }
       isScroll={false}
-      title="Hồ sơ cá nhân"
+      title={profile.type === 'clinic' ? 'Hồ sơ phòng khám' : 'Hồ sơ cá nhân'}
       back
       right={
         <Button
@@ -180,7 +208,7 @@ const UploadCurriculumVitae = ({navigation}: any) => {
         />
       }>
       <FlatList
-        data={profiles}
+        data={profile.type === 'doctor' ? profiles : profilesClinic}
         renderItem={({item}) => (
           <Row
             onPress={item.onPress ? () => item.onPress() : undefined}
@@ -191,7 +219,17 @@ const UploadCurriculumVitae = ({navigation}: any) => {
               paddingVertical: 14,
             }}>
             <Col>
-              <TextComponent text={item.title} />
+              <TextComponent
+                text={item.title}
+                font={fontFamilies.RobotoMedium}
+              />
+              {item.description && (
+                <TextComponent
+                  text={item.description}
+                  size={12}
+                  color={colors.gray}
+                />
+              )}
             </Col>
             <Space width={16} />
             {item.compulsory ? (

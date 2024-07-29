@@ -145,8 +145,8 @@ const HomeProfile = ({navigation}: any) => {
         );
         showToast(res.message);
         dispatch(addProfile(res.data));
-        navigation.navigate('UploadCurriculumVitae');
         setIsLoading(false);
+        navigation.navigate('UploadCurriculumVitae');
       } catch (error) {
         showToast('Không thể cập nhật thông tin');
         setIsLoading(false);
