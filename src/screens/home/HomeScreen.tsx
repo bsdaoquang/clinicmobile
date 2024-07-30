@@ -13,6 +13,7 @@ import GeoLocation, {
 } from '@react-native-community/geolocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 import {MoneyRecive, Notification} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -26,19 +27,17 @@ import {
   View,
 } from 'react-native';
 import MapView from 'react-native-maps';
+import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from 'react-redux';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {ServiceModel} from '../../models/ServiceModel';
-import {useSelector} from 'react-redux';
 import {profileSelector} from '../../redux/reducers/profileReducer';
-import {HandleNotification} from '../../utils/handleNotification';
-import Toast from 'react-native-toast-message';
-import messaging from '@react-native-firebase/messaging';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -50,8 +49,6 @@ const HomeScreen = ({navigation}: any) => {
   const [notificationCount, setNotificationCount] = useState(0);
 
   const profile = useSelector(profileSelector);
-
-  const user = auth().currentUser;
   const menus = [
     {
       key: 'RechargeScreen',
@@ -98,49 +95,10 @@ const HomeScreen = ({navigation}: any) => {
   useEffect(() => {
     getPosition();
 
-    // Tạo dịch vụ sẽ tạo khi khởi tạo hồ sơ, hoặc cập nhật trong profile
-    // firestore()
-    //   .collection('services')
-    //   .where('uid', '==', user?.uid)
-    //   .get()
-    //   .then(snap => {
-    //     if (!snap.empty) {
-    //       const items: ServiceModel[] = [];
-    //       snap.forEach((item: any) =>
-    //         items.push({
-    //           id: item.id,
-    //           ...item.data(),
-    //         }),
-    //       );
-
-    //       setservices(items);
-    //     }
-    //   })
-    //   .catch(error => console.log(error));
-
-    // // nếu khi kích hoạt, kiểm tra thấy không có dịch vụ sẽ yêu cầu tạo dịch vụ
-
-    // // Kiểm tra profile
-    // firestore()
-    //   .collection('profiles')
-    //   .doc(user?.uid)
-    //   .onSnapshot(snap => {
-    //     if (snap.exists) {
-    //       setProfile(snap.data());
-    //     }
-    //   });
-
-    // firestore()
-    //   .collection('notifications')
-    //   .where('uid', '==', user?.uid)
-    //   .where('isRead', '==', false)
-    //   .onSnapshot(snap => {
-    //     setNotificationCount(snap.size);
-    //   });
-
     messaging().onMessage(mess => {
       const notification = mess.notification;
       Toast.show({
+        text1: notification?.title,
         text2: notification?.body,
         type: 'success',
       });
@@ -148,27 +106,6 @@ const HomeScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
-    // Tài khoản mới được miễn phí 5 lần nhận bệnh, những lần sau trở đi phải nạp tiền mới có thể kích hoạt
-    // Hiện thông báo trong 1 lần đầu
-    if (profile && profile.amount === 0 && profile.isLocked !== false) {
-      Alert.alert(
-        '',
-        'Chào mừng bạn đến với Mạng lưới chăm sóc sức khoẻ tại nhà, chúng tôi tặng bạn 5 lần nhận bệnh miễn phí, những lần sau, chúng tôi sẽ thu 15.000VND/lần, hãy bấm vào Bật kết nối để bắt đầu nhận bệnh nhé. Chúc bạn thành công!',
-        [
-          {
-            text: 'Đồng ý',
-            style: 'default',
-            onPress: async () => {
-              await firestore().collection('profiles').doc(user?.uid).update({
-                isLocked: false,
-                freeCount: 5,
-              });
-            },
-          },
-        ],
-      );
-    }
-
     // Nếu đang làm mà hết tiền, khoá tài khoản
     // Nếu bỏ qua cuốc, khoá tài khoản và đếm số lần,
     // nếu bỏ qua cuốc qúa 3 lần, khoá tài khoản vĩnh viễn
@@ -194,12 +131,6 @@ const HomeScreen = ({navigation}: any) => {
       },
       {},
     );
-    // userRef.doc(user?.uid).onSnapshot(snap => {
-    //   if (snap.exists) {
-    //     const data: any = snap.data();
-    //     setIsOnline(data.isOnline);
-    //   }
-    // });
   };
 
   const handleOnline = async (val: boolean) => {
@@ -222,7 +153,7 @@ const HomeScreen = ({navigation}: any) => {
     } else {
       Alert.alert(
         'Lỗi',
-        'Bạn chưa tạo dịch vụ, bạn cần phải tạo dịch trước khi có thể bắt đầu nhận bệnh, bạn có tạo dịch vụ ngay không?',
+        'Bạn chưa tạo dịch vụ, bạn cần phải tạo dịch trước khi có thể bắt đầu nhận bệnh, bạn có muốn tạo dịch vụ ngay không?',
         [
           {
             text: 'Để sau',
@@ -402,13 +333,7 @@ const HomeScreen = ({navigation}: any) => {
                   iconExtra
                   icon={<AntDesign name="poweroff" size={18} color={'white'} />}
                   title="Bật kết nối"
-                  onPress={() =>
-                    HandleNotification.pushNotification(
-                      profile._id,
-                      {title: 'title', body: 'body'},
-                      {id: 'afaf'},
-                    )
-                  }
+                  onPress={() => handleOnline(true)}
                   color="#219C90"
                   styles={{paddingVertical: 8, width: '50%'}}
                 />

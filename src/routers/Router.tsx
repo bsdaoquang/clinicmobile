@@ -9,6 +9,7 @@ import Splash from '../screens/Splash';
 import AuthNavigator from './AuthNavigator';
 import DrawerNavigator from './DrawerNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import {getProfileData} from '../utils/getProfile';
 
 const Router = () => {
   const [isWelcome, setIsWelcome] = useState(true);
@@ -36,14 +37,7 @@ const Router = () => {
     if (res) {
       const data = JSON.parse(res);
       dispatch(login(data));
-      await getProfileData(data._id);
-    }
-  };
-
-  const getProfileData = async (id: string) => {
-    const res = await HandleAPI(`/doctors/profile?id=${id}`);
-    if (res && res.data) {
-      dispatch(addProfile(res.data));
+      await getProfileData(data._id, dispatch);
     }
   };
 

@@ -16,6 +16,7 @@ import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {localNames} from '../../constants/localNames';
 import {login} from '../../redux/reducers/authReducer';
+import {getProfileData} from '../../utils/getProfile';
 
 const WIDTH = (Dimensions.get('window').width - 82) / 6;
 
@@ -71,7 +72,8 @@ const VerificationCode = ({navigation, route}: any) => {
           );
 
           await AsyncStorage.setItem(localNames.authData, JSON.stringify(res));
-          dispatch(login(res));
+          await getProfileData(res.data._id, dispatch);
+          dispatch(login(res.data));
 
           setIsVerifing(false);
         }
@@ -119,7 +121,7 @@ const VerificationCode = ({navigation, route}: any) => {
             maxLength={1}
             onChangeText={val => {
               handleChangeNumCode(1, val);
-              inp3.current?.focus();
+              val && inp3.current?.focus();
             }}
             onSubmitEditing={() => inp3.current?.focus()}
           />
@@ -132,7 +134,7 @@ const VerificationCode = ({navigation, route}: any) => {
             maxLength={1}
             onChangeText={val => {
               handleChangeNumCode(2, val);
-              inp4.current?.focus();
+              val && inp4.current?.focus();
             }}
             onSubmitEditing={() => inp4.current?.focus()}
           />
@@ -145,7 +147,7 @@ const VerificationCode = ({navigation, route}: any) => {
             maxLength={1}
             onChangeText={val => {
               handleChangeNumCode(3, val);
-              inp5.current?.focus();
+              val && inp5.current?.focus();
             }}
             onSubmitEditing={() => inp5.current?.focus()}
           />
@@ -158,7 +160,7 @@ const VerificationCode = ({navigation, route}: any) => {
             maxLength={1}
             onChangeText={val => {
               handleChangeNumCode(4, val);
-              inp6.current?.focus();
+              val && inp6.current?.focus();
             }}
             onSubmitEditing={() => inp6.current?.focus()}
           />

@@ -19,7 +19,6 @@ import {
   VerifyStatus,
   Welcome,
 } from '../screens';
-import Verification from '../screens/auth/Verification';
 import Policy from '../screens/Policy';
 import Terms from '../screens/Terms';
 
@@ -61,7 +60,6 @@ const ProfileNavigator = () => {
       <Stack.Screen name="AddNewAddress" component={AddNewAddress} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Policy" component={Policy} />
-      <Stack.Screen name="Verification" component={Verification} />
       <Stack.Screen name="Avatar" component={Avatar} />
       <Stack.Screen name="CCCD" component={CCCD} />
       <Stack.Screen name="BangTotNghiep" component={BangTotNghiep} />

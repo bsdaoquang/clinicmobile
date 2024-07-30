@@ -2,7 +2,6 @@ import {Button, Divider, Loading, Section} from '@bsdaoquang/rncomponent';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {Alert, Image} from 'react-native';
 import {useDispatch} from 'react-redux';
@@ -10,8 +9,7 @@ import {HandleAPI} from '../apis/handleAPI';
 import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
 import TextComponent from './TextComponent';
-import {showToast} from '../utils/showToast';
-import {addProfile} from '../redux/reducers/profileReducer';
+import {getProfileData} from '../utils/getProfile';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +42,8 @@ const SocicalLogin = () => {
           localNames.authData,
           JSON.stringify(res.data),
         );
+        await getProfileData(res.data._id, dispatch);
         dispatch(login(res.data));
-        dispatch(addProfile(res.data));
       }
       setIsLoading(false);
     } catch (error: any) {

@@ -6,24 +6,25 @@ import {
   colors,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React from 'react';
 import {Image, Platform, ScrollView, StatusBar} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useSelector} from 'react-redux';
-import {fontFamilies} from '../constants/fontFamilies';
-import {authSelector} from '../redux/reducers/authReducer';
-import TextComponent from './TextComponent';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {fontFamilies} from '../constants/fontFamilies';
+import TextComponent from './TextComponent';
+import {useDispatch} from 'react-redux';
+import {logout} from '../redux/reducers/authReducer';
+import {addProfile} from '../redux/reducers/profileReducer';
 
 const DrawerCustom = ({navigation}: any) => {
-  const user = useSelector(authSelector);
-
   const size = 20;
   const color = colors.gray400;
+
+  const dispatch = useDispatch();
 
   const menus = [
     {
@@ -102,7 +103,7 @@ const DrawerCustom = ({navigation}: any) => {
                 : 40,
           },
         ]}>
-        {user.avatar && (
+        {/* {user.avatar && (
           <Image
             source={{uri: user.avatar.downloadUrl}}
             style={{
@@ -113,15 +114,15 @@ const DrawerCustom = ({navigation}: any) => {
               borderColor: colors.white,
             }}
           />
-        )}
-        <Col styles={{marginVertical: 8}}>
+        )} */}
+        {/* <Col styles={{marginVertical: 8}}>
           <TextComponent
             color={colors.gray100}
             size={18}
             text={user.displayName}
             font={fontFamilies.RobotoMedium}
           />
-        </Col>
+        </Col> */}
         <Row>
           <TextComponent size={12} color={colors.gray200} text={`4.5 `} />
 
@@ -152,7 +153,9 @@ const DrawerCustom = ({navigation}: any) => {
           styles={{marginVertical: 10}}
           onPress={async () => {
             await GoogleSignin.signOut();
-            await auth().signOut();
+            await AsyncStorage.clear();
+            dispatch(logout({}));
+            dispatch(addProfile({}));
           }}>
           <FontAwesome6
             name="power-off"
