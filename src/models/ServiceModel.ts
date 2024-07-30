@@ -1,13 +1,10 @@
 export interface ServiceModel {
-  createdAt: number;
+  _id: string;
+  createdAt: string;
   description: string;
-  price: string;
-  searchIndex: string[];
+  price: number;
   slug: string;
   title: string;
   uid: string;
-  updatedAt: number;
-  id: string,
-  position: any,
-  isOnline: boolean;
+  updatedAt: string;
 }

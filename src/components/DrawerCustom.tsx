@@ -14,16 +14,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {fontFamilies} from '../constants/fontFamilies';
-import TextComponent from './TextComponent';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../redux/reducers/authReducer';
-import {addProfile} from '../redux/reducers/profileReducer';
+import {addProfile, profileSelector} from '../redux/reducers/profileReducer';
+import TextComponent from './TextComponent';
+import {fontFamilies} from '../constants/fontFamilies';
 
 const DrawerCustom = ({navigation}: any) => {
   const size = 20;
   const color = colors.gray400;
-
+  const profile = useSelector(profileSelector);
   const dispatch = useDispatch();
 
   const menus = [
@@ -103,9 +103,9 @@ const DrawerCustom = ({navigation}: any) => {
                 : 40,
           },
         ]}>
-        {/* {user.avatar && (
+        {profile.photoUrl && (
           <Image
-            source={{uri: user.avatar.downloadUrl}}
+            source={{uri: profile.photoUrl}}
             style={{
               width: 100,
               height: 100,
@@ -114,15 +114,15 @@ const DrawerCustom = ({navigation}: any) => {
               borderColor: colors.white,
             }}
           />
-        )} */}
-        {/* <Col styles={{marginVertical: 8}}>
+        )}
+        <Col styles={{marginVertical: 8}}>
           <TextComponent
             color={colors.gray100}
             size={18}
-            text={user.displayName}
+            text={profile.displayName}
             font={fontFamilies.RobotoMedium}
           />
-        </Col> */}
+        </Col>
         <Row>
           <TextComponent size={12} color={colors.gray200} text={`4.5 `} />
 

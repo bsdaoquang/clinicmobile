@@ -11,12 +11,11 @@ import {
 import GeoLocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {MoneyRecive, Notification} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   Image,
@@ -31,13 +30,16 @@ import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {HandleAPI} from '../../apis/handleAPI';
 import TextComponent from '../../components/TextComponent';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import {ServiceModel} from '../../models/ServiceModel';
-import {profileSelector} from '../../redux/reducers/profileReducer';
+import {addProfile, profileSelector} from '../../redux/reducers/profileReducer';
+import {getProfileData} from '../../utils/getProfile';
+import {showToast} from '../../utils/showToast';
 
 const HomeScreen = ({navigation}: any) => {
   const [currentLocation, setCurrentLocation] = useState<{
@@ -45,10 +47,12 @@ const HomeScreen = ({navigation}: any) => {
     long: number;
   }>();
   const [isLoading, setIsLoading] = useState(false);
-  const [services, setservices] = useState<ServiceModel[]>([]);
+  const [services, setServices] = useState<ServiceModel[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
   const profile = useSelector(profileSelector);
+  const dispatch = useDispatch();
+
   const menus = [
     {
       key: 'RechargeScreen',
@@ -64,8 +68,20 @@ const HomeScreen = ({navigation}: any) => {
     },
     {
       key: 'Auto',
-      onPress: () => {},
-      label: 'Tự động nhận bệnh',
+      onPress: async () => {
+        await HandleAPI(
+          `/doctors/update?id=${profile._id}`,
+          {
+            isAutoApprove: profile.isAutoApprove
+              ? !profile.isAutoApprove
+              : true,
+          },
+          'put',
+        );
+        await getProfileData(profile._id, dispatch);
+        showToast('Bật chế độ tự động nhận bệnh');
+      },
+      label: 'Tự động',
       icon: (
         <MaterialCommunityIcons
           name="lightning-bolt"
@@ -94,7 +110,7 @@ const HomeScreen = ({navigation}: any) => {
 
   useEffect(() => {
     getPosition();
-
+    getServices();
     messaging().onMessage(mess => {
       const notification = mess.notification;
       Toast.show({
@@ -109,6 +125,8 @@ const HomeScreen = ({navigation}: any) => {
     // Nếu đang làm mà hết tiền, khoá tài khoản
     // Nếu bỏ qua cuốc, khoá tài khoản và đếm số lần,
     // nếu bỏ qua cuốc qúa 3 lần, khoá tài khoản vĩnh viễn
+
+    handleListenLocation();
   }, [profile]);
 
   const getPosition = async () => {
@@ -133,23 +151,37 @@ const HomeScreen = ({navigation}: any) => {
     );
   };
 
-  const handleOnline = async (val: boolean) => {
+  const getServices = async () => {
+    const api = `/doctors/get-services?id=${profile._id}`;
+    try {
+      const res = await HandleAPI(api);
+      res.data && setServices(res.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleOnline = async () => {
     if (services.length > 0) {
-      // setIsLoading(true);
-      // try {
-      //   await firestore()
-      //     .collection('profiles')
-      //     .doc(user?.uid)
-      //     .update({
-      //       isOnline: val,
-      //       currentLocation: val ? currentLocation : '',
-      //     });
-      //   await handleListenLocation(val);
-      //   setIsLoading(false);
-      // } catch (error) {
-      //   console.log(error);
-      //   setIsLoading(false);
-      // }
+      setIsLoading(true);
+      try {
+        const res: any = await HandleAPI(
+          `/doctors/update?id=${profile._id}`,
+          {
+            isOnline: !profile.isOnline,
+            position: currentLocation,
+          },
+          'put',
+        );
+
+        dispatch(addProfile(res.data));
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
     } else {
       Alert.alert(
         'Lỗi',
@@ -168,19 +200,18 @@ const HomeScreen = ({navigation}: any) => {
     }
   };
 
-  const handleListenLocation = async (val: boolean) => {
+  const handleListenLocation = async () => {
     let watch;
-    if (val) {
+    if (profile.isOnline) {
       try {
         watch = GeoLocation.watchPosition(
-          position => {
-            handleUpdatePosition(position);
+          async position => {
+            await handleUpdatePosition(position);
           },
           error => console.log(error),
           {
-            timeout: 300,
-            interval: 15,
-            enableHighAccuracy: false,
+            interval: 60000,
+            enableHighAccuracy: true,
             distanceFilter: 500,
           },
         );
@@ -188,31 +219,23 @@ const HomeScreen = ({navigation}: any) => {
         console.log(error);
       }
     } else {
-      // services.forEach(
-      //   async item =>
-      //     await firestore().collection('services').doc(item.id).update({
-      //       position: '',
-      //       isOnline: false,
-      //     }),
-      // );
-      // watch && GeoLocation.clearWatch(watch);
+      watch && GeoLocation.clearWatch(watch);
     }
   };
 
-  const handleUpdatePosition = (position: GeolocationResponse) => {
-    // services.forEach(async item => {
-    //   await firestore()
-    //     .collection('services')
-    //     .doc(item.id)
-    //     .update({
-    //       position: {
-    //         lat: position.coords.latitude,
-    //         long: position.coords.longitude,
-    //       },
-    //       isOnline: true,
-    //     });
-    //   console.log('Service is updated');
-    // });
+  const handleUpdatePosition = async (position: GeolocationResponse) => {
+    await HandleAPI(
+      `/doctors/update?id=${profile._id}`,
+      {
+        position: {
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        },
+      },
+      'put',
+    );
+
+    showToast('Đã cập nhật thông tin vị trí');
   };
 
   const handleLockAccount = async () => {};
@@ -276,7 +299,11 @@ const HomeScreen = ({navigation}: any) => {
                   }}>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Notifications')}>
-                    <Notification size={24} color={colors.gray} />
+                    <Notification
+                      size={24}
+                      color={colors.gray}
+                      variant="Bold"
+                    />
                   </TouchableOpacity>
                 </Badge>
                 <Space width={12} />
@@ -305,6 +332,9 @@ const HomeScreen = ({navigation}: any) => {
             </Row>
           </View>
           <MapView
+            onMapLoaded={() => (
+              <ActivityIndicator size={22} color={colors.gray} />
+            )}
             style={{
               flex: 1,
               zIndex: -1,
@@ -333,7 +363,7 @@ const HomeScreen = ({navigation}: any) => {
                   iconExtra
                   icon={<AntDesign name="poweroff" size={18} color={'white'} />}
                   title="Bật kết nối"
-                  onPress={() => handleOnline(true)}
+                  onPress={handleOnline}
                   color="#219C90"
                   styles={{paddingVertical: 8, width: '50%'}}
                 />
@@ -362,7 +392,7 @@ const HomeScreen = ({navigation}: any) => {
                         {
                           text: 'Ngưng',
                           style: 'destructive',
-                          onPress: () => handleOnline(false),
+                          onPress: () => handleOnline(),
                         },
                       ],
                     )
@@ -427,7 +457,12 @@ const HomeScreen = ({navigation}: any) => {
                         {
                           width: 45,
                           height: 45,
-                          backgroundColor: colors.gray2,
+                          backgroundColor:
+                            item.key === 'Auto'
+                              ? profile.isAutoApprove
+                                ? colors.primary
+                                : colors.gray2
+                              : colors.gray2,
                           borderRadius: 100,
                         },
                       ]}>
