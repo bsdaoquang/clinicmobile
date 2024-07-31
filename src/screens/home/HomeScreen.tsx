@@ -79,7 +79,6 @@ const HomeScreen = ({navigation}: any) => {
           'put',
         );
         await getProfileData(profile._id, dispatch);
-        showToast('Bật chế độ tự động nhận bệnh');
       },
       label: 'Tự động',
       icon: (
@@ -241,7 +240,7 @@ const HomeScreen = ({navigation}: any) => {
   const handleLockAccount = async () => {};
 
   return (
-    <View style={{flex: 1, paddingTop: Platform.OS === 'ios' ? 40 : 0}}>
+    <View style={{flex: 1}}>
       {currentLocation && profile && (
         <View style={{flex: 1}}>
           <View
@@ -252,7 +251,7 @@ const HomeScreen = ({navigation}: any) => {
               right: 0,
               left: 0,
               paddingHorizontal: 10,
-              paddingTop: 10,
+              paddingTop: 40,
             }}>
             <Row justifyContent="space-between">
               <Card styles={{paddingVertical: 4, marginBottom: 0}}>

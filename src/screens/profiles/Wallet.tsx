@@ -7,79 +7,26 @@ import {
   Space,
   globalStyles,
 } from '@bsdaoquang/rncomponent';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, TouchableOpacity, View} from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useSelector} from 'react-redux';
 import {Container, TextComponent} from '../../components';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
 import {ProfileModel} from '../../models/ProfileModel';
-import {TransactionModel} from '../../models/TransactionModel';
-import {VND} from '../../utils/handleCurrency';
-import Feather from 'react-native-vector-icons/Feather';
 import {Status} from '../../models/Status';
+import {TransactionModel} from '../../models/TransactionModel';
+import {profileSelector} from '../../redux/reducers/profileReducer';
+import {VND} from '../../utils/handleCurrency';
 
 const Wallet = ({navigation}: any) => {
-  const [profile, setProfile] = useState<ProfileModel>();
   const [transactions, setTransactions] = useState<TransactionModel[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const user = auth().currentUser;
+  const profile: ProfileModel = useSelector(profileSelector);
 
-  useEffect(() => {
-    getDatas();
-  }, []);
-
-  const getDatas = async () => {
-    try {
-      firestore()
-        .collection('profiles')
-        .doc(user?.uid)
-        .onSnapshot((snap: any) => {
-          if (snap.exists) {
-            setProfile(snap.data());
-          }
-        });
-
-      await getTransactions();
-
-      setIsLoading(false);
-    } catch (error: any) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
-  const getTransactions = async () => {
-    firestore()
-      .collection('bills')
-      .where('uid', '==', user?.uid)
-      .onSnapshot(snap => {
-        if (!snap.empty) {
-          const items: TransactionModel[] = [];
-          snap.forEach((item: any) =>
-            items.push({
-              id: item.id,
-              ...item.data(),
-            }),
-          );
-          setTransactions(items.sort((a, b) => b.createdAt - a.createdAt));
-        }
-      });
-  };
-
-  return isLoading ? (
-    <Section flex={1} styles={[globalStyles.center]}>
-      <ActivityIndicator />
-    </Section>
-  ) : profile ? (
+  return profile ? (
     <Container isScroll={false} back title="Ví">
       <Card styles={[globalStyles.center]}>
         <TextComponent text="Số dư khả dụng" />

@@ -19,6 +19,7 @@ import {logout} from '../redux/reducers/authReducer';
 import {addProfile, profileSelector} from '../redux/reducers/profileReducer';
 import TextComponent from './TextComponent';
 import {fontFamilies} from '../constants/fontFamilies';
+import {HandleAPI} from '../apis/handleAPI';
 
 const DrawerCustom = ({navigation}: any) => {
   const size = 20;
@@ -152,10 +153,19 @@ const DrawerCustom = ({navigation}: any) => {
         <Row
           styles={{marginVertical: 10}}
           onPress={async () => {
-            await GoogleSignin.signOut();
-            await AsyncStorage.clear();
-            dispatch(logout({}));
-            dispatch(addProfile({}));
+            try {
+              await HandleAPI(
+                `/doctors/update?id=${profile._id}`,
+                {isOnline: false},
+                'put',
+              );
+              await GoogleSignin.signOut();
+              await AsyncStorage.clear();
+              dispatch(logout({}));
+              dispatch(addProfile({}));
+            } catch (error) {
+              console.log(error);
+            }
           }}>
           <FontAwesome6
             name="power-off"

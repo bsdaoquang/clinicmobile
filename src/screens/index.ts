@@ -34,6 +34,8 @@ import ChoiceLocation from './maps/ChoiceLocation';
 import MapScreen from './maps/MapScreen';
 import LoginClinic from './auth/LoginClinic';
 import AddNewAddress from './maps/AddNewAddress';
+import HomeClinic from './home/HomeClinic';
+import EmployeeScreen from './employese/EmployeeScreen';
 
 export {
   HomeProfile,
@@ -72,4 +74,6 @@ export {
   MapScreen,
   LoginClinic,
   AddNewAddress,
+  HomeClinic,
+  EmployeeScreen,
 };

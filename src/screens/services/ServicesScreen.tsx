@@ -40,7 +40,7 @@ const ServicesScreen = ({navigation, route}: any) => {
   }, []);
 
   useEffect(() => {
-    if (route.params.isReload) {
+    if (route.params && route.params.isReload) {
       getServices();
     }
   }, [route.params]);
@@ -79,7 +79,7 @@ const ServicesScreen = ({navigation, route}: any) => {
     <Container
       isScroll={false}
       title="Dịch vụ của bạn"
-      back
+      back={navigation.canGoBack()}
       right={
         <Button
           title="Thêm mới"

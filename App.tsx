@@ -2,8 +2,9 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {StatusBar, View} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Orientation from 'react-native-orientation-locker';
+import {Host} from 'react-native-portalize';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Provider} from 'react-redux';
@@ -12,10 +13,6 @@ import {colors} from './src/constants/colors';
 import {fontFamilies} from './src/constants/fontFamilies';
 import store from './src/redux/store';
 import Router from './src/routers/Router';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {Host} from 'react-native-portalize';
-
-const deviceType = DeviceInfo.getDeviceType();
 
 GoogleSignin.configure({
   webClientId:
@@ -26,8 +23,8 @@ GoogleSignin.configure({
 
 const App = () => {
   useEffect(() => {
-    deviceType === 'Handset' && Orientation.lockToPortrait();
-  }, [deviceType]);
+    Orientation.lockToPortrait();
+  }, []);
 
   const toastConfig = {
     success: (props: any) => (

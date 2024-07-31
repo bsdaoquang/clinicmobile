@@ -19,6 +19,8 @@ import {fontFamilies} from '../../constants/fontFamilies';
 import {useStatusBar} from '../../hooks/useStatusBar';
 import auth from '@react-native-firebase/auth';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Device from 'react-native-device-info';
+const DeviceType = Device.getDeviceType();
 
 const HomeAuth = ({navigation}: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -93,58 +95,74 @@ const HomeAuth = ({navigation}: any) => {
           />
         </Section>
         <View
-          style={[
-            {backgroundColor: colors.primary, padding: 16, paddingVertical: 20},
-          ]}>
-          <Input
-            value={phoneNumber}
-            onChange={val => setPhoneNumber(val)}
-            placeholder="01234"
-            clear
-            bordered
-            max={10}
+          style={{
+            alignItems: 'center',
+            width: '100%',
+          }}>
+          <View
+            style={[
+              {
+                backgroundColor: colors.primary,
+                padding: 16,
+                paddingVertical: 20,
+                width: DeviceType === 'Handset' ? '100%' : '70%',
+              },
+            ]}>
+            <Input
+              value={phoneNumber}
+              onChange={val => setPhoneNumber(val)}
+              placeholder="01234"
+              clear
+              bordered
+              max={10}
+              styles={{
+                borderColor: errorText ? colors.danger : colors.white,
+              }}
+              prefix={
+                <MaterialIcons name="phone" color={colors.gray2} size={22} />
+              }
+              keyboardType="phone-pad"
+            />
+            {errorText && <TextComponent text={errorText} />}
+            <Button
+              inline
+              isShadow={false}
+              styles={{paddingVertical: Platform.OS === 'ios' ? 16 : 14}}
+              title="Tiếp tục"
+              disable={phoneNumber.length < 10}
+              onPress={handleLoginWithPhone}
+            />
+            <Space height={16} />
+            <SocicalLogin />
+          </View>
+
+          <Section
             styles={{
-              borderColor: errorText ? colors.danger : colors.white,
-            }}
-            prefix={
-              <MaterialIcons name="phone" color={colors.gray2} size={22} />
-            }
-            keyboardType="phone-pad"
-          />
-          {errorText && <TextComponent text={errorText} />}
-          <Button
-            inline
-            isShadow={false}
-            styles={{paddingVertical: Platform.OS === 'ios' ? 16 : 14}}
-            title="Tiếp tục"
-            disable={phoneNumber.length < 10}
-            onPress={handleLoginWithPhone}
-          />
-        </View>
-        <SocicalLogin />
-        <Section>
-          <Row>
-            <Col>
-              <TextComponent
-                size={13}
-                text="Bạn là nhân viên phòng khám?"
-                color={`#e0e0e0`}
-              />
-              <Space height={6} />
-              <Row
-                justifyContent="flex-start"
-                onPress={() => navigation.navigate('LoginClinic')}>
+              width: DeviceType === 'Handset' ? '100%' : '70%',
+            }}>
+            <Row>
+              <Col>
                 <TextComponent
-                  font={fontFamilies.RobotoMedium}
-                  text="Đăng nhập phòng khám"
-                  color={colors.white}
+                  size={13}
+                  text="Bạn là nhân viên phòng khám?"
+                  color={`#e0e0e0`}
                 />
-                <Space width={8} />
-                <ArrowRight size={20} color={colors.white} />
-              </Row>
-            </Col>
-          </Row>
-        </Section>
+                <Space height={6} />
+                <Row
+                  justifyContent="flex-start"
+                  onPress={() => navigation.navigate('LoginClinic')}>
+                  <TextComponent
+                    font={fontFamilies.RobotoMedium}
+                    text="Đăng nhập phòng khám"
+                    color={colors.white}
+                  />
+                  <Space width={8} />
+                  <ArrowRight size={20} color={colors.white} />
+                </Row>
+              </Col>
+            </Row>
+          </Section>
+        </View>
         <Loading loading={isLoading} />
       </View>
     </SafeAreaView>

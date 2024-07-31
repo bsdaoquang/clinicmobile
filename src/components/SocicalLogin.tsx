@@ -1,4 +1,4 @@
-import {Button, Divider, Loading, Section} from '@bsdaoquang/rncomponent';
+import {Button, Divider, Loading} from '@bsdaoquang/rncomponent';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -8,8 +8,8 @@ import {useDispatch} from 'react-redux';
 import {HandleAPI} from '../apis/handleAPI';
 import {localNames} from '../constants/localNames';
 import {login} from '../redux/reducers/authReducer';
-import TextComponent from './TextComponent';
 import {getProfileData} from '../utils/getProfile';
+import TextComponent from './TextComponent';
 
 const SocicalLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,16 +27,14 @@ const SocicalLogin = () => {
       const user = userInfo.user;
 
       if (user) {
-        const res: any = await HandleAPI(
-          `/auth/doctor-register`,
-          {
-            email: user.email,
-            name: `${user.familyName ?? ''} ${user.givenName ?? ''}`,
-            phone: '',
-            photo: user.photo,
-          },
-          'post',
-        );
+        const data = {
+          email: user.email,
+          name: `${user.familyName ?? ''} ${user.givenName ?? ''}`,
+          phone: '',
+          photo: user.photo,
+        };
+
+        const res: any = await HandleAPI(`/auth/doctor-register`, data, 'post');
 
         await AsyncStorage.setItem(
           localNames.authData,
@@ -83,7 +81,7 @@ const SocicalLogin = () => {
   };
 
   return (
-    <Section>
+    <>
       <Divider>
         <TextComponent text="Hoặc" color="white" />
       </Divider>
@@ -107,7 +105,7 @@ const SocicalLogin = () => {
         />
       )} */}
       <Loading loading={isLoading} />
-    </Section>
+    </>
   );
 };
 

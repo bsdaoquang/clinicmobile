@@ -71,14 +71,17 @@ const VerificationCode = ({navigation, route}: any) => {
             'post',
           );
 
-          await AsyncStorage.setItem(localNames.authData, JSON.stringify(res));
+          await AsyncStorage.setItem(
+            localNames.authData,
+            JSON.stringify(res.data),
+          );
           await getProfileData(res.data._id, dispatch);
           dispatch(login(res.data));
-
           setIsVerifing(false);
         }
       } catch (error: any) {
-        navigation.goBack();
+        console.log(error);
+        // navigation.goBack();
         setErrorText(error.message);
         setIsVerifing(false);
       }
