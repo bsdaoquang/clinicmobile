@@ -24,15 +24,22 @@ import {
 } from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 import SupportScreen from '../screens/SupportScreen';
+import {useSelector} from 'react-redux';
+import {profileSelector} from '../redux/reducers/profileReducer';
+import TabNavigator from './TabNavigator';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
+  const profile = useSelector(profileSelector);
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Main" component={HomeScreen} />
+      <Stack.Screen
+        name="Main"
+        component={profile.type === 'clinic' ? TabNavigator : HomeScreen}
+      />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
       <Stack.Screen name="AddService" component={AddService} />

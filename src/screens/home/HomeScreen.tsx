@@ -112,6 +112,7 @@ const HomeScreen = ({navigation}: any) => {
     getServices();
     messaging().onMessage(mess => {
       const notification = mess.notification;
+      console.log(notification);
       Toast.show({
         text1: notification?.title,
         text2: notification?.body,
@@ -251,7 +252,7 @@ const HomeScreen = ({navigation}: any) => {
               right: 0,
               left: 0,
               paddingHorizontal: 10,
-              paddingTop: 40,
+              paddingTop: Platform.OS === 'ios' ? 40 : 20,
             }}>
             <Row justifyContent="space-between">
               <Card styles={{paddingVertical: 4, marginBottom: 0}}>
@@ -340,6 +341,7 @@ const HomeScreen = ({navigation}: any) => {
             }}
             showsMyLocationButton={false}
             showsUserLocation
+            onPress={val => console.log(val.nativeEvent.coordinate)}
             region={{
               latitude: currentLocation.lat,
               longitude: currentLocation.long,

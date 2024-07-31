@@ -30,12 +30,7 @@ const DrawerNavigator = () => {
         drawerPosition: 'left',
       }}
       drawerContent={props => <DrawerCustom {...props} />}>
-      <Drawer.Screen
-        name="HomeNavigator"
-        component={
-          profile && profile.type === 'clinic' ? TabNavigator : MainNavigator
-        }
-      />
+      <Drawer.Screen name="HomeNavigator" component={MainNavigator} />
     </Drawer.Navigator>
   );
 };
