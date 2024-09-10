@@ -96,14 +96,7 @@ const SocicalLogin = () => {
         title="Tiếp tục với Google"
         onPress={handleLoginWithGoogle}
       />
-      {/* {Platform.OS === 'ios' && (
-        <Button
-          icon={<Apple size={24} color={colors.black} variant="Bold" />}
-          iconExtra
-          title="Tiếp tục với Apple"
-          onPress={handleLoginWithApple}
-        />
-      )} */}
+
       <Loading loading={isLoading} />
     </>
   );

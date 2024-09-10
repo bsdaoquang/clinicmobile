@@ -38,6 +38,10 @@ const App = () => {
           <Ionicons name="checkmark-circle-outline" color={'white'} size={20} />
         )}
         contentContainerStyle={{paddingHorizontal: 15}}
+        text1Style={{
+          fontSize: 17,
+          color: 'white',
+        }}
         text2Style={{
           fontSize: 12,
           fontFamily: fontFamilies.RobotoRegular,
@@ -59,6 +63,7 @@ const App = () => {
         }}
         text1Style={{
           fontSize: 17,
+          color: 'white',
         }}
         text2Style={{
           fontSize: 12,

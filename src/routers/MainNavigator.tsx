@@ -1,5 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {useSelector} from 'react-redux';
+import {profileSelector} from '../redux/reducers/profileReducer';
 import {
   AddService,
   Agreements,
@@ -7,7 +9,6 @@ import {
   Comingsoon,
   Communitications,
   Histories,
-  HomeProfile,
   Notifications,
   Payment,
   PaymentMethod,
@@ -24,8 +25,6 @@ import {
 } from '../screens';
 import HomeScreen from '../screens/home/HomeScreen';
 import SupportScreen from '../screens/SupportScreen';
-import {useSelector} from 'react-redux';
-import {profileSelector} from '../redux/reducers/profileReducer';
 import TabNavigator from './TabNavigator';
 
 const MainNavigator = () => {
